@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   ThemeProvider,
@@ -17,6 +17,9 @@ import Navbar from './components/Navbar';
 import PredictionForm from './components/PredictionForm';
 import PriceResultCard from './components/PriceResultCard';
 import DepreciationChart from './components/DepreciationChart';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import CarComparison from './components/CarComparison';
+import HistoryDrawer from './components/HistoryDrawer';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -27,6 +30,7 @@ function App() {
   const [metadata, setMetadata] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' });
 
   // Check Backend and ML Service Health & Fetch Dropdown Metadata on Load
@@ -91,17 +95,19 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
       <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-        {/* Navigation Bar */}
+        {/* Navigation Bar with Multi-Currency Selector & History Button */}
         <Navbar
           activeTab={activeTab}
           onTabChange={setActiveTab}
           selectedCurrency={selectedCurrency}
           onCurrencyChange={setSelectedCurrency}
           apiStatus={apiStatus}
+          onOpenHistory={() => setHistoryOpen(true)}
         />
 
         {/* Main Content Area */}
         <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 3, md: 5 } }}>
+          {/* Tab 0: Main Valuation Predictor */}
           {activeTab === 0 && (
             <Grid container spacing={3.5}>
               {/* Left Column: Vehicle Valuation Input Form */}
@@ -135,32 +141,23 @@ function App() {
             </Grid>
           )}
 
-          {/* Tab 1: Market Intelligence Placeholder */}
+          {/* Tab 1: Market Intelligence & ML Model Performance Analytics */}
           {activeTab === 1 && (
-            <Card className="glass-panel" sx={{ p: 4, borderRadius: 4, textAlign: 'center' }}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom color="#00E5FF">
-                Market Intelligence & ML Performance Leaderboard
-              </Typography>
-              <Typography variant="body2" color="text.secondary" maxWidth="md" mx="auto" mb={3}>
-                Visual analytics, 5-model benchmark comparisons ($R^2$, RMSE, MAE), and Scikit-Learn Feature Importance rankings are prepared for Step 8.
-              </Typography>
-              <Chip label="Scheduled for Step 8" color="secondary" sx={{ fontWeight: 700 }} />
-            </Card>
+            <AnalyticsDashboard metadata={metadata} />
           )}
 
-          {/* Tab 2: Compare Cars Placeholder */}
+          {/* Tab 2: Side-by-Side Car Valuation Comparison */}
           {activeTab === 2 && (
-            <Card className="glass-panel" sx={{ p: 4, borderRadius: 4, textAlign: 'center' }}>
-              <Typography variant="h5" fontWeight="bold" gutterBottom color="#FFB703">
-                Side-by-Side Car Valuation Comparison
-              </Typography>
-              <Typography variant="body2" color="text.secondary" maxWidth="md" mx="auto" mb={3}>
-                Compare 2 different vehicle specs and inspect depreciation rates side-by-side.
-              </Typography>
-              <Chip label="Scheduled for Step 8" color="primary" sx={{ fontWeight: 700 }} />
-            </Card>
+            <CarComparison metadata={metadata} selectedCurrency={selectedCurrency} />
           )}
         </Container>
+
+        {/* Prediction History Drawer */}
+        <HistoryDrawer
+          open={historyOpen}
+          onClose={() => setHistoryOpen(false)}
+          selectedCurrency={selectedCurrency}
+        />
 
         {/* Global Toast Notification */}
         <Snackbar
