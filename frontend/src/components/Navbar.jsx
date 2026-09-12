@@ -9,6 +9,7 @@ import {
   Select,
   MenuItem,
   Chip,
+  IconButton,
   Tooltip,
   Container,
   useMediaQuery,
@@ -20,6 +21,7 @@ import InsightsIcon from '@mui/icons-material/Insights';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import SpeedIcon from '@mui/icons-material/Speed';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import HistoryIcon from '@mui/icons-material/History';
 
 const CURRENCIES = [
   { code: 'LKR', label: 'LKR (Rs.)', symbol: 'Rs.' },
@@ -165,6 +167,23 @@ export default function Navbar({
                 </Select>
               </FormControl>
             </Box>
+
+            {/* History Toggle Button */}
+            {onOpenHistory && (
+              <Tooltip title="View Past Valuations">
+                <IconButton
+                  size="small"
+                  onClick={onOpenHistory}
+                  sx={{
+                    color: '#94A3B8',
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    '&:hover': { color: '#00E5FF', backgroundColor: 'rgba(0, 229, 255, 0.1)' },
+                  }}
+                >
+                  <HistoryIcon sx={{ fontSize: 20 }} />
+                </IconButton>
+              </Tooltip>
+            )}
 
             {/* API Status Badge */}
             <Tooltip title={apiStatus === 'online' ? 'All Microservices Operational (Port 5000 & 8000)' : 'Connecting to API Gateway...'}>

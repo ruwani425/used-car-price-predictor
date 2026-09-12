@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -7,67 +7,25 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Grid,
+  Chip,
+  Tooltip as MuiTooltip,
 } from '@mui/material';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import {
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
 import { convertFromLKR, CURRENCY_CONFIG } from '../utils/currencyUtils';
 
 /**
- * Custom Tooltip for Recharts
+ * High-Performance Interactive SVG Depreciation Chart.
+ * 100% React 19 compatible with glowing area gradient, hover nodes, and tooltips.
  */
-function CustomTooltip({ active, payload, label, selectedCurrency }) {
-  if (!active || !payload || !payload.length) return null;
-
-  const dataPoint = payload[0].payload;
-  const currencyInfo = CURRENCY_CONFIG[selectedCurrency] || CURRENCY_CONFIG.LKR;
-
-  return (
-    <Box
-      sx={{
-        backgroundColor: 'rgba(11, 15, 25, 0.95)',
-        backdropFilter: 'blur(12px)',
-        border: '1px solid rgba(0, 229, 255, 0.4)',
-        borderRadius: 2.5,
-        p: 2,
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      <Typography variant="subtitle2" fontWeight="bold" color="#00E5FF" mb={0.5}>
-        Forecast Year: {label}
-      </Typography>
-      <Typography variant="body2" fontWeight="800" color="#FFFFFF">
-        Value ({selectedCurrency}): {currencyInfo.symbol}{' '}
-        {dataPoint.convertedValue.toLocaleString('en-US', {
-          minimumFractionDigits: currencyInfo.decimals,
-          maximumFractionDigits: currencyInfo.decimals,
-        })}
-      </Typography>
-      <Typography variant="caption" color="#94A3B8" display="block">
-        LKR Valuation: Rs. {dataPoint.lakhs.toFixed(2)} Lakhs
-      </Typography>
-      {dataPoint.dropPercent !== undefined && (
-        <Typography variant="caption" color="#FFB703" fontWeight="700">
-          Retained: {(100 - dataPoint.dropPercent).toFixed(1)}% of initial
-        </Typography>
-      )}
-    </Box>
-  );
-}
-
 export default function DepreciationChart({
   depreciationData = [],
   initialLakhs = 0,
   selectedCurrency = 'LKR',
 }) {
-  const [chartMetric, setChartMetric] = useState('currency'); // 'currency' | 'lakhs'
+  const [viewMode, setViewMode] = useState('currency'); // 'currency' | 'percent'
+  const [hoveredIndex, setHoveredIndex] = useState(null);
 
   if (!depreciationData || depreciationData.length === 0) {
     return null;
@@ -75,53 +33,60 @@ export default function DepreciationChart({
 
   const currencyInfo = CURRENCY_CONFIG[selectedCurrency] || CURRENCY_CONFIG.LKR;
 
-  // Transform depreciation points for Recharts
-  const chartData = depreciationData.map((point) => {
-    const lakhs = point.projected_price_lkr_lakhs || point.projected_price_lkr || 0;
-    const rawLkr = point.projected_price_lkr_raw || lakhs * 100000;
-    const conv = convertFromLKR(rawLkr, selectedCurrency);
-
-    const baseLakhs = initialLakhs || (depreciationData[0]?.projected_price_lkr_lakhs || lakhs);
-    const dropPercent = baseLakhs > 0 ? ((baseLakhs - lakhs) / baseLakhs) * 100 : 0;
+  // Process data points
+  const points = depreciationData.map((item, index) => {
+    const lakhs = item.projected_price_lkr_lakhs || item.projected_price_lkr || 0;
+    const lkrRaw = lakhs * 100000;
+    const converted = convertFromLKR(lkrRaw, selectedCurrency);
+    const dropPercent = initialLakhs > 0 ? Math.max(0, ((initialLakhs - lakhs) / initialLakhs) * 100) : 0;
+    const retainedPercent = Math.max(0, 100 - dropPercent);
 
     return {
-      year: point.year,
-      lakhs: Number(lakhs.toFixed(2)),
-      convertedValue: conv.amount,
-      rawLkr,
-      dropPercent: Math.max(0, dropPercent),
+      year: item.year,
+      lakhs,
+      lkrRaw,
+      convertedValue: converted.amount,
+      formattedPrice: converted.formatted,
+      dropPercent,
+      retainedPercent,
     };
   });
 
-  // Calculate Key Insights
-  const startVal = chartData[0]?.convertedValue || 1;
-  const endVal = chartData[chartData.length - 1]?.convertedValue || 1;
-  const year1Val = chartData[1]?.convertedValue || startVal;
+  const activePoint = hoveredIndex !== null ? points[hoveredIndex] : points[points.length - 1];
+  const total5YearDepreciation = points.length > 1 ? points[points.length - 1].dropPercent.toFixed(1) : 0;
 
-  const year1DropPercent = startVal > 0 ? (((startVal - year1Val) / startVal) * 100).toFixed(1) : '7.0';
-  const fiveYearRetainedPercent = startVal > 0 ? (((endVal) / startVal) * 100).toFixed(1) : '74.8';
-  const totalLoss = Math.max(0, startVal - endVal);
-  const formattedLoss = `${currencyInfo.symbol} ${totalLoss.toLocaleString('en-US', {
-    minimumFractionDigits: currencyInfo.decimals,
-    maximumFractionDigits: currencyInfo.decimals,
-  })}`;
+  // Chart coordinates calculation
+  const width = 500;
+  const height = 220;
+  const padding = { top: 25, right: 30, bottom: 35, left: 45 };
+
+  const chartW = width - padding.left - padding.right;
+  const chartH = height - padding.top - padding.bottom;
+
+  const maxVal = Math.max(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : 100))) * 1.08;
+  const minVal = Math.min(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : p.retainedPercent))) * 0.92;
+  const range = maxVal - minVal || 1;
+
+  const getX = (idx) => padding.left + (idx / (points.length - 1)) * chartW;
+  const getY = (val) => padding.top + chartH - ((val - minVal) / range) * chartH;
+
+  // Generate SVG Path
+  const linePoints = points.map((p, idx) => {
+    const val = viewMode === 'currency' ? p.convertedValue : p.retainedPercent;
+    return `${getX(idx)},${getY(val)}`;
+  });
+
+  const pathD = `M ${linePoints.join(' L ')}`;
+  const areaD = `M ${getX(0)},${padding.top + chartH} L ${linePoints.join(' L ')} L ${getX(points.length - 1)},${padding.top + chartH} Z`;
 
   return (
-    <Card
-      className="glass-panel form-card-enter glow-cyan"
-      sx={{
-        borderRadius: 4,
-        border: '1px solid rgba(0, 229, 255, 0.25)',
-        mt: 3.5,
-        overflow: 'hidden',
-      }}
-    >
+    <Card className="glass-panel" sx={{ borderRadius: 4, mt: 3, overflow: 'hidden' }}>
       {/* Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.12) 0%, rgba(19, 28, 46, 0.8) 100%)',
+          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(19, 28, 46, 0.4) 100%)',
           borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          p: { xs: 2.5, sm: 3 },
+          p: 2.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -130,169 +95,170 @@ export default function DepreciationChart({
         }}
       >
         <Box display="flex" alignItems="center" gap={1.2}>
-          <Box
-            sx={{
-              width: 38,
-              height: 38,
-              borderRadius: '50%',
-              bgcolor: 'rgba(255, 183, 3, 0.15)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <TrendingDownIcon sx={{ color: '#FFB703', fontSize: 24 }} />
-          </Box>
+          <TrendingDownIcon sx={{ color: '#00E5FF' }} />
           <Box>
-            <Typography variant="h6" fontWeight="bold" lineHeight={1.2}>
-              5-Year Depreciation Projection
+            <Typography variant="subtitle1" fontWeight="bold">
+              5-Year Forecasted Depreciation Curve
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              Predictive asset valuation decay model (~7% annual decay)
+              Predictive secondary market asset value decay
             </Typography>
           </Box>
         </Box>
 
-        {/* Axis Unit Toggle */}
         <ToggleButtonGroup
-          value={chartMetric}
+          value={viewMode}
           exclusive
-          onChange={(e, val) => val && setChartMetric(val)}
           size="small"
+          onChange={(e, val) => val && setViewMode(val)}
           sx={{
-            bgcolor: 'rgba(255, 255, 255, 0.04)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 2,
+            height: 28,
             '& .MuiToggleButton-root': {
-              color: '#94A3B8',
-              fontWeight: 700,
-              fontSize: '0.75rem',
               px: 1.5,
+              fontSize: '0.75rem',
+              fontWeight: 700,
+              color: '#94A3B8',
+              borderColor: 'rgba(255, 255, 255, 0.1)',
               '&.Mui-selected': {
                 color: '#00E5FF',
-                bgcolor: 'rgba(0, 229, 255, 0.2)',
+                backgroundColor: 'rgba(0, 229, 255, 0.12)',
               },
             },
           }}
         >
-          <ToggleButton value="currency">{currencyInfo.code}</ToggleButton>
-          <ToggleButton value="lakhs">LKR Lakhs</ToggleButton>
+          <ToggleButton value="currency">{selectedCurrency}</ToggleButton>
+          <ToggleButton value="percent">% Retained</ToggleButton>
         </ToggleButtonGroup>
       </Box>
 
-      <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
-        {/* Recharts Area Container */}
-        <Box sx={{ width: '100%', height: 280 }}>
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 10, bottom: 0 }}>
-              <defs>
-                <linearGradient id="deprGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00E5FF" stopOpacity={0.45} />
-                  <stop offset="95%" stopColor="#00E5FF" stopOpacity={0.0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.08)" vertical={false} />
-              <XAxis
-                dataKey="year"
-                stroke="#94A3B8"
-                tick={{ fill: '#94A3B8', fontSize: 12, fontWeight: 600 }}
-                axisLine={{ stroke: 'rgba(255, 255, 255, 0.1)' }}
-              />
-              <YAxis
-                stroke="#94A3B8"
-                tick={{ fill: '#94A3B8', fontSize: 11 }}
-                axisLine={{ stroke: 'rgba(255, 255, 255, 0.1)' }}
-                tickFormatter={(val) => {
-                  if (chartMetric === 'lakhs') return `${val}L`;
-                  if (val >= 1000000) return `${(val / 1000000).toFixed(1)}M`;
-                  if (val >= 1000) return `${(val / 1000).toFixed(0)}k`;
-                  return val;
-                }}
-              />
-              <Tooltip
-                content={<CustomTooltip selectedCurrency={selectedCurrency} />}
-              />
-              <Area
-                type="monotone"
-                dataKey={chartMetric === 'currency' ? 'convertedValue' : 'lakhs'}
-                stroke="#00E5FF"
-                strokeWidth={3}
-                fillOpacity={1}
-                fill="url(#deprGradient)"
-                activeDot={{ r: 6, fill: '#FFB703', stroke: '#00E5FF', strokeWidth: 2 }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+      {/* SVG Line & Area Chart */}
+      <CardContent sx={{ p: 2.5 }}>
+        <Box sx={{ width: '100%', position: 'relative' }}>
+          <svg
+            viewBox={`0 0 ${width} ${height}`}
+            style={{ width: '100%', height: 'auto', overflow: 'visible' }}
+          >
+            <defs>
+              {/* Glowing Gradient Area Fill */}
+              <linearGradient id="cyanAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.4" />
+                <stop offset="60%" stopColor="#00E5FF" stopOpacity="0.08" />
+                <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.0" />
+              </linearGradient>
+
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="glow" />
+                <feComposite in="SourceGraphic" in2="glow" operator="over" />
+              </filter>
+            </defs>
+
+            {/* Horizontal Grid lines */}
+            {[0, 0.33, 0.66, 1].map((ratio, i) => {
+              const yPos = padding.top + chartH * ratio;
+              return (
+                <line
+                  key={i}
+                  x1={padding.left}
+                  y1={yPos}
+                  x2={width - padding.right}
+                  y2={yPos}
+                  stroke="rgba(255, 255, 255, 0.06)"
+                  strokeDasharray="4 4"
+                />
+              );
+            })}
+
+            {/* Area Fill */}
+            <path d={areaD} fill="url(#cyanAreaGradient)" />
+
+            {/* Line Path */}
+            <path
+              d={pathD}
+              fill="none"
+              stroke="#00E5FF"
+              strokeWidth="3.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#glow)"
+            />
+
+            {/* Interactive Circles on each Year point */}
+            {points.map((p, idx) => {
+              const val = viewMode === 'currency' ? p.convertedValue : p.retainedPercent;
+              const cx = getX(idx);
+              const cy = getY(val);
+              const isHovered = hoveredIndex === idx;
+
+              return (
+                <g
+                  key={p.year}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setHoveredIndex(idx)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                >
+                  {/* Outer pulse circle when hovered */}
+                  {isHovered && (
+                    <circle cx={cx} cy={cy} r="12" fill="rgba(0, 229, 255, 0.25)" />
+                  )}
+
+                  {/* Point circle */}
+                  <circle
+                    cx={cx}
+                    cy={cy}
+                    r={isHovered ? 6 : 4.5}
+                    fill={isHovered ? '#FFFFFF' : '#00E5FF'}
+                    stroke="#0B0F19"
+                    strokeWidth="2"
+                  />
+
+                  {/* X-Axis Year Labels */}
+                  <text
+                    x={cx}
+                    y={height - 10}
+                    textAnchor="middle"
+                    fill={isHovered ? '#00E5FF' : '#94A3B8'}
+                    fontSize="11"
+                    fontWeight={isHovered ? '700' : '500'}
+                  >
+                    {p.year}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
         </Box>
 
-        {/* Key Financial Insights Metrics Bar */}
-        <Grid container spacing={2} mt={1}>
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2.5,
-                bgcolor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                textAlign: 'center',
-              }}
-            >
-              <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">
-                1-Year Forecasted Drop
-              </Typography>
-              <Typography variant="h6" fontWeight="800" color="#FFB703" my={0.5}>
-                -{year1DropPercent}%
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Standard annual decay
-              </Typography>
-            </Box>
-          </Grid>
+        {/* Dynamic Tooltip Bar */}
+        <Box
+          sx={{
+            p: 1.8,
+            borderRadius: 2.5,
+            backgroundColor: 'rgba(11, 15, 25, 0.8)',
+            border: '1px solid rgba(0, 229, 255, 0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            mt: 1.5,
+          }}
+        >
+          <Box>
+            <Typography variant="caption" color="text.secondary">
+              Projected Value ({activePoint.year})
+            </Typography>
+            <Typography variant="subtitle2" fontWeight="800" color="#00E5FF">
+              {activePoint.formattedPrice} (Rs. {activePoint.lakhs.toFixed(2)} Lakhs)
+            </Typography>
+          </Box>
 
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2.5,
-                bgcolor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                textAlign: 'center',
-              }}
-            >
-              <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">
-                5-Year Value Retained
-              </Typography>
-              <Typography variant="h6" fontWeight="800" color="#00E5FF" my={0.5}>
-                {fiveYearRetainedPercent}%
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Residual equity after 5 yrs
-              </Typography>
-            </Box>
-          </Grid>
-
-          <Grid item xs={12} sm={4}>
-            <Box
-              sx={{
-                p: 2,
-                borderRadius: 2.5,
-                bgcolor: 'rgba(255, 255, 255, 0.03)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                textAlign: 'center',
-              }}
-            >
-              <Typography variant="caption" color="text.secondary" fontWeight="600" display="block">
-                Total 5-Year Loss
-              </Typography>
-              <Typography variant="h6" fontWeight="800" color="#F8FAFC" my={0.5}>
-                {formattedLoss}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Cumulative depreciation
-              </Typography>
-            </Box>
-          </Grid>
-        </Grid>
+          <Box textAlign="right">
+            <Typography variant="caption" color="text.secondary">
+              Retained Value
+            </Typography>
+            <Typography variant="subtitle2" fontWeight="800" color="#22C55E">
+              {activePoint.retainedPercent.toFixed(1)}% ({activePoint.dropPercent.toFixed(1)}% decay)
+            </Typography>
+          </Box>
+        </Box>
       </CardContent>
     </Card>
   );
