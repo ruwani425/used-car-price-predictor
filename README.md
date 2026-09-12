@@ -23,29 +23,29 @@ The platform is architected as an enterprise 3-tier microservices system:
 
 ```mermaid
 graph TD
-    subgraph Client Tier ["Frontend (Vite + React 19 + MUI Dark Luxury)"]
-        UI[React Single Page Application :5173]
-        Form[Cascading Prediction Form]
-        Card[Valuation & Confidence Display]
-        Chart[5-Year Depreciation Curve]
-        Compare[Car Comparison Matrix]
-        Analytics[Model Metrics & Feature Leaderboard]
+    subgraph ClientTier ["Frontend (Vite + React 19 + MUI Dark Luxury)"]
+        UI["React Single Page Application (:5173)"]
+        Form["Cascading Prediction Form"]
+        Card["Valuation & Confidence Display"]
+        Chart["5-Year Depreciation Curve"]
+        Compare["Car Comparison Matrix"]
+        Analytics["Model Metrics & Feature Leaderboard"]
     end
 
-    subgraph Gateway Tier ["Backend Gateway (Node.js + Express.js :5000)"]
-        GW[Express REST API Gateway]
-        Val[Payload Validation Middleware]
-        Curr[Multi-Currency Exchange Service]
-        Hist[Prediction History Store]
-        Client[Axios ML Client Proxy]
+    subgraph GatewayTier ["Backend Gateway (Node.js + Express.js :5000)"]
+        GW["Express REST API Gateway"]
+        Val["Payload Validation Middleware"]
+        Curr["Multi-Currency Exchange Service"]
+        Hist["Prediction History Store"]
+        Client["Axios ML Client Proxy"]
     end
 
-    subgraph ML Service Tier ["ML Microservice (Python + FastAPI + Scikit-Learn :8000)"]
-        API[FastAPI REST Microservice]
-        Pipeline[Inference Preprocessing Pipeline]
-        Model[Gradient Boosting Regressor (.pkl)]
-        Metadata[Model Metadata & Features Registry]
-        Metrics[Evaluation Metrics & Leaderboard]
+    subgraph MLServiceTier ["ML Microservice (Python + FastAPI + Scikit-Learn :8000)"]
+        API["FastAPI REST Microservice"]
+        Pipeline["Inference Preprocessing Pipeline"]
+        Model["Gradient Boosting Regressor (.pkl)"]
+        Metadata["Model Metadata & Features Registry"]
+        Metrics["Evaluation Metrics & Leaderboard"]
     end
 
     UI -->|REST API Requests| GW
@@ -56,7 +56,7 @@ graph TD
     Pipeline --> Model
     Model -->|Predicted Log Price| Pipeline
     Pipeline -->|Inverse Exp Transform| API
-    API -->|Prediction Result (LKR Lakhs)| Client
+    API -->|Prediction Result LKR Lakhs| Client
     Client --> Curr
     Curr --> Hist
     Hist -->|Enriched Multi-Currency JSON| UI

@@ -76,15 +76,15 @@ To maximize predictive accuracy and prevent model overfitting, seven explicit fe
 
 ```mermaid
 flowchart TD
-    Raw[Raw Listing Data] --> T4[1. Non-Informative Pruning: Drop id, date]
-    T4 --> T1[2. Temporal Derivation: car_age = 2026 - model_year]
-    T1 --> T2[3. Ratio Synthesis: mileage_per_year]
-    T2 --> T3[4. Composite Luxury Score: Weighted Feature Sum]
-    T3 --> T6[5. Long-Tail Clustering: Model Grouping < 25]
-    T6 --> T5[6. Frequency & Categorical Encoding: brand_freq, town_freq, OHE]
-    T5 --> T7A[7a. Robust IQR Outlier Clipping]
+    Raw["Raw Listing Data"] --> T4["1. Non-Informative Pruning: Drop id, date"]
+    T4 --> T1["2. Temporal Derivation: car_age = 2026 - model_year"]
+    T1 --> T2["3. Ratio Synthesis: mileage_per_year"]
+    T2 --> T3["4. Composite Luxury Score: Weighted Feature Sum"]
+    T3 --> T6["5. Long-Tail Clustering: Model Grouping < 25"]
+    T6 --> T5["6. Frequency & Categorical Encoding: brand_freq, town_freq, OHE"]
+    T5 --> T7A["7a. Robust IQR Outlier Clipping"]
     T7A --> T7B["7b. Target Skewness Normalization: log(1 + y)"]
-    T7B --> Final[Engineered ML Matrix: 273 Feature Columns]
+    T7B --> Final["Engineered ML Matrix: 273 Feature Columns"]
 ```
 
 ### 3.1 Technique 1: Temporal Age Derivation (`car_age`)
