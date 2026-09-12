@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   ThemeProvider,
@@ -10,18 +10,13 @@ import {
   Snackbar,
   Grid,
   Card,
-  CardContent,
   Chip,
-  Divider,
-  CircularProgress,
 } from '@mui/material';
 import { darkTheme } from './theme/theme';
 import Navbar from './components/Navbar';
 import PredictionForm from './components/PredictionForm';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import SecurityIcon from '@mui/icons-material/Security';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PriceResultCard from './components/PriceResultCard';
+import DepreciationChart from './components/DepreciationChart';
 
 const API_BASE = 'http://localhost:5000';
 
@@ -119,132 +114,22 @@ function App() {
                 />
               </Grid>
 
-              {/* Right Column: Prediction Result & Valuation Card */}
+              {/* Right Column: Prediction Result Card & Depreciation Chart */}
               {predictionResult && (
                 <Grid item xs={12} lg={5}>
-                  <Card className="glass-panel form-card-enter glow-cyan" sx={{ borderRadius: 4, height: '100%' }}>
-                    <Box
-                      sx={{
-                        background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(19, 28, 46, 0.6) 100%)',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                        p: 3,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}
-                    >
-                      <Box display="flex" alignItems="center" gap={1}>
-                        <CheckCircleIcon sx={{ color: '#00E5FF', fontSize: 28 }} />
-                        <Typography variant="h6" fontWeight="bold">
-                          Estimated Valuation
-                        </Typography>
-                      </Box>
-                      <Chip label="AI ML Verified" color="primary" size="small" sx={{ fontWeight: 700 }} />
-                    </Box>
-
-                    <CardContent sx={{ p: 3.5 }}>
-                      {/* Price Ticker Banner */}
-                      <Box
-                        sx={{
-                          p: 3,
-                          borderRadius: 3,
-                          backgroundColor: 'rgba(11, 15, 25, 0.7)',
-                          border: '1px solid rgba(0, 229, 255, 0.25)',
-                          textAlign: 'center',
-                          mb: 3,
-                        }}
-                      >
-                        <Typography variant="caption" color="text.secondary" fontWeight="700" letterSpacing="0.08em">
-                          FAIR MARKET VALUATION ({selectedCurrency})
-                        </Typography>
-
-                        {/* Converted Currency Display */}
-                        {predictionResult.converted_price && predictionResult.converted_price.currency !== 'LKR' ? (
-                          <Typography
-                            variant="h3"
-                            sx={{
-                              fontWeight: 800,
-                              my: 1,
-                              background: 'linear-gradient(90deg, #00E5FF 0%, #FFB703 100%)',
-                              WebkitBackgroundClip: 'text',
-                              WebkitTextFillColor: 'transparent',
-                            }}
-                          >
-                            {predictionResult.converted_price.symbol}{' '}
-                            {Number(predictionResult.converted_price.amount).toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}
-                          </Typography>
-                        ) : null}
-
-                        {/* Primary LKR Valuation */}
-                        <Typography
-                          variant={predictionResult.converted_price?.currency !== 'LKR' ? 'h5' : 'h3'}
-                          sx={{
-                            fontWeight: 800,
-                            my: 1,
-                            color: predictionResult.converted_price?.currency !== 'LKR' ? '#94A3B8' : '#00E5FF',
-                          }}
-                        >
-                          {predictionResult.formatted_lakhs || `Rs. ${predictionResult.predicted_price_lkr_lakhs} Lakhs`}
-                        </Typography>
-
-                        <Typography variant="body2" color="text.secondary">
-                          Approx. {predictionResult.formatted_lkr || `Rs. ${(predictionResult.predicted_price_lkr_lakhs * 100000).toLocaleString()} LKR`}
-                        </Typography>
-                      </Box>
-
-                      {/* Confidence Range */}
-                      {predictionResult.confidence_interval && (
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          p={2}
-                          borderRadius={2}
-                          bgcolor="rgba(255, 255, 255, 0.03)"
-                          border="1px solid rgba(255, 255, 255, 0.06)"
-                          mb={2.5}
-                        >
-                          <Box>
-                            <Typography variant="caption" color="text.secondary">
-                              Estimated Range (95% CI)
-                            </Typography>
-                            <Typography variant="body2" fontWeight="700" color="#F8FAFC">
-                              Rs. {predictionResult.confidence_interval.min_lkr_lakhs} Lakhs – Rs.{' '}
-                              {predictionResult.confidence_interval.max_lkr_lakhs} Lakhs
-                            </Typography>
-                          </Box>
-                          <SecurityIcon sx={{ color: '#00E5FF' }} />
-                        </Box>
-                      )}
-
-                      {/* Vehicle Specs Summary Pill */}
-                      {predictionResult.requested_vehicle && (
-                        <Box>
-                          <Typography variant="caption" color="text.secondary" fontWeight="600" mb={1} display="block">
-                            EVALUATED CONFIGURATION
-                          </Typography>
-                          <Box display="flex" flexWrap="wrap" gap={0.8}>
-                            <Chip
-                              label={`${predictionResult.requested_vehicle.brand} ${predictionResult.requested_vehicle.model}`}
-                              size="small"
-                              variant="outlined"
-                            />
-                            <Chip label={`YOM: ${predictionResult.requested_vehicle.yom}`} size="small" variant="outlined" />
-                            <Chip
-                              label={`${Number(predictionResult.requested_vehicle.mileage_km).toLocaleString()} KM`}
-                              size="small"
-                              variant="outlined"
-                            />
-                            <Chip label={predictionResult.requested_vehicle.fuel_type} size="small" variant="outlined" />
-                            <Chip label={predictionResult.requested_vehicle.gear} size="small" variant="outlined" />
-                          </Box>
-                        </Box>
-                      )}
-                    </CardContent>
-                  </Card>
+                  <PriceResultCard
+                    result={predictionResult}
+                    selectedCurrency={selectedCurrency}
+                    onCurrencyChange={setSelectedCurrency}
+                    onCopyNotice={(msg) =>
+                      setNotification({ open: true, message: msg, severity: 'info' })
+                    }
+                  />
+                  <DepreciationChart
+                    depreciationData={predictionResult.depreciation_projection}
+                    initialLakhs={predictionResult.predicted_price_lkr_lakhs}
+                    selectedCurrency={selectedCurrency}
+                  />
                 </Grid>
               )}
             </Grid>
