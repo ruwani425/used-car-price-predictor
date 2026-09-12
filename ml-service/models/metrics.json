@@ -1,0 +1,163 @@
+{
+  "best_model": "Gradient Boosting",
+  "benchmark_leaderboard": [
+    {
+      "model_name": "Linear Regression",
+      "cv_r2_mean": 0.8742,
+      "cv_r2_std": 0.0089,
+      "test_r2_score": 0.5588,
+      "test_rmse_lakhs": 32.37,
+      "test_mae_lakhs": 9.6,
+      "test_mape_percent": 18.49,
+      "training_time_seconds": 1.9
+    },
+    {
+      "model_name": "Ridge Regression",
+      "cv_r2_mean": 0.8739,
+      "cv_r2_std": 0.0085,
+      "test_r2_score": 0.5583,
+      "test_rmse_lakhs": 32.39,
+      "test_mae_lakhs": 9.61,
+      "test_mape_percent": 18.48,
+      "training_time_seconds": 2.2
+    },
+    {
+      "model_name": "Decision Tree",
+      "cv_r2_mean": 0.8619,
+      "cv_r2_std": 0.0064,
+      "test_r2_score": 0.6782,
+      "test_rmse_lakhs": 27.65,
+      "test_mae_lakhs": 8.09,
+      "test_mape_percent": 16.81,
+      "training_time_seconds": 0.74
+    },
+    {
+      "model_name": "Random Forest",
+      "cv_r2_mean": 0.9026,
+      "cv_r2_std": 0.0043,
+      "test_r2_score": 0.6908,
+      "test_rmse_lakhs": 27.1,
+      "test_mae_lakhs": 7.14,
+      "test_mape_percent": 13.85,
+      "training_time_seconds": 21.14
+    },
+    {
+      "model_name": "Gradient Boosting",
+      "cv_r2_mean": 0.9063,
+      "cv_r2_std": 0.005,
+      "test_r2_score": 0.7001,
+      "test_rmse_lakhs": 26.69,
+      "test_mae_lakhs": 7.9,
+      "test_mape_percent": 14.75,
+      "training_time_seconds": 204.6
+    }
+  ],
+  "top_feature_importances": [
+    {
+      "feature": "gear_Manual",
+      "importance": 0.2655,
+      "importance_percent": 26.55
+    },
+    {
+      "feature": "gear_Automatic",
+      "importance": 0.2228,
+      "importance_percent": 22.28
+    },
+    {
+      "feature": "car_age",
+      "importance": 0.1483,
+      "importance_percent": 14.83
+    },
+    {
+      "feature": "mileage_km",
+      "importance": 0.1236,
+      "importance_percent": 12.36
+    },
+    {
+      "feature": "engine_cc",
+      "importance": 0.0701,
+      "importance_percent": 7.01
+    },
+    {
+      "feature": "brand_freq",
+      "importance": 0.0586,
+      "importance_percent": 5.86
+    },
+    {
+      "feature": "luxury_score",
+      "importance": 0.0199,
+      "importance_percent": 1.99
+    },
+    {
+      "feature": "mileage_per_year",
+      "importance": 0.0196,
+      "importance_percent": 1.96
+    },
+    {
+      "feature": "town_freq",
+      "importance": 0.0074,
+      "importance_percent": 0.74
+    },
+    {
+      "feature": "power_mirror",
+      "importance": 0.0045,
+      "importance_percent": 0.45
+    },
+    {
+      "feature": "model_grouped_NANO",
+      "importance": 0.0039,
+      "importance_percent": 0.39
+    },
+    {
+      "feature": "model_grouped_QQ",
+      "importance": 0.003,
+      "importance_percent": 0.3
+    },
+    {
+      "feature": "model_grouped_PREMIO G SUPERIOR",
+      "importance": 0.0027,
+      "importance_percent": 0.27
+    },
+    {
+      "feature": "model_grouped_OTHER",
+      "importance": 0.0023,
+      "importance_percent": 0.23
+    },
+    {
+      "feature": "power_window",
+      "importance": 0.0022,
+      "importance_percent": 0.22
+    },
+    {
+      "feature": "model_grouped_MITSUBISHI",
+      "importance": 0.0021,
+      "importance_percent": 0.21
+    },
+    {
+      "feature": "model_grouped_PREMIO",
+      "importance": 0.0021,
+      "importance_percent": 0.21
+    },
+    {
+      "feature": "has_ongoing_lease",
+      "importance": 0.0019,
+      "importance_percent": 0.19
+    },
+    {
+      "feature": "model_grouped_FAMILIA",
+      "importance": 0.0018,
+      "importance_percent": 0.18
+    },
+    {
+      "feature": "model_grouped_AQUA",
+      "importance": 0.0015,
+      "importance_percent": 0.15
+    }
+  ],
+  "evaluation_summary": {
+    "test_r2_score": 0.7001,
+    "training_samples": 7816,
+    "test_samples": 1954,
+    "total_features": 273
+  }
+}
