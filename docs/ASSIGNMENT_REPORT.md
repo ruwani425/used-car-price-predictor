@@ -10,6 +10,12 @@
 - **Academic Year**: 2025/2026
 - **Date of Submission**: September 2026
 
+### 👥 Project Authors & Team Allocation
+| Role | Student Name | Student ID | Batch | Key Responsibilities |
+| :--- | :--- | :---: | :---: | :--- |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | Data Cleaning, 7 Feature Engineering Pipelines, FastAPI Microservice, Multi-Currency Engine, Result Visualizations & Depreciation Charts, E2E Integration Suite. |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | Multi-Model Benchmarking & Hyperparameter Tuning, Model Serialization, Express REST API Gateway, Luxury Dark Theme, Cascading Valuation Form, Analytics Dashboard & Car Comparison. |
+
 ---
 
 ## 1. Executive Summary & Problem Formulation

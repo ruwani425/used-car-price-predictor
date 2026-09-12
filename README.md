@@ -216,10 +216,10 @@ npm run dev
 
 ## 👥 Team & Work Distribution
 
-| Member | Role | Key Contributions |
-| :--- | :--- | :--- |
-| **Member 1** | ML & Fullstack Integration | Data Cleaning, 7 Feature Engineering Pipelines, FastAPI Microservice, Multi-Currency Engine, Result Visualizations & Depreciation Charts, E2E Integration Suite. |
-| **Member 2** | ML Benchmarking & Frontend | Multi-Model Benchmarking & Tuning, Model Serialization, Express REST API Gateway, Luxury Dark Theme, Cascading Valuation Form, Analytics Leaderboard & Car Comparison. |
+| Member | Student Name | Student ID | Batch | Role & Key Contributions |
+| :--- | :--- | :---: | :---: | :--- |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **ML & Fullstack Integration**: Data Cleaning, 7 Feature Engineering Pipelines, FastAPI Microservice, Multi-Currency Engine, Result Visualizations & Depreciation Charts, E2E Integration Suite. |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **ML Benchmarking & Frontend**: Multi-Model Benchmarking & Tuning, Model Serialization, Express REST API Gateway, Luxury Dark Theme, Cascading Valuation Form, Analytics Leaderboard & Car Comparison. |
 
 ---
 

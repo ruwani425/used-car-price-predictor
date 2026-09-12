@@ -7,7 +7,11 @@ This guide is designed to prepare both project members for the academic viva voc
 
 ## 📌 Section 1: Team Responsibilities & Work Distribution
 
-| Area | Member 1 Focus | Member 2 Focus |
+### 👥 Student Details
+- **Member 01**: **W. Himadi Yenushka De Silva** (ID: `241711081`, Batch: `GDSE 71`)
+- **Member 02**: **E.V. Ruwani Ranthika** (ID: `241722021`, Batch: `GDSE 72`)
+
+| Area | Member 01 (Himadi Yenushka - GDSE 71) | Member 02 (Ruwani Ranthika - GDSE 72) |
 | :--- | :--- | :--- |
 | **Machine Learning** | Data cleaning, handling duplicates & missing values, implementing the 7 feature engineering techniques. | Benchmarking 5 regression models, hyperparameter tuning, cross-validation, model serialization (`.pkl`, `metrics.json`). |
 | **Backend & APIs** | FastAPI ML microservice endpoints (`/api/ml/predict`, `/api/ml/metadata`), multi-currency conversion engine, prediction history. | Express.js API Gateway, request validation middleware, Axios proxy client, CORS & error handling. |
