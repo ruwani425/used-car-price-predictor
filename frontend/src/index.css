@@ -1,10 +1,97 @@
+:root {
+  --bg-primary: #0b0f19;
+  --bg-card: rgba(19, 28, 46, 0.8);
+  --cyan-glow: #00e5ff;
+  --gold-glow: #ffb703;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-glass: rgba(255, 255, 255, 0.08);
+}
+
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255, 183, 3, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.6) 0%, transparent 100%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0f19;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: linear-gradient(145deg, rgba(19, 28, 46, 0.75) 0%, rgba(13, 20, 36, 0.9) 100%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-glass);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.25);
+}
+
+.glow-gold {
+  box-shadow: 0 0 25px rgba(255, 183, 3, 0.25);
+}
+
+/* Pulse animation for API status badge */
+@keyframes pulse-green {
+  0% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.pulsing-status {
+  animation: pulse-green 2s infinite;
+}
+
+/* Form input smooth transition */
+.form-card-enter {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

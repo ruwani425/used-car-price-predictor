@@ -1,105 +1,106 @@
-# 🚗 Smart Car Valuation & Price Prediction System
+# 🚗 Enterprise Used Car Price Valuation & Market Intelligence Platform
 
-An end-to-end Machine Learning-powered Full-Stack Web Application designed to predict used car market values based on real-world vehicle specifications.
-
----
-
-## 📌 Project Overview
-This project addresses price asymmetry and valuation challenges in the second-hand automotive market. By leveraging machine learning algorithms, modern backend API orchestration, and a responsive web interface, the system provides accurate vehicle valuation based on parameters such as brand, manufacture year, mileage, transmission type, and fuel type.
+An end-to-end, production-grade Machine Learning and Web Application system designed specifically for the **Sri Lankan Automobile Market**. Built for the **GDSE Machine Learning Module Assignment**, this platform bridges advanced machine learning regression techniques with a high-performance modern 3-tier microservices architecture.
 
 ---
 
-## 🏗️ System Architecture
-The application follows a decoupled 3-tier microservices architecture:
+## 🌟 Key Features
 
-```text
-┌──────────────────────────────────────────────────────────┐
-│             React + Material UI Frontend                 │
-│                 (Port: 5173 - Vite)                      │
-└────────────────────────────┬─────────────────────────────┘
-                             │
-                             │ HTTP POST (/api/predict)
-                             ▼
-┌──────────────────────────────────────────────────────────┐
-│              Express.js REST API Backend                 │
-│                 (Port: 5000 - Node.js)                   │
-└────────────────────────────┬─────────────────────────────┘
-                             │
-                             │ Internal HTTP POST (/predict)
-                             ▼
-┌──────────────────────────────────────────────────────────┐
-│            FastAPI ML Prediction Microservice            │
-│                 (Port: 8000 - Python)                    │
-└────────────────────────────┬─────────────────────────────┘
-                             │
-                             │ Loads Model (.pkl)
-                             ▼
-┌──────────────────────────────────────────────────────────┐
-│          Trained Machine Learning Model Pipeline         │
-└──────────────────────────────────────────────────────────┘
-```
-
-* **Frontend:** Interactive SPA built with React 19, Vite, and Material UI (MUI).
-* **Backend REST API:** Node.js & Express server handling validation, CORS, error handling, and routing.
-* **ML Prediction Service:** Python FastAPI service serving the serialized Scikit-learn model.
+- **Accurate Real-time Valuation**: Instant market price estimation based on vehicle brand, model, edition, transmission, mileage, engine capacity, condition, and luxury options.
+- **7 Advanced Feature Engineering Pipelines**: Robust data preprocessing, IQR outlier clipping, log-transformed target modeling ($\log(1 + y)$), frequency encoding, and luxury scoring.
+- **5-Model Benchmark Suite**: Rigorous evaluation across Linear Regression, Ridge, Decision Tree, Random Forest, and Gradient Boosting with 5-fold Cross-Validation.
+- **Interactive 5-Year Depreciation Forecasting**: Dynamic residual value curve forecasting vehicle depreciation over 5 years.
+- **Multi-Currency Conversion Engine**: Real-time price conversion across LKR (Lakhs & Total), USD, EUR, GBP, and JPY.
+- **Side-by-Side Car Comparison**: Compare two car configurations simultaneously to evaluate valuation and value-retention.
+- **Analytics & Model Leaderboard**: Real-time inspection of ML model performance metrics ($R^2$, RMSE, MAE, MAPE) and top feature importances.
+- **Historical Prediction Log**: Persistent, searchable history drawer with instant re-calculation.
 
 ---
 
-## 📂 Repository Structure
+## 🏛️ System Architecture
 
-```text
-used-car-price-predictor/
-├── backend/                  # Node.js + Express REST API
-│   ├── src/
-│   │   ├── controllers/      # Route controllers (predictController.js)
-│   │   ├── routes/           # API routes (predictRoute.js)
-│   │   └── server.js         # Express app entry point
-│   ├── .env.example          # Environment variables template
-│   ├── package.json          # Node dependencies and scripts
-│   └── README.md             # Backend specific documentation
-├── frontend/                 # React + Vite Frontend Client
-│   ├── src/
-│   │   ├── App.jsx           # Main UI Component with valuation form
-│   │   ├── main.jsx          # React DOM entry
-│   │   └── index.css         # Styling
-│   ├── package.json          # Frontend dependencies and scripts
-│   └── README.md             # Frontend specific documentation
-├── ml-service/               # Python FastAPI ML Microservice
-│   ├── models/               # Saved model binaries (.pkl)
-│   ├── app.py                # FastAPI application & endpoints
-│   ├── train_dummy.py        # Model training script
-│   ├── requirements.txt      # Python dependencies
-│   └── README.md             # ML Service specific documentation
-└── README.md                 # Root documentation (this file)
+The platform is architected as an enterprise 3-tier microservices system:
+
+```mermaid
+graph TD
+    subgraph ClientTier ["Frontend (Vite + React 19 + MUI Dark Luxury)"]
+        UI["React Single Page Application (:5173)"]
+        Form["Cascading Prediction Form"]
+        Card["Valuation & Confidence Display"]
+        Chart["5-Year Depreciation Curve"]
+        Compare["Car Comparison Matrix"]
+        Analytics["Model Metrics & Feature Leaderboard"]
+    end
+
+    subgraph GatewayTier ["Backend Gateway (Node.js + Express.js :5000)"]
+        GW["Express REST API Gateway"]
+        Val["Payload Validation Middleware"]
+        Curr["Multi-Currency Exchange Service"]
+        Hist["Prediction History Store"]
+        Client["Axios ML Client Proxy"]
+    end
+
+    subgraph MLServiceTier ["ML Microservice (Python + FastAPI + Scikit-Learn :8000)"]
+        API["FastAPI REST Microservice"]
+        Pipeline["Inference Preprocessing Pipeline"]
+        Model["Gradient Boosting Regressor (.pkl)"]
+        Metadata["Model Metadata & Features Registry"]
+        Metrics["Evaluation Metrics & Leaderboard"]
+    end
+
+    UI -->|REST API Requests| GW
+    GW -->|POST /api/predict| Val
+    Val -->|Validated Payload| Client
+    Client -->|Internal HTTP Proxy| API
+    API --> Pipeline
+    Pipeline --> Model
+    Model -->|Predicted Log Price| Pipeline
+    Pipeline -->|Inverse Exp Transform| API
+    API -->|Prediction Result LKR Lakhs| Client
+    Client --> Curr
+    Curr --> Hist
+    Hist -->|Enriched Multi-Currency JSON| UI
 ```
 
 ---
 
-## 📊 Dataset & Feature Engineering Specifications
+## 📊 ML Model Performance & Leaderboard
 
-* **Dataset Source:** Kaggle (Vehicle Dataset from CarDekho)
-* **Target Variable:** `Selling_Price`
+The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fold Cross-Validation and a held-out test split (80/20):
 
-### Key Feature Engineering Techniques:
-1. **Feature Creation:** Derived `Car_Age` ($2026 - \text{Year}$) to account for market depreciation.
-2. **Missing Value Imputation:** Handled missing numerical values using median imputation.
-3. **Outlier Treatment:** Applied IQR capping to mitigate extreme mileage outliers.
-4. **Categorical Feature Encoding:** Applied One-Hot Encoding (`drop='first'`) to nominal attributes (`Fuel_Type`, `Transmission`).
-5. **Feature Scaling:** Standardized numerical attributes using `StandardScaler`.
-6. **Feature Selection:** Removed redundant attributes (`Seller_Type`, `Owner`, `Car_Name`).
+| Model | 5-Fold CV $R^2$ | Test $R^2$ | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Gradient Boosting** ⭐ | **0.9063 ± 0.005** | **0.7001** | **26.69** | **7.90** | **14.75%** | 39.41s |
+| **Random Forest** | 0.9026 ± 0.004 | 0.6908 | 27.10 | 7.14 | **13.85%** | 4.78s |
+| **Decision Tree** | 0.8619 ± 0.006 | 0.6782 | 27.65 | 8.09 | 16.81% | 0.33s |
+| **Linear Regression** | 0.8742 ± 0.009 | 0.5588 | 32.37 | 9.60 | 18.49% | 1.11s |
+| **Ridge Regression** | 0.8739 ± 0.009 | 0.5583 | 32.39 | 9.61 | 18.48% | 1.25s |
+
+> **Selected Champion Model**: **Gradient Boosting Regressor** (`car_price_model.pkl`), achieving the lowest RMSE of **26.69 Lakhs** and highest Cross-Validation $R^2$ of **0.9063**.
 
 ---
 
-## 🚀 Quick Start Guide (Run All Services)
+## 🛠️ Technology Stack
+
+| Layer | Technologies |
+| :--- | :--- |
+| **ML Microservice** | Python 3.10+, FastAPI, Uvicorn, Scikit-Learn, Pandas, NumPy, Joblib |
+| **Backend Gateway** | Node.js, Express.js, Axios, CORS, Dotenv |
+| **Frontend Client** | React 19, Vite, Material UI (MUI v6), Lucide Icons, Custom SVG Visualizations |
+| **Architecture** | Microservices REST API, 3-Tier Separation of Concerns |
+
+---
+
+## 🚀 Quick Start & Installation
 
 ### Prerequisites
-* **Node.js:** v18.0.0 or higher
-* **Python:** v3.10 or higher
-* **Git**
+- **Python 3.10+**
+- **Node.js 18+** and **npm**
+- **Git**
 
 ---
 
-### Step 1: Clone the Repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/ruwani425/used-car-price-predictor.git
 cd used-car-price-predictor
@@ -107,87 +108,138 @@ cd used-car-price-predictor
 
 ---
 
-### Step 2: Start the ML Prediction Service (Terminal 1)
+### 2. Run ML Microservice (`ml-service/`)
 ```bash
 cd ml-service
-
-# Create virtual environment
+# Create and activate virtual environment
 python -m venv venv
+# On Windows PowerShell:
+.\venv\Scripts\Activate.ps1
+# On Linux/macOS:
+# source venv/bin/activate
 
-# Activate virtual environment
-# Windows (PowerShell):
-venv\Scripts\activate
-# Windows (CMD):
-venv\Scripts\activate.bat
-# macOS / Linux:
-source venv/bin/activate
-
-# Install Python dependencies
+# Install dependencies
 pip install -r requirements.txt
 
-# Train / Generate Model (if models/car_price_model.pkl does not exist)
-python train_dummy.py
+# (Optional) Retrain models & regenerate artifacts
+python clean_dataset.py
+python feature_engineering.py
+python train.py
 
-# Start FastAPI server
-uvicorn app:app --port 8000 --reload
+# Start FastAPI server on port 8000
+uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
-> 📍 **ML Service will run on:** `http://localhost:8000`  
-> 📖 **API Docs (Swagger UI):** `http://localhost:8000/docs`
+- **ML Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
 
 ---
 
-### Step 3: Start the Backend API (Terminal 2)
+### 3. Run Backend API Gateway (`backend/`)
 ```bash
-cd backend
-
-# Install dependencies
+cd ../backend
 npm install
-
-# (Optional) Verify .env file
-# PORT=5000
-# ML_SERVICE_URL=http://localhost:8000
-
-# Start server with Nodemon (Development Mode)
 npm run dev
 ```
-> 📍 **Backend API will run on:** `http://localhost:5000`  
-> 🩺 **Health Check:** `http://localhost:5000/health`
+- **Gateway Endpoint**: [http://localhost:5000](http://localhost:5000)
+- **Health Endpoint**: [http://localhost:5000/health](http://localhost:5000/health)
 
 ---
 
-### Step 4: Start the Frontend Client (Terminal 3)
+### 4. Run Frontend Application (`frontend/`)
 ```bash
-cd frontend
-
-# Install dependencies
+cd ../frontend
 npm install
-
-# Start Vite development server
 npm run dev
 ```
-> 📍 **Frontend Web App will run on:** `http://localhost:5173`
+- **Web App URL**: [http://localhost:5173](http://localhost:5173)
 
 ---
 
-## 🧪 Testing the Complete Pipeline
+## 📡 REST API Documentation
 
-1. Open your browser and navigate to **`http://localhost:5173`**.
-2. Enter vehicle details:
-   * **Brand:** `Toyota`
-   * **Manufacture Year:** `2018`
-   * **Mileage (km):** `65000`
-   * **Fuel Type:** `Petrol`
-   * **Transmission:** `Automatic`
-3. Click **"Calculate Valuation"**.
-4. The frontend sends a request to Express (`http://localhost:5000/api/predict`), which forwards the payload to FastAPI (`http://localhost:8000/predict`), and returns the predicted market value on the UI.
+### 1. Predict Car Valuation
+- **Endpoint**: `POST /api/predict`
+- **Headers**: `Content-Type: application/json`
+- **Request Body**:
+```json
+{
+  "brand": "TOYOTA",
+  "model": "PREMIO",
+  "model_year": 2018,
+  "transmission": "Automatic",
+  "mileage_km": 45000,
+  "engine_capacity": 1500,
+  "fuel_type": "Petrol",
+  "vehicle_condition": "Used",
+  "town": "Colombo",
+  "options": {
+    "air_conditioning": true,
+    "power_steering": true,
+    "power_window": true,
+    "power_mirror": true,
+    "has_ongoing_lease": false
+  }
+}
+```
+- **Response (200 OK)**:
+```json
+{
+  "success": true,
+  "prediction": {
+    "price_lkr_lakhs": 142.50,
+    "price_lkr_total": 14250000,
+    "confidence_interval": {
+      "lower_lakhs": 128.25,
+      "upper_lakhs": 156.75,
+      "lower_total": 12825000,
+      "upper_total": 15675000
+    },
+    "converted_prices": {
+      "USD": { "amount": 46644.84, "symbol": "$", "formatted": "$46,645" },
+      "EUR": { "amount": 42818.51, "symbol": "€", "formatted": "€42,819" },
+      "GBP": { "amount": 35948.54, "symbol": "£", "formatted": "£35,949" },
+      "JPY": { "amount": 6951219.51, "symbol": "¥", "formatted": "¥6,951,220" }
+    },
+    "depreciation_forecast": [
+      { "year_offset": 0, "year": 2026, "estimated_price_lakhs": 142.50, "retained_percentage": 100 },
+      { "year_offset": 1, "year": 2027, "estimated_price_lakhs": 131.10, "retained_percentage": 92.0 },
+      { "year_offset": 2, "year": 2028, "estimated_price_lakhs": 120.61, "retained_percentage": 84.6 },
+      { "year_offset": 3, "year": 2029, "estimated_price_lakhs": 110.96, "retained_percentage": 77.9 },
+      { "year_offset": 4, "year": 2030, "estimated_price_lakhs": 102.09, "retained_percentage": 71.6 },
+      { "year_offset": 5, "year": 2031, "estimated_price_lakhs": 93.92, "retained_percentage": 65.9 }
+    ]
+  }
+}
+```
 
 ---
 
-## 👥 Team & Individual Contributions
+## 👥 Team & Work Distribution
 
-| Member Name | Student ID | Primary Responsibilities |
-| :--- | :--- | :--- |
-| **Member 1** | `ST00001` | Dataset Preprocessing, EDA, and Feature Engineering Pipeline |
-| **Member 2** | `ST00002` | ML Model Training, Evaluation, and Pipeline Serialization |
-| **Member 3** | `ST00003` | Python FastAPI Microservice & Express Backend REST API |
-| **Member 4** | `ST00004` | React + Material UI Frontend UI & API Integration |
+### Summary of Roles & Responsibilities
+
+| Member | Student Name | Student ID | Batch | Assigned Implementation Steps & Scope |
+| :--- | :--- | :---: | :---: | :--- |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **Step 01**: Data Cleaning & 7 Feature Engineering Pipelines<br>**Step 03**: FastAPI ML Microservice REST Endpoints<br>**Step 05**: Multi-Currency Conversion Engine & Prediction History Store<br>**Step 07**: Price Result Card & Interactive 5-Year Depreciation Chart<br>**Step 09**: Fullstack End-to-End Integration & Error Boundaries |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Benchmarking & Champion Model Export<br>**Step 04**: Express.js API Gateway, Input Validation & ML Proxy<br>**Step 06**: Dark Luxury UI Theme & Cascading Valuation Form<br>**Step 08**: Model Analytics Leaderboard & Car Comparison Matrix<br>**Step 10**: Architecture Documentation & Academic Project Report |
+
+### 📋 10-Step Implementation Plan Breakdown
+
+| Step | Phase / Task Description | Assigned Member | Student Name | Student ID |
+| :---: | :--- | :---: | :--- | :---: |
+| **Step 01** | Dataset Hygiene, Cleaning & 7 Feature Engineering Pipelines | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 02** | Multi-Model Regression Benchmarking, 5-Fold CV & Champion Model Export | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 03** | FastAPI ML Microservice, Inference Pipelines & REST Endpoints | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 04** | Node.js / Express.js Gateway, Payload Validation Middleware & ML Proxy | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 05** | Multi-Currency Conversion Engine (LKR, USD, EUR, GBP, JPY) & History Store | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 06** | Dark Luxury UI Theme Setup & Cascading Vehicle Valuation Form | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 07** | Valuation Result Card & Interactive 5-Year Depreciation Curve Visualization | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 08** | Model Analytics Leaderboard & Side-by-Side Car Comparison Tool | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 09** | Fullstack End-to-End Integration, Error Boundaries & Latency Monitoring | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+
+---
+
+## 📄 License & Academic Integrity
+
+Developed for the **Graduate Diploma in Software Engineering (GDSE)** Machine Learning Module. All rights reserved.
