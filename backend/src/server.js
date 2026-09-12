@@ -11,6 +11,7 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const historyRoutes = require("./routes/historyRoutes");
 const currencyRoutes = require("./routes/currencyRoutes");
 const healthRoutes = require("./routes/healthRoutes");
+const { startCurrencyCron } = require("./jobs/currencyCron");
 
 const app = express();
 
@@ -88,6 +89,9 @@ if (require.main === module) {
     console.log(`💱 Currencies endpoint: http://localhost:${config.port}/api/currencies`);
     console.log(`📜 History endpoint: http://localhost:${config.port}/api/history`);
     console.log("==================================================");
+
+    // Start background 3-hour currency sync cron job
+    startCurrencyCron();
   });
 
   process.on("SIGTERM", () => {
