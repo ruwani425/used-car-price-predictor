@@ -1,0 +1,26 @@
+{
+  "name": "used-car-price-predictor-backend",
+  "version": "1.0.0",
+  "description": "Express.js REST API Gateway for Used Car Price Prediction System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test_backend.js"
+  },
+  "keywords": [
+    "express",
+    "gateway",
+    "machine-learning",
+    "car-price-prediction"
+  ],
+  "author": "GDSE ML Project Team",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "morgan": "^1.10.0"
+  }
+}
