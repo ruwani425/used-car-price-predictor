@@ -8,8 +8,9 @@ const { errorHandler, notFoundHandler } = require("./middleware/errorHandler");
 const predictionRoutes = require("./routes/predictionRoutes");
 const metadataRoutes = require("./routes/metadataRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const historyRoutes = require("./routes/historyRoutes");
+const currencyRoutes = require("./routes/currencyRoutes");
 const healthRoutes = require("./routes/healthRoutes");
-const { getPredictionHistory } = require("./controllers/predictionController");
 
 const app = express();
 
@@ -35,7 +36,8 @@ app.use("/api/predict", predictionRoutes);
 app.use("/api/metadata", metadataRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/metrics", analyticsRoutes); // Alias
-app.use("/api/history", getPredictionHistory);
+app.use("/api/history", historyRoutes);
+app.use("/api/currencies", currencyRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/health", healthRoutes);
 
@@ -46,12 +48,14 @@ app.get("/", (req, res) => {
     version: "1.0.0",
     description: "Enterprise REST API Gateway interfacing React UI and Python FastAPI ML Microservice",
     docs: {
-      predict: "POST /api/predict",
+      predict: "POST /api/predict (supports ?currency=USD or body.target_currency)",
       metadata: "GET /api/metadata",
       analytics: "GET /api/analytics",
-      history: "GET /api/history",
+      currencies: "GET /api/currencies",
+      history: "GET /api/history (?brand=TOYOTA&limit=10&min_price=10&max_price=150)",
       health: "GET /api/health",
     },
+    supported_currencies: ["LKR", "USD", "EUR", "GBP", "JPY"],
     ml_service_target: config.mlServiceUrl,
   });
 });
@@ -67,6 +71,8 @@ if (require.main === module) {
     console.log(`🚀 Node.js Express Gateway running on port ${config.port}`);
     console.log(`🔗 Connected ML Service: ${config.mlServiceUrl}`);
     console.log(`🌐 Health endpoint: http://localhost:${config.port}/api/health`);
+    console.log(`💱 Currencies endpoint: http://localhost:${config.port}/api/currencies`);
+    console.log(`📜 History endpoint: http://localhost:${config.port}/api/history`);
     console.log("==================================================");
   });
 
