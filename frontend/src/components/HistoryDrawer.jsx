@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import {
   Drawer,
@@ -6,13 +6,9 @@ import {
   Typography,
   IconButton,
   List,
-  ListItem,
-  ListItemText,
   Chip,
   Divider,
-  Button,
   CircularProgress,
-  Tooltip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import HistoryIcon from '@mui/icons-material/History';
@@ -20,18 +16,17 @@ import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { convertFromLKR } from '../utils/currencyUtils';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 export default function HistoryDrawer({
   open = false,
   onClose,
-  onSelectCar,
   selectedCurrency = 'LKR',
 }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async () => {
     setLoading(true);
     try {
       const res = await axios.get(`${API_BASE}/api/history`, { timeout: 4000 });
@@ -43,11 +38,28 @@ export default function HistoryDrawer({
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (open) {
-      fetchHistory();
+      let isSubscribed = true;
+      const load = async () => {
+        setLoading(true);
+        try {
+          const res = await axios.get(`${API_BASE}/api/history`, { timeout: 4000 });
+          if (isSubscribed && res.data?.history) {
+            setHistory(res.data.history);
+          }
+        } catch (err) {
+          console.warn('Could not load history:', err.message);
+        } finally {
+          if (isSubscribed) setLoading(false);
+        }
+      };
+      load();
+      return () => {
+        isSubscribed = false;
+      };
     }
   }, [open]);
 

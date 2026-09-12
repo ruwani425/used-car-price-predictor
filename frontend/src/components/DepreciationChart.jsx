@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -6,14 +6,9 @@ import {
   Typography,
   ToggleButtonGroup,
   ToggleButton,
-  Grid,
-  Chip,
-  Tooltip as MuiTooltip,
 } from '@mui/material';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AutoGraphIcon from '@mui/icons-material/AutoGraph';
-import { convertFromLKR, CURRENCY_CONFIG } from '../utils/currencyUtils';
+import { convertFromLKR } from '../utils/currencyUtils';
 
 /**
  * High-Performance Interactive SVG Depreciation Chart.
@@ -31,10 +26,8 @@ export default function DepreciationChart({
     return null;
   }
 
-  const currencyInfo = CURRENCY_CONFIG[selectedCurrency] || CURRENCY_CONFIG.LKR;
-
   // Process data points
-  const points = depreciationData.map((item, index) => {
+  const points = depreciationData.map((item) => {
     const lakhs = item.projected_price_lkr_lakhs || item.projected_price_lkr || 0;
     const lkrRaw = lakhs * 100000;
     const converted = convertFromLKR(lkrRaw, selectedCurrency);
@@ -53,7 +46,6 @@ export default function DepreciationChart({
   });
 
   const activePoint = hoveredIndex !== null ? points[hoveredIndex] : points[points.length - 1];
-  const total5YearDepreciation = points.length > 1 ? points[points.length - 1].dropPercent.toFixed(1) : 0;
 
   // Chart coordinates calculation
   const width = 500;

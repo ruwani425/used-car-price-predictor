@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   Box,
@@ -8,7 +8,6 @@ import {
   Typography,
   Chip,
   LinearProgress,
-  Divider,
   Table,
   TableBody,
   TableCell,
@@ -16,9 +15,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Tooltip,
   CircularProgress,
-  Alert,
   Button,
 } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
@@ -31,7 +28,7 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 // Fallback metrics in case backend is offline
 const FALLBACK_METRICS = {
@@ -158,14 +155,12 @@ const FEATURE_ENGINEERING_TECHNIQUES = [
   },
 ];
 
-export default function AnalyticsDashboard({ metadata = null }) {
+export default function AnalyticsDashboard() {
   const [metricsData, setMetricsData] = useState(FALLBACK_METRICS);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const fetchMetrics = async () => {
     setLoading(true);
-    setError(null);
     try {
       const res = await axios.get(`${API_BASE}/api/analytics`, { timeout: 5000 });
       if (res.data?.benchmark_leaderboard) {
@@ -173,14 +168,30 @@ export default function AnalyticsDashboard({ metadata = null }) {
       }
     } catch (err) {
       console.warn('Could not load live analytics from API, showing cached benchmark metrics:', err.message);
-      // keep fallback
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMetrics();
+    let isMounted = true;
+    const load = async () => {
+      setLoading(true);
+      try {
+        const res = await axios.get(`${API_BASE}/api/analytics`, { timeout: 5000 });
+        if (isMounted && res.data?.benchmark_leaderboard) {
+          setMetricsData(res.data);
+        }
+      } catch (err) {
+        console.warn('Could not load live analytics from API:', err.message);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const leaderboard = metricsData.benchmark_leaderboard || FALLBACK_METRICS.benchmark_leaderboard;
