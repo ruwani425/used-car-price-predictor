@@ -37,6 +37,7 @@ export default function Navbar({
   selectedCurrency = 'LKR',
   onCurrencyChange,
   apiStatus = 'online', // 'online' | 'offline' | 'checking'
+  onOpenHistory,
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));

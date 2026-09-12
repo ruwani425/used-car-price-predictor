@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "test": "node test_backend.js"
+    "test": "node test_backend.js",
+    "test:e2e": "node test_e2e_integration.js"
   },
   "keywords": [
     "express",

@@ -14,6 +14,20 @@ const healthRoutes = require("./routes/healthRoutes");
 
 const app = express();
 
+// Latency & Response-Time Tracking Middleware
+app.use((req, res, next) => {
+  const start = Date.now();
+  const originalEnd = res.end;
+  res.end = function (...args) {
+    const duration = Date.now() - start;
+    if (!res.headersSent) {
+      res.setHeader("X-Response-Time", `${duration}ms`);
+    }
+    return originalEnd.apply(this, args);
+  };
+  next();
+});
+
 // Middleware
 app.use(
   cors({

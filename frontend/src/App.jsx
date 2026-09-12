@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
   ThemeProvider,
   CssBaseline,
   Box,
   Container,
-  Typography,
   Alert,
   Snackbar,
   Grid,
-  Card,
-  Chip,
 } from '@mui/material';
 import { darkTheme } from './theme/theme';
 import Navbar from './components/Navbar';
@@ -21,7 +18,7 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import CarComparison from './components/CarComparison';
 import HistoryDrawer from './components/HistoryDrawer';
 
-const API_BASE = 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);

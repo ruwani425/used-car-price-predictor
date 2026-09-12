@@ -6,8 +6,17 @@ const currencyService = require("../services/currencyService");
  */
 const getCurrencies = (req, res) => {
   const data = currencyService.getAllCurrencies();
+  const rates = {};
+  data.currencies.forEach((c) => {
+    rates[c.code] = c.rate_against_lkr;
+  });
+
   return res.status(200).json({
     status: "success",
+    base_currency: data.base_currency,
+    last_updated: data.last_updated,
+    currencies: data.currencies,
+    rates,
     data,
   });
 };
