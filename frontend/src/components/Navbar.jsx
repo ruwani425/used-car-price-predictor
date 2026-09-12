@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import {
   AppBar,
   Toolbar,
@@ -10,7 +9,6 @@ import {
   Select,
   MenuItem,
   Chip,
-  IconButton,
   Tooltip,
   Container,
   useMediaQuery,
@@ -21,7 +19,6 @@ import CurrencyExchangeIcon from '@mui/icons-material/CurrencyExchange';
 import InsightsIcon from '@mui/icons-material/Insights';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import SpeedIcon from '@mui/icons-material/Speed';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 const CURRENCIES = [

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,21 +14,11 @@ import {
   CircularProgress,
   Divider,
   Switch,
-  FormControlLabel,
   Chip,
-  Slider,
-  Tooltip,
-  Alert,
-  Autocomplete,
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import SpeedIcon from '@mui/icons-material/Speed';
-import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AcUnitIcon from '@mui/icons-material/AcUnit';
-import PowerIcon from '@mui/icons-material/Power';
 import FlipCameraAndroidIcon from '@mui/icons-material/FlipCameraAndroid';
 import WindowIcon from '@mui/icons-material/Window';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -74,23 +64,12 @@ export default function PredictionForm({
     power_window: true,
   });
 
-  const [availableModels, setAvailableModels] = useState([]);
-
-  // Update available models when Brand changes (Cascading Dropdown)
-  useEffect(() => {
-    const brandKey = formData.brand.toUpperCase();
-    const modelsForBrand = brandModelsMap[brandKey] || [];
-    
-    if (modelsForBrand.length > 0) {
-      setAvailableModels(modelsForBrand);
-      // Auto-select first model if current model is not in brand list
-      if (!modelsForBrand.includes(formData.model.toUpperCase())) {
-        setFormData((prev) => ({ ...prev, model: modelsForBrand[0] }));
-      }
-    } else {
-      setAvailableModels(['OTHER']);
-    }
-  }, [formData.brand, metadata]);
+  // Dynamically derive available models based on selected brand
+  const brandKey = formData.brand.toUpperCase();
+  const availableModels =
+    brandModelsMap[brandKey] && brandModelsMap[brandKey].length > 0
+      ? brandModelsMap[brandKey]
+      : ['OTHER'];
 
   // Compute live Luxury Score (0 to 4)
   const luxuryScore = (formData.air_condition ? 1 : 0) +
@@ -99,7 +78,18 @@ export default function PredictionForm({
                       (formData.power_window ? 1 : 0);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (field === 'brand') {
+      const bKey = String(value).toUpperCase();
+      const modelsForBrand = brandModelsMap[bKey] || [];
+      const defaultModel = modelsForBrand.length > 0 ? modelsForBrand[0] : 'OTHER';
+      setFormData((prev) => ({
+        ...prev,
+        brand: value,
+        model: defaultModel,
+      }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   const handleSubmit = (e) => {
