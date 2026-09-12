@@ -11,10 +11,26 @@
 - **Date of Submission**: September 2026
 
 ### 👥 Project Authors & Team Allocation
-| Role | Student Name | Student ID | Batch | Key Responsibilities |
+
+| Role | Student Name | Student ID | Batch | Assigned Implementation Steps & Scope |
 | :--- | :--- | :---: | :---: | :--- |
-| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | Data Cleaning, 7 Feature Engineering Pipelines, FastAPI Microservice, Multi-Currency Engine, Result Visualizations & Depreciation Charts, E2E Integration Suite. |
-| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | Multi-Model Benchmarking & Hyperparameter Tuning, Model Serialization, Express REST API Gateway, Luxury Dark Theme, Cascading Valuation Form, Analytics Dashboard & Car Comparison. |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **Step 01**: Data Cleaning & 7 Feature Engineering Pipelines<br>**Step 03**: FastAPI ML Microservice REST Endpoints<br>**Step 05**: Multi-Currency Conversion Engine & Prediction History Store<br>**Step 07**: Price Result Card & Interactive 5-Year Depreciation Chart<br>**Step 09**: Fullstack End-to-End Integration & Error Boundaries |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Benchmarking & Champion Model Export<br>**Step 04**: Express.js API Gateway, Input Validation & ML Proxy<br>**Step 06**: Dark Luxury UI Theme & Cascading Valuation Form<br>**Step 08**: Model Analytics Leaderboard & Car Comparison Matrix<br>**Step 10**: Architecture Documentation & Academic Project Report |
+
+#### 📋 10-Step Implementation Work Allocation Breakdown
+
+| Step | Phase / Task Description | Assigned Member | Student Name | Student ID |
+| :---: | :--- | :---: | :--- | :---: |
+| **Step 01** | Dataset Hygiene, Cleaning & 7 Feature Engineering Pipelines | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 02** | Multi-Model Regression Benchmarking, 5-Fold CV & Champion Model Export | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 03** | FastAPI ML Microservice, Inference Pipelines & REST Endpoints | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 04** | Node.js / Express.js Gateway, Payload Validation Middleware & ML Proxy | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 05** | Multi-Currency Conversion Engine (LKR, USD, EUR, GBP, JPY) & History Store | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 06** | Dark Luxury UI Theme Setup & Cascading Vehicle Valuation Form | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 07** | Valuation Result Card & Interactive 5-Year Depreciation Curve Visualization | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 08** | Model Analytics Leaderboard & Side-by-Side Car Comparison Tool | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 09** | Fullstack End-to-End Integration, Error Boundaries & Latency Monitoring | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
+| **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
 
 ---
 
