@@ -48,7 +48,7 @@ The automotive market in Sri Lanka exhibits unique economic characteristics due 
 The objective of this project is to develop and deploy an end-to-end, production-grade Machine Learning system that accurately estimates market prices for used vehicles in Sri Lanka. The project delivers:
 - Automated data preprocessing and exploratory profiling of 9,788 real-world vehicle listings.
 - Implementation of seven mathematically grounded feature engineering techniques.
-- Systematic benchmarking of five regression algorithms with 5-fold cross-validation.
+- Systematic benchmarking of three representative regression algorithms (baseline, bagging, boosting) with 5-fold cross-validation.
 - A decoupled, production-grade 3-tier microservices architecture (FastAPI ML Service, Express.js Gateway, React 19 Client).
 - Financial intelligence tooling: dynamic 5-year depreciation forecasting, multi-currency conversion, and side-by-side vehicle comparison.
 
@@ -155,15 +155,21 @@ This reduced model dimensions from 450+ to 68 dominant automotive clusters while
 
 ### 4.2 Benchmarking Results
 
-| Model Algorithm | 5-Fold CV $R^2$ (Mean ± Std) | Test $R^2$ Score | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time (s) |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Linear Regression** | $0.8742 \pm 0.0089$ | $0.5588$ | $32.37$ | $9.60$ | $18.49\%$ | $1.11\text{ s}$ |
-| **Ridge Regression** ($\alpha=1.0$) | $0.8739 \pm 0.0085$ | $0.5583$ | $32.39$ | $9.61$ | $18.48\%$ | $1.25\text{ s}$ |
-| **Decision Tree Regressor** | $0.8619 \pm 0.0064$ | $0.6782$ | $27.65$ | $8.09$ | $16.81\%$ | $0.33\text{ s}$ |
-| **Random Forest Regressor** | $0.9026 \pm 0.0043$ | $0.6908$ | $27.10$ | **7.14** | **13.85%** | $4.78\text{ s}$ |
-| **Gradient Boosting Regressor** | **0.9063 ± 0.0050** | **0.7001** | **26.69** | $7.90$ | $14.75\%$ | $39.41\text{ s}$ |
+| Model Algorithm | Role | 5-Fold CV $R^2$ (Mean ± Std) | Test $R^2$ Score | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time (s) |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Linear Regression** | Baseline | $0.8742 \pm 0.0089$ | $0.5588$ | $32.37$ | $9.60$ | $18.49\%$ | $1.23\text{ s}$ |
+| **Random Forest Regressor** | Bagging | $0.9026 \pm 0.0043$ | $0.6908$ | $27.10$ | **7.14** | **13.85%** | $11.08\text{ s}$ |
+| **Gradient Boosting Regressor** | Boosting Champion | **0.9063 ± 0.0050** | **0.7001** | **26.69** | $7.90$ | $14.75\%$ | $40.89\text{ s}$ |
 
-### 4.3 Feature Importance Analysis
+### 4.3 Model Selection Rationale
+The suite is limited to **three algorithm families** so the comparison remains academically defensible in a viva:
+1. **Linear Regression (Baseline)** establishes a parametric lower bound. It fits quickly and is easy to interpret, but it cannot capture non-linear brand premiums and transmission effects, which is why holdout $R^2$ drops to $0.5588$.
+2. **Random Forest (Bagging)** averages many deep trees. Variance reduction yields the best holdout **MAE (7.14 Lakhs)** and **MAPE (13.85%)**.
+3. **Gradient Boosting (Boosting Champion)** sequentially fits residuals. It achieves the best **5-fold CV $R^2$ (0.9063)** and lowest holdout **RMSE (26.69 Lakhs)**, and is therefore exported as `car_price_model.pkl`.
+
+Ridge Regression was omitted because it tracked ordinary least squares almost identically. A standalone Decision Tree was omitted because Random Forest already represents the tree/bagging family with stronger generalization.
+
+### 4.4 Feature Importance Analysis
 The ensemble tree models revealed the following top predictive contributors to vehicle market valuation:
 1. **Transmission Type (`gear_Manual` / `gear_Automatic`)**: **48.83% aggregate importance**. In Sri Lanka, automatic transmissions command a massive price premium over manual variants.
 2. **Vehicle Age (`car_age`)**: **14.83% importance**. Strongest continuous depreciation factor.

@@ -47,7 +47,7 @@ python train.py
 ```
 
 ### 4. Interactive Jupyter Notebook (Visualizations & Research)
-To explore exploratory data analysis (EDA), 7 feature engineering distributions, and 5-model comparative benchmark charts:
+To explore exploratory data analysis (EDA), 7 feature engineering distributions, and 3-model comparative benchmark charts:
 ```powershell
 jupyter notebook notebooks/used_car_price_prediction.ipynb
 ```

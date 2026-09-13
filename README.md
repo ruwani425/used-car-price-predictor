@@ -8,7 +8,7 @@ An end-to-end, production-grade Machine Learning and Web Application system desi
 
 - **Accurate Real-time Valuation**: Instant market price estimation based on vehicle brand, model, edition, transmission, mileage, engine capacity, condition, and luxury options.
 - **7 Advanced Feature Engineering Pipelines**: Robust data preprocessing, IQR outlier clipping, log-transformed target modeling ($\log(1 + y)$), frequency encoding, and luxury scoring.
-- **5-Model Benchmark Suite**: Rigorous evaluation across Linear Regression, Ridge, Decision Tree, Random Forest, and Gradient Boosting with 5-fold Cross-Validation.
+- **3-Model Benchmark Suite**: Linear Regression (baseline), Random Forest (bagging), and Gradient Boosting (boosting champion) evaluated with 5-fold Cross-Validation.
 - **Interactive 5-Year Depreciation Forecasting**: Dynamic residual value curve forecasting vehicle depreciation over 5 years.
 - **Live Multi-Currency Conversion Engine**: Real-time price conversion across LKR (Lakhs & Total), USD, EUR, GBP, and JPY backed by official Open Exchange Rates API.
 - **Upstash Cloud Redis Caching & 3-Hour Cron Engine**: High-performance caching with automated background synchronization to optimize API quotas.
@@ -22,15 +22,13 @@ An end-to-end, production-grade Machine Learning and Web Application system desi
 
 The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fold Cross-Validation and a held-out test split (80/20):
 
-| Model | 5-Fold CV $R^2$ | Test $R^2$ | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Gradient Boosting** | **0.9063 ± 0.005** | **0.7001** | **26.69** | **7.90** | **14.75%** | 39.41s |
-| **Random Forest** | 0.9026 ± 0.004 | 0.6908 | 27.10 | 7.14 | **13.85%** | 4.78s |
-| **Decision Tree** | 0.8619 ± 0.006 | 0.6782 | 27.65 | 8.09 | 16.81% | 0.33s |
-| **Linear Regression** | 0.8742 ± 0.009 | 0.5588 | 32.37 | 9.60 | 18.49% | 1.11s |
-| **Ridge Regression** | 0.8739 ± 0.009 | 0.5583 | 32.39 | 9.61 | 18.48% | 1.25s |
+| Model | Role | 5-Fold CV $R^2$ | Test $R^2$ | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Gradient Boosting** | Boosting Champion | **0.9063 ± 0.005** | **0.7001** | **26.69** | 7.90 | 14.75% | 40.89s |
+| **Random Forest** | Bagging | 0.9026 ± 0.004 | 0.6908 | 27.10 | **7.14** | **13.85%** | 11.08s |
+| **Linear Regression** | Baseline | 0.8742 ± 0.009 | 0.5588 | 32.37 | 9.60 | 18.49% | 1.23s |
 
-> **Selected Champion Model**: **Gradient Boosting Regressor** (`car_price_model.pkl`), achieving the lowest RMSE of **26.69 Lakhs** and highest Cross-Validation $R^2$ of **0.9063**.
+> **Selected Champion Model**: **Gradient Boosting Regressor** (`car_price_model.pkl`), achieving the lowest RMSE of **26.69 Lakhs** and highest Cross-Validation $R^2$ of **0.9063**. Linear Regression is the interpretable baseline; Random Forest is the bagging ensemble (best MAPE).
 
 ---
 
@@ -187,7 +185,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 | Step | Implementation Phase & Task Description | Assigned Member | Student Name | Student ID | Batch |
 | :---: | :--- | :---: | :--- | :---: | :---: |
 | **Step 01** | **Data Cleaning & Feature Engineering Pipeline** (`ml-service/`)<br>• Deduplicate dataset rows and clean data anomalies.<br>• Implement 7 feature engineering techniques (Car Age, Mileage/Year, Luxury Score, rare model grouping, log transformation, IQR outlier clipping).<br>• Construct reusable Scikit-Learn preprocessing pipeline. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
-| **Step 02** | **Multi-Model Training, Hyperparameter Tuning & Export** (`ml-service/`)<br>• Train and benchmark 5 regression algorithms (Linear, Ridge, Decision Tree, Random Forest, Gradient Boosting).<br>• Compute $R^2$, RMSE, MAE, MAPE via 5-Fold Cross-Validation.<br>• Export serialized artifacts (`car_price_model.pkl`, `metrics.json`, `metadata.json`). | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 02** | **Multi-Model Training, Hyperparameter Tuning & Export** (`ml-service/`)<br>• Train and benchmark 3 regression algorithms (Linear Regression baseline, Random Forest bagging, Gradient Boosting champion).<br>• Compute $R^2$, RMSE, MAE, MAPE via 5-Fold Cross-Validation.<br>• Export serialized artifacts (`car_price_model.pkl`, `metrics.json`, `metadata.json`). | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
 | **Step 03** | **Python FastAPI ML Microservice Development** (`ml-service/`)<br>• Build high-performance FastAPI microservice (`app.py`).<br>• Expose `POST /api/ml/predict`, `GET /api/ml/metadata`, and `GET /api/ml/metrics`.<br>• Perform unit testing and interactive Swagger docs on port `8000`. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
 | **Step 04** | **Express.js Backend REST API Gateway Setup** (`backend/`)<br>• Initialize Node.js Express server architecture (server, routes, controllers).<br>• Implement request payload validation middleware.<br>• Build Axios ML proxy client forwarding requests to FastAPI (`:8000`). | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
 | **Step 05** | **Multi-Currency Engine & Prediction History System** (`backend/`)<br>• Implement base conversion engine and data models.<br>• Enrich valuation response with converted prices and formatting.<br>• Implement persistent prediction history retrieval endpoint (`GET /api/history`). | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
