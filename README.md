@@ -241,8 +241,8 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 | Member | Student Name | Student ID | Batch | Assigned Implementation Scope & Key Contributions |
 | :--- | :--- | :---: | :---: | :--- |
-| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | • **Data Preprocessing & Feature Engineering**: 7 mathematical pipeline transformations, IQR outlier clipping, log normalization.<br>• **FastAPI ML Microservice**: REST inference endpoints, Scikit-Learn pipeline integration.<br>• **Depreciation Projection**: 5-Year compound depreciation mathematical forecasting curve.<br>• **Fullstack Integration**: API proxy orchestration and error boundary handlers. |
-| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | • **Live Currency Exchange Engine**: Integration of official Open Exchange Rates API (`USD`, `EUR`, `GBP`, `JPY`).<br>• **Cloud Redis Caching & Cron Architecture**: Upstash Redis integration with 3-hour TTL caching and automated `node-cron` background sync.<br>• **Express.js API Gateway**: Middleware pipeline, header currency resolution, and request validation.<br>• **ML Model Benchmarking**: 5-model regression evaluation suite & Champion Gradient Boosting model selection.<br>• **Modern SaaS Frontend UI**: 2-Column responsive dashboard redesign, vehicle comparison tool, and valuation drawer. |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | 🔹 **Data Preprocessing & Feature Engineering**: 7 mathematical pipeline transformations, IQR outlier clipping, log normalization.<br>🔹 **FastAPI ML Microservice**: REST inference endpoints, Scikit-Learn pipeline integration.<br>🔹 **Depreciation Projection**: 5-Year compound depreciation mathematical forecasting curve.<br>🔹 **Fullstack Integration**: API proxy orchestration and error boundary handlers. |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | 🔹 **Live Currency Exchange Engine**: Integration of official Open Exchange Rates API (`USD`, `EUR`, `GBP`, `JPY`).<br>🔹 **Cloud Redis Caching & Cron Architecture**: Upstash Redis integration with 3-hour TTL caching and automated `node-cron` background sync.<br>🔹 **Express.js API Gateway**: Middleware pipeline, `x-currency-code` header resolution, and input validation.<br>🔹 **ML Model Benchmarking**: 5-model regression evaluation suite & Champion Gradient Boosting model export.<br>🔹 **Modern SaaS Frontend UI**: 2-Column responsive dashboard redesign, vehicle comparison tool, and valuation drawer. |
 
 ---
 
@@ -251,15 +251,15 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 | Step | Phase / Task Description | Assigned Member | Student Name | Student ID |
 | :---: | :--- | :---: | :--- | :---: |
 | **Step 01** | Dataset Hygiene, Cleaning & 7 Feature Engineering Pipelines | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 02** | Multi-Model Regression Benchmarking, 5-Fold CV & Champion Model Export | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 02** | Multi-Model Regression Benchmarking, 5-Fold CV & Champion Model Export | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
 | **Step 03** | FastAPI ML Microservice, Inference Pipelines & REST Endpoints | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 04** | Node.js / Express.js Gateway, Payload Validation Middleware & ML Proxy | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 05** | Live Open Exchange Rates API Integration & Upstash Cloud Redis Caching | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 06** | 3-Hour Automated Cron Synchronization Engine & Currency Middleware | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 04** | Node.js / Express.js Gateway, Payload Validation Middleware & ML Proxy | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
+| **Step 05** | **Live Open Exchange Rates API Integration & Upstash Cloud Redis Caching** | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
+| **Step 06** | **3-Hour Automated Cron Synchronization Engine & Currency Middleware** | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
 | **Step 07** | Valuation Result Card & Interactive 5-Year Depreciation Curve Visualization | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 08** | Minimalist Blue & White SaaS 2-Column Dashboard & Side-by-Side Car Comparator | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 08** | Minimalist Blue & White SaaS 2-Column Dashboard & Side-by-Side Car Comparator | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
 | **Step 09** | Fullstack End-to-End Integration, Error Boundaries & Latency Monitoring | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
 
 ---
 
