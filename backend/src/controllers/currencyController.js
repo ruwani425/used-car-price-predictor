@@ -14,6 +14,8 @@ const getCurrencies = (req, res) => {
   return res.status(200).json({
     status: "success",
     base_currency: data.base_currency,
+    source: data.source,
+    redis_available: data.redis_available,
     last_updated: data.last_updated,
     currencies: data.currencies,
     rates,
@@ -42,7 +44,27 @@ const convertCurrency = (req, res) => {
   });
 };
 
+/**
+ * POST /api/currencies/refresh
+ * Forces real-time synchronization with Open Exchange Rates API.
+ */
+const refreshCurrencies = async (req, res) => {
+  const syncResult = await currencyService.fetchAndCacheRates();
+  const data = currencyService.getAllCurrencies();
+
+  return res.status(200).json({
+    status: "success",
+    message: syncResult.success
+      ? "Exchange rates successfully synchronized with Open Exchange Rates API and cached in Redis."
+      : "Synchronization failed; operating on fallback exchange rates.",
+    source: data.source,
+    last_updated: data.last_updated,
+    currencies: data.currencies,
+  });
+};
+
 module.exports = {
   getCurrencies,
   convertCurrency,
+  refreshCurrencies,
 };

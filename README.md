@@ -10,9 +10,10 @@ An end-to-end, production-grade Machine Learning and Web Application system desi
 - **7 Advanced Feature Engineering Pipelines**: Robust data preprocessing, IQR outlier clipping, log-transformed target modeling ($\log(1 + y)$), frequency encoding, and luxury scoring.
 - **5-Model Benchmark Suite**: Rigorous evaluation across Linear Regression, Ridge, Decision Tree, Random Forest, and Gradient Boosting with 5-fold Cross-Validation.
 - **Interactive 5-Year Depreciation Forecasting**: Dynamic residual value curve forecasting vehicle depreciation over 5 years.
-- **Multi-Currency Conversion Engine**: Real-time price conversion across LKR (Lakhs & Total), USD, EUR, GBP, and JPY.
+- **Live Multi-Currency Conversion Engine**: Real-time price conversion across LKR (Lakhs & Total), USD, EUR, GBP, and JPY backed by official Open Exchange Rates API.
+- **Upstash Cloud Redis Caching & 3-Hour Cron Engine**: High-performance caching with automated background synchronization to optimize API quotas.
 - **Side-by-Side Car Comparison**: Compare two car configurations simultaneously to evaluate valuation and value-retention.
-- **Analytics & Model Leaderboard**: Real-time inspection of ML model performance metrics ($R^2$, RMSE, MAE, MAPE) and top feature importances.
+- **Minimalist Blue & White SaaS UI**: Clean, light-themed responsive interface built with React 19 and Material-UI.
 - **Historical Prediction Log**: Persistent, searchable history drawer with instant re-calculation.
 
 ---
@@ -23,20 +24,22 @@ The platform is architected as an enterprise 3-tier microservices system:
 
 ```mermaid
 graph TD
-    subgraph ClientTier ["Frontend (Vite + React 19 + MUI Dark Luxury)"]
+    subgraph ClientTier ["Frontend (Vite + React 19 + MUI Modern SaaS)"]
         UI["React Single Page Application (:5173)"]
-        Form["Cascading Prediction Form"]
-        Card["Valuation & Confidence Display"]
-        Chart["5-Year Depreciation Curve"]
+        Form["Vehicle Specification Form"]
+        Card["Fair Market Valuation Display"]
+        Chart["5-Year Depreciation Forecast Curve"]
         Compare["Car Comparison Matrix"]
-        Analytics["Model Metrics & Feature Leaderboard"]
+        Hist["Valuation History Drawer"]
     end
 
     subgraph GatewayTier ["Backend Gateway (Node.js + Express.js :5000)"]
         GW["Express REST API Gateway"]
         Val["Payload Validation Middleware"]
-        Curr["Multi-Currency Exchange Service"]
-        Hist["Prediction History Store"]
+        Curr["Multi-Currency Engine (currencyService.js)"]
+        Cron["3-Hour Cron Sync Job (node-cron)"]
+        Redis["Upstash Cloud Redis Cache (3h TTL)"]
+        OpenEx["Open Exchange Rates API"]
         Client["Axios ML Client Proxy"]
     end
 
@@ -44,8 +47,8 @@ graph TD
         API["FastAPI REST Microservice"]
         Pipeline["Inference Preprocessing Pipeline"]
         Model["Gradient Boosting Regressor (.pkl)"]
-        Metadata["Model Metadata & Features Registry"]
-        Metrics["Evaluation Metrics & Leaderboard"]
+        Metadata["Model Metadata & Taxonomy Registry"]
+        Metrics["Evaluation Metrics & Benchmarks"]
     end
 
     UI -->|REST API Requests| GW
@@ -58,6 +61,10 @@ graph TD
     Pipeline -->|Inverse Exp Transform| API
     API -->|Prediction Result LKR Lakhs| Client
     Client --> Curr
+    Curr <-->|Read / Write Cached Rates| Redis
+    Cron -->|Fetch Every 3 Hours| OpenEx
+    OpenEx -->|Live Exchange JSON| Cron
+    Cron -->|Set TTL Cache| Redis
     Curr --> Hist
     Hist -->|Enriched Multi-Currency JSON| UI
 ```
@@ -85,132 +92,146 @@ The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fo
 | Layer | Technologies |
 | :--- | :--- |
 | **ML Microservice** | Python 3.10+, FastAPI, Uvicorn, Scikit-Learn, Pandas, NumPy, Joblib |
-| **Backend Gateway** | Node.js, Express.js, Axios, CORS, Dotenv |
-| **Frontend Client** | React 19, Vite, Material UI (MUI v6), Lucide Icons, Custom SVG Visualizations |
+| **Backend Gateway** | Node.js, Express.js, Axios, CORS, Dotenv, ioredis, node-cron |
+| **Cloud Cache** | Upstash Serverless Cloud Redis (TLS / `rediss://`) |
+| **External APIs** | Open Exchange Rates API (Official Live Rates) |
+| **Frontend Client** | React 19, Vite, Material UI (MUI v6), SVG Data Visualizations |
 | **Architecture** | Microservices REST API, 3-Tier Separation of Concerns |
 
 ---
 
-## 🚀 Quick Start & Installation
+## 🔑 External Services Setup Guide
 
-### Prerequisites
-- **Python 3.10+**
-- **Node.js 18+** and **npm**
-- **Git**
+### 1. How to Setup Upstash Cloud Redis
 
----
+Upstash provides a fully managed, serverless Cloud Redis instance with SSL/TLS encryption.
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/ruwani425/used-car-price-predictor.git
-cd used-car-price-predictor
-```
-
----
-
-### 2. Run ML Microservice (`ml-service/`)
-```bash
-cd ml-service
-# Create and activate virtual environment
-python -m venv venv
-# On Windows PowerShell:
-.\venv\Scripts\Activate.ps1
-# On Linux/macOS:
-# source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# (Optional) Retrain models & regenerate artifacts
-python clean_dataset.py
-python feature_engineering.py
-python train.py
-
-# Start FastAPI server on port 8000
-uvicorn app:app --host 127.0.0.1 --port 8000 --reload
-```
-- **ML Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Health Check**: [http://localhost:8000/health](http://localhost:8000/health)
+1. **Sign Up / Login**: Visit [console.upstash.com](https://console.upstash.com/) and log in with your GitHub or Google account.
+2. **Create Database**:
+   - Click **"Create Database"**.
+   - **Name**: `car-price-predictor-redis`
+   - **Type**: Regional
+   - **Region**: `ap-southeast-1` (Singapore) or nearest to your region.
+   - **Eviction**: Enable `Evict keys when memory limit is reached`.
+   - Click **"Create"**.
+3. **Copy Connection URL**:
+   - In the database dashboard, scroll down to the **"REST API" / "Node.js (ioredis)"** section.
+   - Select the **"ioredis"** tab or copy the **`REDIS_URL`** connection string (format: `rediss://default:<password>@<host>.upstash.io:6379`).
+4. **Configure in Project**:
+   - Open `backend/.env` and paste your Redis connection string:
+     ```env
+     REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
+     ```
+5. **Verify Data via Web**:
+   - Open the **"Data Browser"** tab in Upstash Console to view stored cache keys (`currency:rates`, `currency:exchange_rates:latest`) and live TTL countdown timers.
 
 ---
 
-### 3. Run Backend API Gateway (`backend/`)
-```bash
-cd ../backend
-npm install
-npm run dev
-```
-- **Gateway Endpoint**: [http://localhost:5000](http://localhost:5000)
-- **Health Endpoint**: [http://localhost:5000/health](http://localhost:5000/health)
+### 2. How to Get an Open Exchange Rates App ID
+
+Open Exchange Rates provides official foreign exchange rates for converting LKR to USD, EUR, GBP, and JPY.
+
+1. **Sign Up**: Visit [openexchangerates.org/signup/free](https://openexchangerates.org/signup/free) and create a free developer account (includes 1,000 free API requests per month).
+2. **Obtain App ID**:
+   - After signing in, go to the **"App IDs"** section in your dashboard: [openexchangerates.org/account/app-ids](https://openexchangerates.org/account/app-ids).
+   - Copy your 32-character **App ID** (e.g., `cda30b7d944b4f71b8a861df1d899384`).
+3. **Configure in Project**:
+   - Open `backend/.env` and add your App ID:
+     ```env
+     OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
+     ```
+4. **Quota Efficiency Guaranteed**:
+   - Thanks to the **3-hour Redis caching strategy** (`0 */3 * * *`), our backend makes **only 8 API requests per day** ($8 \times 30 = 240 \text{ requests/month}$), using only 24% of the monthly 1,000 free quota while allowing unlimited frontend currency conversions.
 
 ---
 
-### 4. Run Frontend Application (`frontend/`)
-```bash
-cd ../frontend
-npm install
-npm run dev
+## 🚀 Running the 3 Projects Separately (Step-by-Step)
+
+To run the complete system, open **3 separate terminal windows** (one for each microservice layer):
+
 ```
-- **Web App URL**: [http://localhost:5173](http://localhost:5173)
+┌───────────────────────────┐    ┌───────────────────────────┐    ┌───────────────────────────┐
+│   Terminal 1: ML Service  │    │   Terminal 2: Backend     │    │   Terminal 3: Frontend    │
+│   FastAPI (Port 8000)     │ ── │   Express.js (Port 5000)  │ ── │   React + Vite (Port 5173)│
+└───────────────────────────┘    └───────────────────────────┘    └───────────────────────────┘
+```
 
 ---
 
-## 📡 REST API Documentation
+### 🖥️ Terminal 1: ML Microservice (`ml-service/`)
 
-### 1. Predict Car Valuation
-- **Endpoint**: `POST /api/predict`
-- **Headers**: `Content-Type: application/json`
-- **Request Body**:
-```json
-{
-  "brand": "TOYOTA",
-  "model": "PREMIO",
-  "model_year": 2018,
-  "transmission": "Automatic",
-  "mileage_km": 45000,
-  "engine_capacity": 1500,
-  "fuel_type": "Petrol",
-  "vehicle_condition": "Used",
-  "town": "Colombo",
-  "options": {
-    "air_conditioning": true,
-    "power_steering": true,
-    "power_window": true,
-    "power_mirror": true,
-    "has_ongoing_lease": false
-  }
-}
-```
-- **Response (200 OK)**:
-```json
-{
-  "success": true,
-  "prediction": {
-    "price_lkr_lakhs": 142.50,
-    "price_lkr_total": 14250000,
-    "confidence_interval": {
-      "lower_lakhs": 128.25,
-      "upper_lakhs": 156.75,
-      "lower_total": 12825000,
-      "upper_total": 15675000
-    },
-    "converted_prices": {
-      "USD": { "amount": 46644.84, "symbol": "$", "formatted": "$46,645" },
-      "EUR": { "amount": 42818.51, "symbol": "€", "formatted": "€42,819" },
-      "GBP": { "amount": 35948.54, "symbol": "£", "formatted": "£35,949" },
-      "JPY": { "amount": 6951219.51, "symbol": "¥", "formatted": "¥6,951,220" }
-    },
-    "depreciation_forecast": [
-      { "year_offset": 0, "year": 2026, "estimated_price_lakhs": 142.50, "retained_percentage": 100 },
-      { "year_offset": 1, "year": 2027, "estimated_price_lakhs": 131.10, "retained_percentage": 92.0 },
-      { "year_offset": 2, "year": 2028, "estimated_price_lakhs": 120.61, "retained_percentage": 84.6 },
-      { "year_offset": 3, "year": 2029, "estimated_price_lakhs": 110.96, "retained_percentage": 77.9 },
-      { "year_offset": 4, "year": 2030, "estimated_price_lakhs": 102.09, "retained_percentage": 71.6 },
-      { "year_offset": 5, "year": 2031, "estimated_price_lakhs": 93.92, "retained_percentage": 65.9 }
-    ]
-  }
-}
-```
+1. Navigate to the `ml-service` directory:
+   ```powershell
+   cd ml-service
+   ```
+2. Create and activate a Python virtual environment:
+   ```powershell
+   # Windows PowerShell:
+   python -m venv venv
+   .\venv\Scripts\Activate.ps1
+
+   # macOS / Linux:
+   # python3 -m venv venv
+   # source venv/bin/activate
+   ```
+3. Install dependencies:
+   ```powershell
+   pip install -r requirements.txt
+   ```
+4. Start the FastAPI ML microservice:
+   ```powershell
+   uvicorn app:app --host 127.0.0.1 --port 8000 --reload
+   ```
+5. **Verification URLs**:
+   - Health Check: [http://localhost:8000/health](http://localhost:8000/health)
+   - Interactive Swagger API Docs: [http://localhost:8000/docs](http://localhost:8000/docs)
+
+---
+
+### 🖥️ Terminal 2: Backend API Gateway (`backend/`)
+
+1. Open a new terminal window and navigate to `backend`:
+   ```powershell
+   cd backend
+   ```
+2. Create your `.env` configuration file:
+   ```env
+   PORT=5000
+   ML_SERVICE_URL=http://localhost:8000
+   REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
+   OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
+   ```
+3. Install Node.js dependencies:
+   ```powershell
+   npm install
+   ```
+4. Start the Node.js Express server with auto-reload:
+   ```powershell
+   npm run dev
+   ```
+5. **Verification URLs**:
+   - Gateway Health Endpoint: [http://localhost:5000/api/health](http://localhost:5000/api/health)
+   - Live Redis Currencies Endpoint: [http://localhost:5000/api/currencies](http://localhost:5000/api/currencies)
+   - Vehicle Taxonomy Metadata: [http://localhost:5000/api/metadata](http://localhost:5000/api/metadata)
+
+---
+
+### 🖥️ Terminal 3: Frontend Web Client (`frontend/`)
+
+1. Open a new terminal window and navigate to `frontend`:
+   ```powershell
+   cd frontend
+   ```
+2. Install React dependencies:
+   ```powershell
+   npm install
+   ```
+3. Start the Vite development server:
+   ```powershell
+   npm run dev
+   ```
+4. **Access the Web Application**:
+   - Open your browser and navigate to: **[http://localhost:5173](http://localhost:5173)**
 
 ---
 
@@ -218,10 +239,12 @@ npm run dev
 
 ### Summary of Roles & Responsibilities
 
-| Member | Student Name | Student ID | Batch | Assigned Implementation Steps & Scope |
+| Member | Student Name | Student ID | Batch | Assigned Implementation Scope & Key Contributions |
 | :--- | :--- | :---: | :---: | :--- |
-| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **Step 01**: Data Cleaning & 7 Feature Engineering Pipelines<br>**Step 03**: FastAPI ML Microservice REST Endpoints<br>**Step 05**: Multi-Currency Conversion Engine & Prediction History Store<br>**Step 07**: Price Result Card & Interactive 5-Year Depreciation Chart<br>**Step 09**: Fullstack End-to-End Integration & Error Boundaries |
-| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Benchmarking & Champion Model Export<br>**Step 04**: Express.js API Gateway, Input Validation & ML Proxy<br>**Step 06**: Dark Luxury UI Theme & Cascading Valuation Form<br>**Step 08**: Model Analytics Leaderboard & Car Comparison Matrix<br>**Step 10**: Architecture Documentation & Academic Project Report |
+| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | • **Data Preprocessing & Feature Engineering**: 7 mathematical pipeline transformations, IQR outlier clipping, log normalization.<br>• **FastAPI ML Microservice**: REST inference endpoints, Scikit-Learn pipeline integration.<br>• **Depreciation Projection**: 5-Year compound depreciation mathematical forecasting curve.<br>• **Fullstack Integration**: API proxy orchestration and error boundary handlers. |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | • **Live Currency Exchange Engine**: Integration of official Open Exchange Rates API (`USD`, `EUR`, `GBP`, `JPY`).<br>• **Cloud Redis Caching & Cron Architecture**: Upstash Redis integration with 3-hour TTL caching and automated `node-cron` background sync.<br>• **Express.js API Gateway**: Middleware pipeline, header currency resolution, and request validation.<br>• **ML Model Benchmarking**: 5-model regression evaluation suite & Champion Gradient Boosting model selection.<br>• **Modern SaaS Frontend UI**: 2-Column responsive dashboard redesign, vehicle comparison tool, and valuation drawer. |
+
+---
 
 ### 📋 10-Step Implementation Plan Breakdown
 
@@ -231,12 +254,26 @@ npm run dev
 | **Step 02** | Multi-Model Regression Benchmarking, 5-Fold CV & Champion Model Export | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
 | **Step 03** | FastAPI ML Microservice, Inference Pipelines & REST Endpoints | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
 | **Step 04** | Node.js / Express.js Gateway, Payload Validation Middleware & ML Proxy | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 05** | Multi-Currency Conversion Engine (LKR, USD, EUR, GBP, JPY) & History Store | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 06** | Dark Luxury UI Theme Setup & Cascading Vehicle Valuation Form | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 05** | Live Open Exchange Rates API Integration & Upstash Cloud Redis Caching | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 06** | 3-Hour Automated Cron Synchronization Engine & Currency Middleware | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
 | **Step 07** | Valuation Result Card & Interactive 5-Year Depreciation Curve Visualization | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 08** | Model Analytics Leaderboard & Side-by-Side Car Comparison Tool | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 08** | Minimalist Blue & White SaaS 2-Column Dashboard & Side-by-Side Car Comparator | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
 | **Step 09** | Fullstack End-to-End Integration, Error Boundaries & Latency Monitoring | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
 | **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+
+---
+
+## 📡 REST API Quick Reference
+
+| Method | Endpoint | Description | Layer |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/health` | Gateway & ML microservice health status | Gateway (5000) |
+| `GET` | `/api/metadata` | Brand taxonomy, model lists, and available cities | Gateway (5000) |
+| `GET` | `/api/currencies` | Live cached exchange rates & currency pair matrix | Gateway / Redis |
+| `POST` | `/api/predict` | Real-time vehicle market price prediction | Gateway $\rightarrow$ ML (8000) |
+| `GET` | `/api/history` | Historical vehicle valuation logs | Gateway (5000) |
+| `GET` | `/health` | Direct ML service liveness probe | ML Service (8000) |
+| `GET` | `/docs` | Interactive Swagger OpenAPI documentation | ML Service (8000) |
 
 ---
 

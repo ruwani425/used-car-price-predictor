@@ -11,8 +11,7 @@ import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { convertFromLKR } from '../utils/currencyUtils';
 
 /**
- * High-Performance Interactive SVG Depreciation Chart.
- * 100% React 19 compatible with glowing area gradient, hover nodes, and tooltips.
+ * Clean Minimalist SVG Depreciation Chart (Blue & White SaaS Theme).
  */
 export default function DepreciationChart({
   depreciationData = [],
@@ -49,14 +48,14 @@ export default function DepreciationChart({
 
   // Chart coordinates calculation
   const width = 500;
-  const height = 220;
-  const padding = { top: 25, right: 30, bottom: 35, left: 45 };
+  const height = 200;
+  const padding = { top: 20, right: 25, bottom: 30, left: 35 };
 
   const chartW = width - padding.left - padding.right;
   const chartH = height - padding.top - padding.bottom;
 
-  const maxVal = Math.max(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : 100))) * 1.08;
-  const minVal = Math.min(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : p.retainedPercent))) * 0.92;
+  const maxVal = Math.max(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : 100))) * 1.05;
+  const minVal = Math.min(...points.map((p) => (viewMode === 'currency' ? p.convertedValue : p.retainedPercent))) * 0.95;
   const range = maxVal - minVal || 1;
 
   const getX = (idx) => padding.left + (idx / (points.length - 1)) * chartW;
@@ -72,28 +71,28 @@ export default function DepreciationChart({
   const areaD = `M ${getX(0)},${padding.top + chartH} L ${linePoints.join(' L ')} L ${getX(points.length - 1)},${padding.top + chartH} Z`;
 
   return (
-    <Card className="glass-panel" sx={{ borderRadius: 4, mt: 3, overflow: 'hidden' }}>
+    <Card sx={{ borderRadius: 3, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
       {/* Header */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(19, 28, 46, 0.4) 100%)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          p: 2.5,
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid #E2E8F0',
+          p: 2,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: 1.5,
+          gap: 1.2,
         }}
       >
-        <Box display="flex" alignItems="center" gap={1.2}>
-          <TrendingDownIcon sx={{ color: '#00E5FF' }} />
+        <Box display="flex" alignItems="center" gap={1}>
+          <TrendingDownIcon sx={{ color: '#4F46E5', fontSize: 20 }} />
           <Box>
-            <Typography variant="subtitle1" fontWeight="bold">
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0F172A', fontSize: '0.9rem' }}>
               5-Year Forecasted Depreciation Curve
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Predictive secondary market asset value decay
+            <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem' }}>
+              Projected asset value retention over time
             </Typography>
           </Box>
         </Box>
@@ -104,16 +103,18 @@ export default function DepreciationChart({
           size="small"
           onChange={(e, val) => val && setViewMode(val)}
           sx={{
-            height: 28,
+            height: 26,
             '& .MuiToggleButton-root': {
-              px: 1.5,
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              color: '#94A3B8',
-              borderColor: 'rgba(255, 255, 255, 0.1)',
+              px: 1.2,
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              color: '#64748B',
+              borderColor: '#E2E8F0',
+              textTransform: 'none',
               '&.Mui-selected': {
-                color: '#00E5FF',
-                backgroundColor: 'rgba(0, 229, 255, 0.12)',
+                color: '#4F46E5',
+                backgroundColor: '#EEF2FF',
+                borderColor: '#C7D2FE',
               },
             },
           }}
@@ -124,27 +125,20 @@ export default function DepreciationChart({
       </Box>
 
       {/* SVG Line & Area Chart */}
-      <CardContent sx={{ p: 2.5 }}>
+      <CardContent sx={{ p: 2 }}>
         <Box sx={{ width: '100%', position: 'relative' }}>
           <svg
             viewBox={`0 0 ${width} ${height}`}
             style={{ width: '100%', height: 'auto', overflow: 'visible' }}
           >
             <defs>
-              {/* Glowing Gradient Area Fill */}
-              <linearGradient id="cyanAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.4" />
-                <stop offset="60%" stopColor="#00E5FF" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#00E5FF" stopOpacity="0.0" />
+              <linearGradient id="indigoAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.16" />
+                <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.0" />
               </linearGradient>
-
-              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                <feGaussianBlur stdDeviation="3" result="glow" />
-                <feComposite in="SourceGraphic" in2="glow" operator="over" />
-              </filter>
             </defs>
 
-            {/* Horizontal Grid lines */}
+            {/* Grid lines */}
             {[0, 0.33, 0.66, 1].map((ratio, i) => {
               const yPos = padding.top + chartH * ratio;
               return (
@@ -154,24 +148,23 @@ export default function DepreciationChart({
                   y1={yPos}
                   x2={width - padding.right}
                   y2={yPos}
-                  stroke="rgba(255, 255, 255, 0.06)"
+                  stroke="#F1F5F9"
                   strokeDasharray="4 4"
                 />
               );
             })}
 
             {/* Area Fill */}
-            <path d={areaD} fill="url(#cyanAreaGradient)" />
+            <path d={areaD} fill="url(#indigoAreaGradient)" />
 
             {/* Line Path */}
             <path
               d={pathD}
               fill="none"
-              stroke="#00E5FF"
-              strokeWidth="3.5"
+              stroke="#4F46E5"
+              strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
-              filter="url(#glow)"
             />
 
             {/* Interactive Circles on each Year point */}
@@ -188,27 +181,26 @@ export default function DepreciationChart({
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                 >
-                  {/* Outer pulse circle when hovered */}
+                  {/* Hover circle */}
                   {isHovered && (
-                    <circle cx={cx} cy={cy} r="12" fill="rgba(0, 229, 255, 0.25)" />
+                    <circle cx={cx} cy={cy} r="10" fill="rgba(79, 70, 229, 0.15)" />
                   )}
 
-                  {/* Point circle */}
                   <circle
                     cx={cx}
                     cy={cy}
-                    r={isHovered ? 6 : 4.5}
-                    fill={isHovered ? '#FFFFFF' : '#00E5FF'}
-                    stroke="#0B0F19"
-                    strokeWidth="2"
+                    r={isHovered ? 5.5 : 4}
+                    fill="#FFFFFF"
+                    stroke="#4F46E5"
+                    strokeWidth="2.5"
                   />
 
                   {/* X-Axis Year Labels */}
                   <text
                     x={cx}
-                    y={height - 10}
+                    y={height - 8}
                     textAnchor="middle"
-                    fill={isHovered ? '#00E5FF' : '#94A3B8'}
+                    fill={isHovered ? '#4F46E5' : '#64748B'}
                     fontSize="11"
                     fontWeight={isHovered ? '700' : '500'}
                   >
@@ -223,31 +215,31 @@ export default function DepreciationChart({
         {/* Dynamic Tooltip Bar */}
         <Box
           sx={{
-            p: 1.8,
-            borderRadius: 2.5,
-            backgroundColor: 'rgba(11, 15, 25, 0.8)',
-            border: '1px solid rgba(0, 229, 255, 0.2)',
+            p: 1.5,
+            borderRadius: 2,
+            backgroundColor: '#F8FAFC',
+            border: '1px solid #E2E8F0',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            mt: 1.5,
+            mt: 1.2,
           }}
         >
           <Box>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem' }}>
               Projected Value ({activePoint.year})
             </Typography>
-            <Typography variant="subtitle2" fontWeight="800" color="#00E5FF">
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0F172A', fontSize: '0.85rem' }}>
               {activePoint.formattedPrice} (Rs. {activePoint.lakhs.toFixed(2)} Lakhs)
             </Typography>
           </Box>
 
           <Box textAlign="right">
-            <Typography variant="caption" color="text.secondary">
-              Retained Value
+            <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.72rem' }}>
+              Retained Ratio
             </Typography>
-            <Typography variant="subtitle2" fontWeight="800" color="#22C55E">
-              {activePoint.retainedPercent.toFixed(1)}% ({activePoint.dropPercent.toFixed(1)}% decay)
+            <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#059669', fontSize: '0.85rem' }}>
+              {activePoint.retainedPercent.toFixed(1)}% (↓ {activePoint.dropPercent.toFixed(1)}%)
             </Typography>
           </Box>
         </Box>

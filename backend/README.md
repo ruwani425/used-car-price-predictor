@@ -1,158 +1,58 @@
-# ⚙️ Car Valuation Backend REST API
+# 🛡️ Backend API Gateway & Currency Service
 
-An intermediate RESTful API gateway built with **Node.js** and **Express.js**. It receives requests from the frontend client, validates input payloads, forwards prediction tasks to the Python ML Microservice, and returns formatted responses.
+The Node.js and Express.js API Gateway that orchestrates requests between the Frontend client, ML microservice, Cloud Redis cache, and Open Exchange Rates API.
+
+---
+
+## 🌟 Key Responsibilities
+
+- **REST API Gateway**: Exposes secure REST endpoints for vehicle predictions, metadata taxonomy, and historical logs.
+- **Upstash Cloud Redis Caching**: Caches official live foreign exchange rates with a 3-hour TTL.
+- **Automated Cron Sync**: `node-cron` background worker running every 3 hours (`0 */3 * * *`) to fetch fresh rates from Open Exchange Rates API.
+- **Header Currency Resolution**: Custom middleware (`x-currency-code`) to dynamically inject currency conversions.
+- **ML Proxy Client**: Validates client payloads and forwards inference requests to the Python FastAPI microservice (`:8000`).
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Runtime:** [Node.js](https://nodejs.org/) (v18+)
-* **Framework:** [Express.js](https://expressjs.com/) (v5)
-* **HTTP Client:** [Axios](https://axios-http.com/)
-* **CORS Middleware:** `cors`
-* **Configuration:** `dotenv`
-* **Development Reload:** `nodemon`
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js
+- **Cache Engine**: ioredis (Upstash TLS `rediss://`)
+- **Cron Engine**: node-cron
+- **HTTP Client**: Axios
+- **Utilities**: CORS, Dotenv, Morgan
 
 ---
 
-## 📦 Installed Packages
+## 🚀 Getting Started
 
-```bash
-# Production dependencies
-npm install express axios cors dotenv
-
-# Development dependencies
-npm install -D nodemon
-```
-
----
-
-## 📂 Project Structure
-
-```text
-backend/
-├── src/
-│   ├── controllers/
-│   │   └── predictController.js   # Validation & ML Service forwarding logic
-│   ├── routes/
-│   │   └── predictRoute.js        # API route definitions (/predict)
-│   └── server.js                  # Express application setup & entry point
-├── .env                           # Environment variables
-├── .env.example                   # Environment configuration template
-├── package.json                   # Scripts & dependencies
-└── README.md                      # Backend documentation (this file)
-```
-
----
-
-## ⚙️ Local Setup & Run
-
-### 1. Navigate to Backend Directory
-```bash
-cd backend
-```
-
-### 2. Install Dependencies
+### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Environment Variables Configuration
-Create a `.env` file in the root of `backend/` (or copy from `.env.example`):
+### 2. Configure Environment Variables
+Create a `.env` file in the `backend` root:
 ```env
 PORT=5000
 ML_SERVICE_URL=http://localhost:8000
+REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
+OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
 ```
 
-### 4. Run the Server
+### 3. Run Server
 ```bash
-# Development mode with Nodemon (auto reload on file changes)
+# Development (with auto-reload)
 npm run dev
 
-# Production mode
+# Production
 npm start
 ```
-The server will start on: **`http://localhost:5000`**
 
----
-
-## 📡 API Endpoints
-
-### 1. Health Check
-* **Method:** `GET`
-* **Route:** `/health`
-* **Description:** Check if the backend API service is running.
-* **Response (200 OK):**
-```json
-{
-  "status": "Backend API is running healthy"
-}
-```
-
----
-
-### 2. Predict Vehicle Price
-* **Method:** `POST`
-* **Route:** `/api/predict`
-* **Description:** Validates car parameters and requests prediction from the ML service.
-* **Headers:** `Content-Type: application/json`
-
-#### Request Body:
-```json
-{
-  "brand": "Toyota",
-  "year": 2018,
-  "mileage": 65000,
-  "fuel_type": "Petrol",
-  "transmission": "Automatic"
-}
-```
-
-#### Success Response (200 OK):
-```json
-{
-  "success": true,
-  "estimated_price": 18000.00
-}
-```
-
-#### Error Responses:
-* **400 Bad Request:** (Missing required fields)
-  ```json
-  {
-    "error": "All fields are required"
-  }
-  ```
-* **502 Bad Gateway:** (ML Microservice unreachable or threw an error)
-  ```json
-  {
-    "error": "Failed to fetch prediction from ML service"
-  }
-  ```
-
----
-
-## 🧪 Testing with cURL / PowerShell
-
-### Test Health Check:
-```bash
-# cURL
-curl http://localhost:5000/health
-
-# PowerShell
-Invoke-RestMethod -Uri "http://localhost:5000/health" -Method Get
-```
-
-### Test Price Prediction:
-```bash
-# cURL
-curl -X POST http://localhost:5000/api/predict \
-  -H "Content-Type: application/json" \
-  -d '{"brand":"Toyota","year":2018,"mileage":65000,"fuel_type":"Petrol","transmission":"Automatic"}'
-
-# PowerShell
-Invoke-RestMethod -Uri "http://localhost:5000/api/predict" `
-  -Method Post `
-  -Headers @{ "Content-Type" = "application/json" } `
-  -Body '{"brand":"Toyota","year":2018,"mileage":65000,"fuel_type":"Petrol","transmission":"Automatic"}'
-```
+### 4. API Endpoints
+- Health Check: `GET http://localhost:5000/api/health`
+- Currencies: `GET http://localhost:5000/api/currencies`
+- Metadata: `GET http://localhost:5000/api/metadata`
+- Valuation Predict: `POST http://localhost:5000/api/predict`
+- History: `GET http://localhost:5000/api/history`

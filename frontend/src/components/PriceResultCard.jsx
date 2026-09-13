@@ -19,7 +19,7 @@ import { convertFromLKR, CURRENCY_CONFIG } from '../utils/currencyUtils';
 /**
  * Hook to smoothly animate counting up numbers
  */
-function useAnimatedCount(targetValue = 0, duration = 800) {
+function useAnimatedCount(targetValue = 0, duration = 600) {
   const [currentValue, setCurrentValue] = useState(targetValue);
   const prevTargetRef = useRef(targetValue);
 
@@ -64,13 +64,11 @@ export default function PriceResultCard({
     : 0;
   const lakhs = result ? result.predicted_price_lkr_lakhs : 0;
 
-  // Convert to active currency
   const converted = convertFromLKR(rawLkr, selectedCurrency);
-  const animatedAmount = useAnimatedCount(converted.amount, 600);
+  const animatedAmount = useAnimatedCount(converted.amount, 500);
 
   if (!result) return null;
 
-  // Confidence interval values
   const minLakhs = result.confidence_interval?.min_lkr_lakhs || (lakhs * 0.95);
   const maxLakhs = result.confidence_interval?.max_lkr_lakhs || (lakhs * 1.05);
 
@@ -80,13 +78,12 @@ export default function PriceResultCard({
   const vehicle = result.requested_vehicle || result.vehicle_summary || {};
   const modelUsed = result.model_used || 'Gradient Boosting';
 
-  // Copy valuation summary to clipboard
   const handleCopy = () => {
     const summaryText = `🚗 Used Car Valuation (${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.yom || ''})
 💰 Estimated Value: ${converted.formatted} (Rs. ${lakhs.toFixed(2)} Lakhs)
 📊 95% Confidence Range: ${minConverted.formatted} – ${maxConverted.formatted}
 🤖 AI Model: ${modelUsed}
-Powered by AutoValuate AI`;
+Powered by AutoValuate`;
 
     navigator.clipboard.writeText(summaryText).then(() => {
       if (onCopyNotice) {
@@ -97,19 +94,20 @@ Powered by AutoValuate AI`;
 
   return (
     <Card
-      className="glass-panel form-card-enter glow-cyan"
       sx={{
-        borderRadius: 4,
+        borderRadius: 3,
         overflow: 'hidden',
-        border: '1px solid rgba(0, 229, 255, 0.3)',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        backgroundColor: '#FFFFFF',
       }}
     >
       {/* Header Banner */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, rgba(0, 229, 255, 0.18) 0%, rgba(19, 28, 46, 0.9) 100%)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-          p: { xs: 2.5, sm: 3 },
+          backgroundColor: '#FFFFFF',
+          borderBottom: '1px solid #E2E8F0',
+          p: 2.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -120,54 +118,64 @@ Powered by AutoValuate AI`;
         <Box display="flex" alignItems="center" gap={1.2}>
           <Box
             sx={{
-              width: 38,
-              height: 38,
+              width: 36,
+              height: 36,
               borderRadius: '50%',
-              bgcolor: 'rgba(0, 229, 255, 0.15)',
+              bgcolor: '#ECFDF5',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}
           >
-            <CheckCircleIcon sx={{ color: '#00E5FF', fontSize: 24 }} />
+            <CheckCircleIcon sx={{ color: '#059669', fontSize: 22 }} />
           </Box>
           <Box>
-            <Typography variant="h6" fontWeight="bold" lineHeight={1.2}>
-              Valuation Result
+            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A', lineHeight: 1.2 }}>
+              Fair Market Valuation
             </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Verified by {modelUsed} Regressor
+            <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.75rem' }}>
+              Real-time Market Valuation Engine
             </Typography>
           </Box>
         </Box>
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Chip
-            icon={<AutoAwesomeIcon sx={{ fontSize: 14, color: '#FFB703 !important' }} />}
-            label="AI Verified"
+            icon={<AutoAwesomeIcon sx={{ fontSize: 13, color: '#4F46E5 !important' }} />}
+            label="Verified"
             size="small"
             sx={{
-              fontWeight: 800,
-              bgcolor: 'rgba(255, 183, 3, 0.15)',
-              color: '#FFB703',
-              border: '1px solid rgba(255, 183, 3, 0.3)',
+              fontWeight: 700,
+              bgcolor: '#EEF2FF',
+              color: '#4F46E5',
+              border: '1px solid #C7D2FE',
+              fontSize: '0.72rem',
             }}
           />
           <Tooltip title="Copy Valuation Summary">
-            <IconButton onClick={handleCopy} size="small" sx={{ color: '#00E5FF', bgcolor: 'rgba(0, 229, 255, 0.1)' }}>
-              <ContentCopyIcon fontSize="small" />
+            <IconButton
+              onClick={handleCopy}
+              size="small"
+              sx={{
+                color: '#475569',
+                border: '1px solid #E2E8F0',
+                borderRadius: 1.5,
+                '&:hover': { color: '#4F46E5', bgcolor: '#F8FAFC' },
+              }}
+            >
+              <ContentCopyIcon sx={{ fontSize: 16 }} />
             </IconButton>
           </Tooltip>
         </Stack>
       </Box>
 
-      <CardContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
-        {/* Currency Quick-Switcher Tabs */}
-        <Box mb={2.5}>
-          <Typography variant="caption" color="text.secondary" fontWeight="700" letterSpacing="0.08em" mb={1} display="block">
+      <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
+        {/* Currency Quick-Switcher */}
+        <Box mb={2}>
+          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.05em', mb: 0.8, display: 'block' }}>
             SELECT DISPLAY CURRENCY
           </Typography>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack direction="row" spacing={0.8} flexWrap="wrap" useFlexGap>
             {Object.keys(CURRENCY_CONFIG).map((cur) => {
               const active = selectedCurrency === cur;
               return (
@@ -178,14 +186,13 @@ Powered by AutoValuate AI`;
                   onClick={() => onCurrencyChange && onCurrencyChange(cur)}
                   sx={{
                     fontWeight: 700,
-                    fontSize: '0.8rem',
-                    bgcolor: active ? 'rgba(0, 229, 255, 0.25)' : 'rgba(255, 255, 255, 0.04)',
-                    color: active ? '#00E5FF' : '#94A3B8',
-                    border: active ? '1px solid #00E5FF' : '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: active ? '0 0 12px rgba(0, 229, 255, 0.3)' : 'none',
-                    transition: 'all 0.2s ease',
+                    fontSize: '0.78rem',
+                    bgcolor: active ? '#4F46E5' : '#F8FAFC',
+                    color: active ? '#FFFFFF' : '#475569',
+                    border: active ? '1px solid #4F46E5' : '1px solid #E2E8F0',
+                    transition: 'all 0.15s ease',
                     '&:hover': {
-                      bgcolor: active ? 'rgba(0, 229, 255, 0.3)' : 'rgba(255, 255, 255, 0.08)',
+                      bgcolor: active ? '#4338CA' : '#F1F5F9',
                     },
                   }}
                 />
@@ -194,55 +201,32 @@ Powered by AutoValuate AI`;
           </Stack>
         </Box>
 
-        {/* Huge Animated Price Ticker Box */}
+        {/* Primary Clean Valuation Hero Box */}
         <Box
           sx={{
-            p: { xs: 2.5, sm: 3.5 },
-            borderRadius: 3.5,
-            backgroundColor: 'rgba(11, 15, 25, 0.8)',
-            border: '1px solid rgba(0, 229, 255, 0.3)',
-            boxShadow: 'inset 0 0 24px rgba(0, 229, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.35)',
+            p: 3,
+            borderRadius: 2.5,
+            backgroundColor: '#F8FAFC',
+            border: '1px solid #E2E8F0',
             textAlign: 'center',
-            position: 'relative',
-            overflow: 'hidden',
-            mb: 3,
+            mb: 2.5,
           }}
         >
-          {/* Subtle decorative glow dot */}
-          <Box
-            sx={{
-              position: 'absolute',
-              top: -20,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              width: 120,
-              height: 40,
-              borderRadius: '50%',
-              bgcolor: 'rgba(0, 229, 255, 0.35)',
-              filter: 'blur(20px)',
-              pointerEvents: 'none',
-            }}
-          />
-
-          <Typography variant="caption" color="text.secondary" fontWeight="700" letterSpacing="0.1em">
+          <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.08em' }}>
             FAIR MARKET VALUATION ({selectedCurrency})
           </Typography>
 
-          {/* Animated Primary Price */}
           <Typography
             variant="h2"
             sx={{
-              fontWeight: 900,
-              my: 1,
+              fontWeight: 800,
+              my: 0.8,
               letterSpacing: '-0.03em',
-              fontSize: { xs: '2.4rem', sm: '3.2rem' },
-              background: 'linear-gradient(90deg, #FFFFFF 20%, #00E5FF 70%, #FFB703 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 0 30px rgba(0, 229, 255, 0.25)',
+              fontSize: { xs: '2.2rem', sm: '2.8rem' },
+              color: '#0F172A',
             }}
           >
-            {converted.symbol}{' '}
+            <span style={{ color: '#4F46E5', fontWeight: 700 }}>{converted.symbol}</span>{' '}
             {animatedAmount.toLocaleString('en-US', {
               minimumFractionDigits: CURRENCY_CONFIG[selectedCurrency]?.decimals || 0,
               maximumFractionDigits: CURRENCY_CONFIG[selectedCurrency]?.decimals || 0,
@@ -251,19 +235,19 @@ Powered by AutoValuate AI`;
 
           {/* Dual Currency Sub-Display */}
           {selectedCurrency !== 'LKR' && (
-            <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
-              <Typography variant="body1" fontWeight="700" color="#94A3B8">
-                Equivalent: <span style={{ color: '#F8FAFC' }}>Rs. {lakhs.toFixed(2)} Lakhs</span>
+            <Box display="flex" alignItems="center" justifyContent="center" gap={0.8} flexWrap="wrap">
+              <Typography variant="body2" sx={{ fontWeight: 600, color: '#475569' }}>
+                Equivalent: <span style={{ color: '#0F172A', fontWeight: 700 }}>Rs. {lakhs.toFixed(2)} Lakhs</span>
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{ color: '#94A3B8' }}>
                 (Rs. {Math.round(rawLkr).toLocaleString()} LKR)
               </Typography>
             </Box>
           )}
 
           {selectedCurrency === 'LKR' && (
-            <Typography variant="body2" color="text.secondary">
-              Raw Value: Rs. {Math.round(rawLkr).toLocaleString()} LKR (Rs. {lakhs.toFixed(2)} Lakhs)
+            <Typography variant="body2" sx={{ color: '#64748B', fontWeight: 500 }}>
+              Raw Market Value: Rs. {Math.round(rawLkr).toLocaleString()} LKR (Rs. {lakhs.toFixed(2)} Lakhs)
             </Typography>
           )}
         </Box>
@@ -271,88 +255,87 @@ Powered by AutoValuate AI`;
         {/* Confidence Interval (95% CI) */}
         <Box
           sx={{
-            p: 2.5,
-            borderRadius: 3,
-            bgcolor: 'rgba(255, 255, 255, 0.03)',
-            border: '1px solid rgba(255, 255, 255, 0.07)',
-            mb: 3,
+            p: 2,
+            borderRadius: 2,
+            bgcolor: '#FFFFFF',
+            border: '1px solid #E2E8F0',
+            mb: 2.5,
           }}
         >
-          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1.5}>
-            <Box display="flex" alignItems="center" gap={1}>
-              <SecurityIcon sx={{ color: '#00E5FF', fontSize: 20 }} />
-              <Typography variant="caption" fontWeight="700" color="text.secondary" letterSpacing="0.05em">
-                STATISTICAL CONFIDENCE RANGE (95% CI)
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+            <Box display="flex" alignItems="center" gap={0.8}>
+              <SecurityIcon sx={{ color: '#4F46E5', fontSize: 18 }} />
+              <Typography variant="caption" sx={{ fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
+                ESTIMATED FAIR PRICE RANGE
               </Typography>
             </Box>
-            <Typography variant="caption" fontWeight="700" color="#00E5FF">
-              ± 5% Margin
+            <Typography variant="caption" sx={{ fontWeight: 700, color: '#4F46E5' }}>
+              ± 5% Market Window
             </Typography>
           </Box>
 
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
             <Box textAlign="left">
-              <Typography variant="caption" color="text.secondary" display="block">
+              <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>
                 Lower Bound (Min)
               </Typography>
-              <Typography variant="body2" fontWeight="800" color="#94A3B8">
+              <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A' }}>
                 {minConverted.formatted}
               </Typography>
             </Box>
 
             <Box textAlign="center">
-              <Typography variant="caption" color="#00E5FF" fontWeight="700" display="block">
-                Expected Value
+              <Typography variant="caption" sx={{ color: '#4F46E5', fontWeight: 700, display: 'block', fontSize: '0.72rem' }}>
+                Expected Valuation
               </Typography>
-              <Typography variant="body1" fontWeight="900" color="#FFFFFF">
+              <Typography variant="body2" sx={{ fontWeight: 800, color: '#0F172A' }}>
                 {converted.formatted}
               </Typography>
             </Box>
 
             <Box textAlign="right">
-              <Typography variant="caption" color="text.secondary" display="block">
+              <Typography variant="caption" sx={{ color: '#64748B', display: 'block', fontSize: '0.72rem' }}>
                 Upper Bound (Max)
               </Typography>
-              <Typography variant="body2" fontWeight="800" color="#94A3B8">
+              <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A' }}>
                 {maxConverted.formatted}
               </Typography>
             </Box>
           </Box>
 
-          {/* Visual Confidence Bar */}
           <LinearProgress
             variant="determinate"
             value={50}
             sx={{
-              height: 6,
+              height: 5,
               borderRadius: 3,
-              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              backgroundColor: '#E2E8F0',
               '& .MuiLinearProgress-bar': {
-                background: 'linear-gradient(90deg, #0077B6 0%, #00E5FF 50%, #FFB703 100%)',
+                backgroundColor: '#4F46E5',
                 borderRadius: 3,
               },
             }}
           />
         </Box>
 
-        {/* Vehicle Snapshot Details */}
+        {/* Vehicle Details */}
         {vehicle && (
           <Box>
-            <Typography variant="caption" color="text.secondary" fontWeight="700" letterSpacing="0.08em" mb={1.2} display="block">
+            <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.05em', mb: 1, display: 'block' }}>
               VALUATED VEHICLE CONFIGURATION
             </Typography>
-            <Stack direction="row" spacing={0.8} flexWrap="wrap" useFlexGap>
+            <Stack direction="row" spacing={0.6} flexWrap="wrap" useFlexGap>
               <Chip
                 label={`${vehicle.brand || ''} ${vehicle.model || ''}`.trim() || 'Vehicle'}
                 size="small"
-                sx={{ bgcolor: 'rgba(0, 229, 255, 0.1)', color: '#00E5FF', fontWeight: 700, border: '1px solid rgba(0, 229, 255, 0.2)' }}
+                sx={{ bgcolor: '#EEF2FF', color: '#4F46E5', fontWeight: 700, border: '1px solid #C7D2FE' }}
               />
-              <Chip label={`Year: ${vehicle.yom || '-'}`} size="small" variant="outlined" />
-              <Chip label={`${Number(vehicle.mileage_km || 0).toLocaleString()} KM`} size="small" variant="outlined" />
-              <Chip label={vehicle.fuel_type || 'Petrol'} size="small" variant="outlined" />
-              <Chip label={vehicle.gear || 'Automatic'} size="small" variant="outlined" />
-              {vehicle.engine_cc && <Chip label={`${vehicle.engine_cc} cc`} size="small" variant="outlined" />}
-              {vehicle.town && <Chip label={`📍 ${vehicle.town}`} size="small" variant="outlined" />}
+              <Chip label={`Year: ${vehicle.yom || '-'}`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
+              <Chip label={`${Number(vehicle.mileage_km || 0).toLocaleString()} KM`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
+              <Chip label={vehicle.fuel_type || 'Petrol'} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
+              <Chip label={vehicle.gear || 'Automatic'} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
+              {vehicle.engine_cc && <Chip label={`${vehicle.engine_cc} cc`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />}
+              {vehicle.town && <Chip label={`📍 ${vehicle.town}`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />}
             </Stack>
           </Box>
         )}

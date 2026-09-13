@@ -1,167 +1,57 @@
-# 🧠 Car Valuation ML Prediction Service
+# 🧠 Machine Learning Microservice (FastAPI)
 
-A high-performance Python Machine Learning microservice built with **FastAPI**. It handles model serialization, feature preprocessing, and serves real-time car price inference.
+The Python machine learning microservice responsible for real-time model inference, data preprocessing pipelines, and 5-year depreciation forecasting.
+
+---
+
+## 🌟 Key Responsibilities
+
+- **Model Inference**: Serves predictions using the trained Champion **Gradient Boosting Regressor** (`car_price_model.pkl`).
+- **Feature Engineering Pipelines**: Automatically handles domain-derived features (Car Age, Mileage per Year, Luxury Score), One-Hot Encoding, and Log Transformation.
+- **5-Year Depreciation Calculation**: Returns annual compound residual value projections.
+- **Taxonomy Metadata API**: Serves unique Sri Lankan automobile brands, models, towns, and powertrain options.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Language:** Python 3.10+
-* **Web Framework:** [FastAPI](https://fastapi.tiangolo.com/) & [Uvicorn](https://www.uvicorn.org/) (ASGI Server)
-* **Data Validation:** [Pydantic v2](https://docs.pydantic.dev/)
-* **Machine Learning & Preprocessing:** [Scikit-learn](https://scikit-learn.org/), [Pandas](https://pandas.pydata.org/), [NumPy](https://numpy.org/)
-* **Model Serialization:** [Joblib](https://joblib.readthedocs.io/)
+- **Framework**: FastAPI + Uvicorn
+- **Data Science**: Scikit-Learn, Pandas, NumPy, Joblib
+- **Validation**: Pydantic v2
 
 ---
 
-## 📦 Installed Dependencies (`requirements.txt`)
+## 🚀 Getting Started
 
-```text
-fastapi
-uvicorn
-pydantic
-scikit-learn
-pandas
-numpy
-joblib
-```
-
-To install directly:
-```bash
-pip install fastapi uvicorn pydantic scikit-learn pandas numpy joblib
-```
-
----
-
-## 📂 Project Structure
-
-```text
-ml-service/
-├── models/                     # Directory storing serialized models
-│   └── car_price_model.pkl    # Trained Scikit-learn model artifact
-├── app.py                      # FastAPI application with prediction endpoints
-├── train_dummy.py              # Dummy/Sample model training & export script
-├── requirements.txt            # Python dependencies
-└── README.md                   # ML Service documentation (this file)
-```
-
----
-
-## ⚙️ Local Setup & Run
-
-### 1. Navigate to ML Service Directory
-```bash
-cd ml-service
-```
-
-### 2. Create and Activate Virtual Environment
-```bash
-# Create virtual environment named 'venv'
+### 1. Setup Virtual Environment
+```powershell
+# Windows PowerShell:
 python -m venv venv
+.\venv\Scripts\Activate.ps1
 
-# Activate on Windows (PowerShell):
-venv\Scripts\activate
-
-# Activate on Windows (CMD):
-venv\Scripts\activate.bat
-
-# Activate on macOS/Linux:
-source venv/bin/activate
+# macOS / Linux:
+# python3 -m venv venv
+# source venv/bin/activate
 ```
 
-### 3. Install Required Dependencies
-```bash
+### 2. Install Dependencies
+```powershell
 pip install -r requirements.txt
 ```
 
-### 4. Train Model & Generate Artifact
-Run the training script to generate and save `models/car_price_model.pkl`:
-```bash
-python train_dummy.py
-```
-> Output: `Model saved successfully as models/car_price_model.pkl`
-
-### 5. Start the FastAPI Server
-```bash
-uvicorn app:app --port 8000 --reload
-```
-The ML prediction service will run at: **`http://localhost:8000`**
-
----
-
-## 📖 Interactive API Documentation
-
-FastAPI automatically generates interactive API documentation:
-* **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
-* **ReDoc:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
-
----
-
-## 📡 API Endpoints
-
-### 1. Health Check
-* **Method:** `GET`
-* **Route:** `/`
-* **Response (200 OK):**
-```json
-{
-  "status": "ML Service is up and running"
-}
+### 3. (Optional) Re-train ML Model
+```powershell
+python clean_dataset.py
+python feature_engineering.py
+python train.py
 ```
 
----
-
-### 2. Predict Price
-* **Method:** `POST`
-* **Route:** `/predict`
-* **Headers:** `Content-Type: application/json`
-
-#### Request Schema:
-```json
-{
-  "brand": "Toyota",
-  "year": 2018,
-  "mileage": 65000,
-  "fuel_type": "Petrol",
-  "transmission": "Automatic"
-}
+### 4. Start FastAPI Server
+```powershell
+uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-#### Success Response (200 OK):
-```json
-{
-  "success": true,
-  "predicted_price": 18000.00
-}
-```
-
-#### Error Response:
-* **500 Internal Server Error:** (Model file not found)
-* **400 Bad Request:** (Invalid input values or format error)
-
----
-
-## 🧪 Testing with cURL / PowerShell
-
-### Test Root / Health:
-```bash
-# cURL
-curl http://localhost:8000/
-
-# PowerShell
-Invoke-RestMethod -Uri "http://localhost:8000/" -Method Get
-```
-
-### Test Prediction:
-```bash
-# cURL
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"brand":"Toyota","year":2018,"mileage":65000,"fuel_type":"Petrol","transmission":"Automatic"}'
-
-# PowerShell
-Invoke-RestMethod -Uri "http://localhost:8000/predict" `
-  -Method Post `
-  -Headers @{ "Content-Type" = "application/json" } `
-  -Body '{"brand":"Toyota","year":2018,"mileage":65000,"fuel_type":"Petrol","transmission":"Automatic"}'
-```
+### 5. API Documentation
+- Health Check: `GET http://localhost:8000/health`
+- Swagger Interactive Docs: `GET http://localhost:8000/docs`
+- ReDoc Docs: `GET http://localhost:8000/redoc`

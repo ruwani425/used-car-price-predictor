@@ -1,6 +1,6 @@
 /**
- * Frontend Currency Utilities & Exchange Rates.
- * Mirrors backend/src/services/currencyService.js for instant client-side updates.
+ * Frontend Currency Utilities & Dynamic Exchange Rates.
+ * Synchronizes with Backend Redis Cache & Open Exchange Rates API.
  */
 
 export const CURRENCY_CONFIG = {
@@ -15,30 +15,41 @@ export const CURRENCY_CONFIG = {
     code: 'USD',
     name: 'US Dollar',
     symbol: '$',
-    rateToLKR: 305.5,
+    rateToLKR: 328.29, // Dynamically updated from Backend Redis
     decimals: 2,
   },
   EUR: {
     code: 'EUR',
     name: 'Euro',
     symbol: '€',
-    rateToLKR: 332.8,
+    rateToLKR: 380.89, // Dynamically updated from Backend Redis
     decimals: 2,
   },
   GBP: {
     code: 'GBP',
     name: 'British Pound',
     symbol: '£',
-    rateToLKR: 396.4,
+    rateToLKR: 444.15, // Dynamically updated from Backend Redis
     decimals: 2,
   },
   JPY: {
     code: 'JPY',
     name: 'Japanese Yen',
     symbol: '¥',
-    rateToLKR: 2.05,
+    rateToLKR: 2.14, // Dynamically updated from Backend Redis
     decimals: 0,
   },
+};
+
+/**
+ * Updates dynamic exchange rates from Backend Redis Cache.
+ */
+export const updateCurrencyRates = (rates) => {
+  if (!rates || typeof rates !== 'object') return;
+  if (rates.USD) CURRENCY_CONFIG.USD.rateToLKR = Number(rates.USD);
+  if (rates.EUR) CURRENCY_CONFIG.EUR.rateToLKR = Number(rates.EUR);
+  if (rates.GBP) CURRENCY_CONFIG.GBP.rateToLKR = Number(rates.GBP);
+  if (rates.JPY) CURRENCY_CONFIG.JPY.rateToLKR = Number(rates.JPY);
 };
 
 /**
