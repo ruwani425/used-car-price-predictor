@@ -28,16 +28,16 @@ const record = (name, status, detail = "") => {
   results.tests.push({ name, status, detail });
   if (status === "PASS") {
     results.passed++;
-    console.log(`  ✅ [PASS] ${name} ${detail ? `(${detail})` : ""}`);
+    console.log(`  [PASS] ${name} ${detail ? `(${detail})` : ""}`);
   } else {
     results.failed++;
-    console.error(`  ❌ [FAIL] ${name}: ${detail}`);
+    console.error(`   [FAIL] ${name}: ${detail}`);
   }
 };
 
 async function runE2ETests() {
   console.log("================================================================================");
-  console.log("🚀 STARTING FULL-STACK E2E SYSTEM INTEGRATION & ROBUSTNESS TESTS");
+  console.log("STARTING FULL-STACK E2E SYSTEM INTEGRATION & ROBUSTNESS TESTS");
   console.log("   Target Microservices: Ports 8000 (ML), 5000 (Gateway), 5173 (Frontend)");
   console.log("================================================================================\n");
 
@@ -455,14 +455,14 @@ async function runE2ETests() {
   // Summary & Viva Voce Readiness
   // ----------------------------------------------------------------------
   console.log("\n================================================================================");
-  console.log(`📊 INTEGRATION TEST RESULTS: ${results.passed} PASSED / ${results.failed} FAILED (Total: ${results.tests.length})`);
+  console.log(`INTEGRATION TEST RESULTS: ${results.passed} PASSED / ${results.failed} FAILED (Total: ${results.tests.length})`);
   console.log("================================================================================");
 
   if (results.failed === 0) {
-    console.log("🎉 ALL FULL-STACK E2E INTEGRATION & ROBUSTNESS TESTS PASSED WITH 100% SUCCESS!");
+    console.log(" ALL FULL-STACK E2E INTEGRATION & ROBUSTNESS TESTS PASSED WITH 100% SUCCESS!");
     process.exit(0);
   } else {
-    console.error("⚠️ Some tests failed. Check logs above.");
+    console.error("Some tests failed. Check logs above.");
     process.exit(1);
   }
 }

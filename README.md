@@ -1,10 +1,10 @@
-# 🚗 Enterprise Used Car Price Valuation & Market Intelligence Platform
+# Enterprise Used Car Price Valuation & Market Intelligence Platform
 
 An end-to-end, production-grade Machine Learning and Web Application system designed specifically for the **Sri Lankan Automobile Market**. Built for the **GDSE Machine Learning Module Assignment**, this platform bridges advanced machine learning regression techniques with a high-performance modern 3-tier microservices architecture.
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 - **Accurate Real-time Valuation**: Instant market price estimation based on vehicle brand, model, edition, transmission, mileage, engine capacity, condition, and luxury options.
 - **7 Advanced Feature Engineering Pipelines**: Robust data preprocessing, IQR outlier clipping, log-transformed target modeling ($\log(1 + y)$), frequency encoding, and luxury scoring.
@@ -18,13 +18,13 @@ An end-to-end, production-grade Machine Learning and Web Application system desi
 
 ---
 
-## 📊 ML Model Performance & Leaderboard
+## ML Model Performance & Leaderboard
 
 The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fold Cross-Validation and a held-out test split (80/20):
 
 | Model | 5-Fold CV $R^2$ | Test $R^2$ | Test RMSE (Lakhs) | Test MAE (Lakhs) | Test MAPE (%) | Training Time |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Gradient Boosting** ⭐ | **0.9063 ± 0.005** | **0.7001** | **26.69** | **7.90** | **14.75%** | 39.41s |
+| **Gradient Boosting** | **0.9063 ± 0.005** | **0.7001** | **26.69** | **7.90** | **14.75%** | 39.41s |
 | **Random Forest** | 0.9026 ± 0.004 | 0.6908 | 27.10 | 7.14 | **13.85%** | 4.78s |
 | **Decision Tree** | 0.8619 ± 0.006 | 0.6782 | 27.65 | 8.09 | 16.81% | 0.33s |
 | **Linear Regression** | 0.8742 ± 0.009 | 0.5588 | 32.37 | 9.60 | 18.49% | 1.11s |
@@ -34,7 +34,7 @@ The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fo
 
 ---
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 | Layer | Technologies |
 | :--- | :--- |
@@ -92,7 +92,7 @@ Open Exchange Rates provides official foreign exchange rates for converting LKR 
 
 ---
 
-## 🚀 Running the 3 Projects Separately (Step-by-Step)
+## Running the 3 Projects Separately (Step-by-Step)
 
 To run the complete system, open **3 separate terminal windows** (one for each microservice layer):
 
@@ -105,7 +105,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-### 🖥️ Terminal 1: ML Microservice (`ml-service/`)
+### Terminal 1: ML Microservice (`ml-service/`)
 
 1. Navigate to the `ml-service` directory:
    ```powershell
@@ -135,7 +135,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-### 🖥️ Terminal 2: Backend API Gateway (`backend/`)
+### Terminal 2: Backend API Gateway (`backend/`)
 
 1. Open a new terminal window and navigate to `backend`:
    ```powershell
@@ -163,7 +163,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-### 🖥️ Terminal 3: Frontend Web Client (`frontend/`)
+### Terminal 3: Frontend Web Client (`frontend/`)
 
 1. Open a new terminal window and navigate to `frontend`:
    ```powershell

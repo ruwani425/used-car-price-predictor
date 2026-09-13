@@ -1,10 +1,10 @@
-# 🛡️ Backend API Gateway & Currency Service
+# Backend API Gateway & Currency Service
 
 The Node.js and Express.js API Gateway that orchestrates requests between the Frontend client, ML microservice, Cloud Redis cache, and Open Exchange Rates API.
 
 ---
 
-## 🌟 Key Responsibilities
+## Key Responsibilities
 
 - **REST API Gateway**: Exposes secure REST endpoints for vehicle predictions, metadata taxonomy, and historical logs.
 - **Upstash Cloud Redis Caching**: Caches official live foreign exchange rates with a 3-hour TTL.
@@ -14,7 +14,7 @@ The Node.js and Express.js API Gateway that orchestrates requests between the Fr
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Runtime**: Node.js 18+
 - **Framework**: Express.js
@@ -25,7 +25,7 @@ The Node.js and Express.js API Gateway that orchestrates requests between the Fr
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Install Dependencies
 ```bash

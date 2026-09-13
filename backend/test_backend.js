@@ -49,7 +49,7 @@ const runTests = async () => {
       if (histRes.status !== 200) throw new Error("History endpoint failed");
 
       console.log("\n==================================================");
-      console.log("✅ ALL STEP 4 BACKEND GATEWAY TESTS PASSED SUCCESSFULLY!");
+      console.log("ALL STEP 4 BACKEND GATEWAY TESTS PASSED SUCCESSFULLY!");
       console.log("==================================================");
     } catch (err) {
       console.error("[-] Test Error:", err);

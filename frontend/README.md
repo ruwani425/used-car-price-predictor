@@ -4,7 +4,7 @@ The modern, responsive web application for the Used Car Price Valuation Platform
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Price Calculator**: Interactive vehicle specification input form with instant valuation and confidence margin indicators.
 - **5-Year Depreciation Curve**: Dynamic SVG visualization forecasting annual residual value retention.
@@ -14,7 +14,7 @@ The modern, responsive web application for the Used Car Price Valuation Platform
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: React 19 + Vite
 - **UI Library**: Material-UI (MUI v6) + Emotion
@@ -23,7 +23,7 @@ The modern, responsive web application for the Used Car Price Valuation Platform
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Install Dependencies
 ```bash

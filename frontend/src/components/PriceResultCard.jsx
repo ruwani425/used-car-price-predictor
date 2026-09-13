@@ -79,10 +79,10 @@ export default function PriceResultCard({
   const modelUsed = result.model_used || 'Gradient Boosting';
 
   const handleCopy = () => {
-    const summaryText = `🚗 Used Car Valuation (${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.yom || ''})
-💰 Estimated Value: ${converted.formatted} (Rs. ${lakhs.toFixed(2)} Lakhs)
-📊 95% Confidence Range: ${minConverted.formatted} – ${maxConverted.formatted}
-🤖 AI Model: ${modelUsed}
+    const summaryText = `Used Car Valuation (${vehicle.brand || ''} ${vehicle.model || ''} ${vehicle.yom || ''})
+ Estimated Value: ${converted.formatted} (Rs. ${lakhs.toFixed(2)} Lakhs)
+95% Confidence Range: ${minConverted.formatted} – ${maxConverted.formatted}
+AI Model: ${modelUsed}
 Powered by AutoValuate`;
 
     navigator.clipboard.writeText(summaryText).then(() => {
@@ -335,7 +335,7 @@ Powered by AutoValuate`;
               <Chip label={vehicle.fuel_type || 'Petrol'} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
               <Chip label={vehicle.gear || 'Automatic'} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />
               {vehicle.engine_cc && <Chip label={`${vehicle.engine_cc} cc`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />}
-              {vehicle.town && <Chip label={`📍 ${vehicle.town}`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />}
+              {vehicle.town && <Chip label={` ${vehicle.town}`} size="small" sx={{ bgcolor: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0' }} />}
             </Stack>
           </Box>
         )}

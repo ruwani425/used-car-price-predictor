@@ -87,11 +87,11 @@ app.use(errorHandler);
 if (require.main === module) {
   const server = app.listen(config.port, () => {
     console.log("==================================================");
-    console.log(`🚀 Node.js Express Gateway running on port ${config.port}`);
-    console.log(`🔗 Connected ML Service: ${config.mlServiceUrl}`);
-    console.log(`🌐 Health endpoint: http://localhost:${config.port}/api/health`);
-    console.log(`💱 Currencies endpoint: http://localhost:${config.port}/api/currencies`);
-    console.log(`📜 History endpoint: http://localhost:${config.port}/api/history`);
+    console.log(`Node.js Express Gateway running on port ${config.port}`);
+    console.log(`Connected ML Service: ${config.mlServiceUrl}`);
+    console.log(`Health endpoint: http://localhost:${config.port}/api/health`);
+    console.log(`Currencies endpoint: http://localhost:${config.port}/api/currencies`);
+    console.log(`History endpoint: http://localhost:${config.port}/api/history`);
     console.log("==================================================");
 
     // Start background 3-hour currency sync cron job

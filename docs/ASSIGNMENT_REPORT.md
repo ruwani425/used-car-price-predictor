@@ -161,7 +161,7 @@ This reduced model dimensions from 450+ to 68 dominant automotive clusters while
 | **Ridge Regression** ($\alpha=1.0$) | $0.8739 \pm 0.0085$ | $0.5583$ | $32.39$ | $9.61$ | $18.48\%$ | $1.25\text{ s}$ |
 | **Decision Tree Regressor** | $0.8619 \pm 0.0064$ | $0.6782$ | $27.65$ | $8.09$ | $16.81\%$ | $0.33\text{ s}$ |
 | **Random Forest Regressor** | $0.9026 \pm 0.0043$ | $0.6908$ | $27.10$ | **7.14** | **13.85%** | $4.78\text{ s}$ |
-| **Gradient Boosting Regressor** ⭐ | **0.9063 ± 0.0050** | **0.7001** | **26.69** | $7.90$ | $14.75\%$ | $39.41\text{ s}$ |
+| **Gradient Boosting Regressor** | **0.9063 ± 0.0050** | **0.7001** | **26.69** | $7.90$ | $14.75\%$ | $39.41\text{ s}$ |
 
 ### 4.3 Feature Importance Analysis
 The ensemble tree models revealed the following top predictive contributors to vehicle market valuation:

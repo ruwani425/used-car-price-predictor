@@ -4,7 +4,7 @@ The Python machine learning microservice responsible for real-time model inferen
 
 ---
 
-## 🌟 Key Responsibilities
+## Key Responsibilities
 
 - **Model Inference**: Serves predictions using the trained Champion **Gradient Boosting Regressor** (`car_price_model.pkl`).
 - **Feature Engineering Pipelines**: Automatically handles domain-derived features (Car Age, Mileage per Year, Luxury Score), One-Hot Encoding, and Log Transformation.
@@ -13,7 +13,7 @@ The Python machine learning microservice responsible for real-time model inferen
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework**: FastAPI + Uvicorn
 - **Data Science**: Scikit-Learn, Pandas, NumPy, Joblib
@@ -21,7 +21,7 @@ The Python machine learning microservice responsible for real-time model inferen
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Setup Virtual Environment
 ```powershell
