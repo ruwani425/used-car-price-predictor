@@ -21,12 +21,6 @@ from sklearn.linear_model import LinearRegression, RidgeCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
-# Optional XGBoost import if installed, otherwise GradientBoostingRegressor is used
-try:
-    import xgboost as xgb
-    XGB_AVAILABLE = True
-except ImportError:
-    XGB_AVAILABLE = False
 
 
 from feature_engineering import (
