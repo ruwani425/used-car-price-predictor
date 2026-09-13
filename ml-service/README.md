@@ -46,12 +46,19 @@ python feature_engineering.py
 python train.py
 ```
 
-### 4. Start FastAPI Server
+### 4. Interactive Jupyter Notebook (Visualizations & Research)
+To explore exploratory data analysis (EDA), 7 feature engineering distributions, and 5-model comparative benchmark charts:
+```powershell
+jupyter notebook notebooks/used_car_price_prediction.ipynb
+```
+
+### 5. Start FastAPI Server
 ```powershell
 uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-### 5. API Documentation
+### 6. API Documentation
 - Health Check: `GET http://localhost:8000/health`
 - Swagger Interactive Docs: `GET http://localhost:8000/docs`
 - ReDoc Docs: `GET http://localhost:8000/redoc`
+
