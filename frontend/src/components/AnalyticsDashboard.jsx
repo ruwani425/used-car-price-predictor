@@ -102,58 +102,6 @@ const FALLBACK_METRICS = {
   },
 };
 
-const FEATURE_ENGINEERING_TECHNIQUES = [
-  {
-    num: 1,
-    title: 'Domain Derived Features',
-    desc: 'Car_Age (2026 - YOM), Mileage_Per_Year (KM / Age), and Luxury_Score (0 to 4 amenity sum).',
-    badge: 'Feature Extraction',
-    color: '#4F46E5',
-  },
-  {
-    num: 2,
-    title: 'Irrelevant Feature Removal',
-    desc: 'Dropped raw index Unnamed: 0 and transient web scraping timestamps.',
-    badge: 'Dimensionality',
-    color: '#64748B',
-  },
-  {
-    num: 3,
-    title: 'Binary Feature Encoding',
-    desc: 'Mapped AC, Power Steering, Mirrors, Windows (Available/Not) and Condition/Lease to 0/1 integers.',
-    badge: 'Binary Encoding',
-    color: '#059669',
-  },
-  {
-    num: 4,
-    title: 'High-Cardinality Grouping',
-    desc: 'Clustered rare models (<25 listings) into "OTHER" and applied Empirical Frequency Encoding.',
-    badge: 'Cardinality Mgmt',
-    color: '#7C3AED',
-  },
-  {
-    num: 5,
-    title: 'IQR Outlier Truncation',
-    desc: 'Bounded continuous variables (Mileage, Engine CC) with Interquartile Range boundaries.',
-    badge: 'Outlier Treatment',
-    color: '#DC2626',
-  },
-  {
-    num: 6,
-    title: 'Target Log Transformation',
-    desc: 'Applied log(1 + y) on Price to normalize heavy positive skewness before model fitting.',
-    badge: 'Log Normalization',
-    color: '#D97706',
-  },
-  {
-    num: 7,
-    title: 'StandardScaler Pipeline',
-    desc: 'Standardized continuous columns in a Scikit-Learn reproducible inference pipeline.',
-    badge: 'Feature Scaling',
-    color: '#0284C7',
-  },
-];
-
 export default function AnalyticsDashboard() {
   const [metricsData, setMetricsData] = useState(FALLBACK_METRICS);
   const [loading, setLoading] = useState(false);
@@ -460,63 +408,6 @@ export default function AnalyticsDashboard() {
           </Card>
         </Grid>
       </Grid>
-
-      {/* Row 3: 7 Feature Engineering Summary */}
-      <Card sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
-        <Box sx={{ p: 2.5, borderBottom: '1px solid #E2E8F0' }}>
-          <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A' }}>
-            7 Mandatory Feature Engineering Techniques
-          </Typography>
-          <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
-            Domain-specific mathematical transformations implemented for the Sri Lankan automotive market:
-          </Typography>
-        </Box>
-
-        <CardContent sx={{ p: 2.5 }}>
-          <Grid container spacing={2}>
-            {FEATURE_ENGINEERING_TECHNIQUES.map((tech) => (
-              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={tech.num}>
-                <Box
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    backgroundColor: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Box>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
-                      <Chip
-                        label={`Technique ${tech.num}`}
-                        size="small"
-                        sx={{
-                          height: 18,
-                          fontSize: '0.68rem',
-                          fontWeight: 700,
-                          backgroundColor: '#EEF2FF',
-                          color: '#4F46E5',
-                          border: '1px solid #C7D2FE',
-                        }}
-                      />
-                      <Chip label={tech.badge} size="small" sx={{ height: 18, fontSize: '0.65rem', bgcolor: '#FFFFFF', border: '1px solid #E2E8F0', color: '#64748B' }} />
-                    </Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 700, color: '#0F172A', mb: 0.5, fontSize: '0.85rem' }}>
-                      {tech.title}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: '#64748B', lineHeight: 1.4, fontSize: '0.75rem', display: 'block' }}>
-                      {tech.desc}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Grid>
-            ))}
-          </Grid>
-        </CardContent>
-      </Card>
     </Box>
   );
 }
