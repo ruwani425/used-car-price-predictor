@@ -10,7 +10,7 @@ const historyService = require("../services/historyService");
 const handlePrediction = async (req, res, next) => {
   try {
     const payload = req.body;
-    const targetCurrency = payload.target_currency || req.query.currency || "USD";
+    const targetCurrency = req.preferredCurrency || payload.target_currency || req.query.currency || "USD";
 
     // Call ML Microservice
     const mlResponse = await mlClient.predictPrice(payload);

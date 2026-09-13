@@ -11,6 +11,7 @@ const analyticsRoutes = require("./routes/analyticsRoutes");
 const historyRoutes = require("./routes/historyRoutes");
 const currencyRoutes = require("./routes/currencyRoutes");
 const healthRoutes = require("./routes/healthRoutes");
+const { startCurrencyCron } = require("./jobs/currencyCron");
 
 const app = express();
 
@@ -44,6 +45,10 @@ app.use(express.urlencoded({ extended: true }));
 if (config.nodeEnv !== "test") {
   app.use(morgan("dev"));
 }
+
+// Request Currency Header Resolver (x-currency-code, x-currency, currency)
+const { currencyMiddleware } = require("./middleware/currencyMiddleware");
+app.use(currencyMiddleware);
 
 // API Routes
 app.use("/api/predict", predictionRoutes);
@@ -88,6 +93,9 @@ if (require.main === module) {
     console.log(`💱 Currencies endpoint: http://localhost:${config.port}/api/currencies`);
     console.log(`📜 History endpoint: http://localhost:${config.port}/api/history`);
     console.log("==================================================");
+
+    // Start background 3-hour currency sync cron job
+    startCurrencyCron();
   });
 
   process.on("SIGTERM", () => {

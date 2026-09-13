@@ -82,7 +82,6 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Derived models for Car 1 and Car 2
   const car1Models = brandModelsMap[car1.brand.toUpperCase()] || ['OTHER'];
   const car2Models = brandModelsMap[car2.brand.toUpperCase()] || ['OTHER'];
 
@@ -114,7 +113,6 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
         target_currency: selectedCurrency,
       };
 
-      // Run parallel valuation queries
       const [res1, res2] = await Promise.all([
         axios.post(`${API_BASE}/api/predict`, payload1),
         axios.post(`${API_BASE}/api/predict`, payload2),
@@ -130,7 +128,6 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
     }
   };
 
-  // Convert prices for display
   const price1 = result1 ? convertFromLKR(result1.predicted_price_lkr_raw || result1.predicted_price_lkr_lakhs * 100000, selectedCurrency) : null;
   const price2 = result2 ? convertFromLKR(result2.predicted_price_lkr_raw || result2.predicted_price_lkr_lakhs * 100000, selectedCurrency) : null;
 
@@ -141,29 +138,28 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
   return (
     <Box className="form-card-enter">
       {/* Header */}
-      <Card className="glass-panel" sx={{ borderRadius: 4, mb: 3.5 }}>
-        <Box sx={{ p: 3, borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+      <Card sx={{ borderRadius: 3, mb: 3, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Box sx={{ p: 2.5, borderBottom: '1px solid #E2E8F0', backgroundColor: '#FFFFFF' }}>
           <Box display="flex" alignItems="center" gap={1.5}>
             <Box
               sx={{
-                width: 44,
-                height: 44,
-                borderRadius: 2.5,
-                background: 'linear-gradient(135deg, #FFB703 0%, #FB8500 100%)',
+                width: 40,
+                height: 40,
+                borderRadius: 2,
+                backgroundColor: '#EEF2FF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 18px rgba(255, 183, 3, 0.35)',
               }}
             >
-              <CompareArrowsIcon sx={{ color: '#031024', fontSize: 26 }} />
+              <CompareArrowsIcon sx={{ color: '#4F46E5', fontSize: 24 }} />
             </Box>
             <Box>
-              <Typography variant="h5" fontWeight="800">
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1.1rem', color: '#0F172A' }}>
                 Side-by-Side Vehicle Valuation Comparator
               </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Configure two cars to evaluate valuation differences, depreciation curves, and feature premiums
+              <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
+                Configure two car specifications to evaluate price differences and value retention
               </Typography>
             </Box>
           </Box>
@@ -171,19 +167,19 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
       </Card>
 
       {/* Dual Vehicle Form Cards */}
-      <Grid container spacing={3.5} mb={3.5}>
+      <Grid container spacing={3} mb={3}>
         {/* Car 1 Config */}
-        <Grid item xs={12} md={6}>
-          <Card className="glass-panel" sx={{ borderRadius: 3, p: 3, border: '1px solid rgba(0, 229, 255, 0.25)' }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2.5}>
-              <Chip label="VEHICLE A" color="primary" sx={{ fontWeight: 800 }} />
-              <Typography variant="h6" fontWeight="bold">
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
+            <Box display="flex" alignItems="center" gap={1} mb={2}>
+              <Chip label="VEHICLE A" sx={{ fontWeight: 700, bgcolor: '#EEF2FF', color: '#4F46E5', border: '1px solid #C7D2FE', fontSize: '0.75rem' }} />
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
                 {car1.brand} {car1.model} ({car1.yom})
               </Typography>
             </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+            <Grid container spacing={1.8}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Brand</InputLabel>
                   <Select
@@ -202,7 +198,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Model</InputLabel>
                   <Select value={car1.model} label="Model" onChange={(e) => setCar1({ ...car1, model: e.target.value })}>
@@ -213,7 +209,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -224,7 +220,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -235,7 +231,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -246,7 +242,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Fuel Type</InputLabel>
                   <Select value={car1.fuel_type} label="Fuel Type" onChange={(e) => setCar1({ ...car1, fuel_type: e.target.value })}>
@@ -257,7 +253,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Transmission</InputLabel>
                   <Select value={car1.gear} label="Transmission" onChange={(e) => setCar1({ ...car1, gear: e.target.value })}>
@@ -272,17 +268,17 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
         </Grid>
 
         {/* Car 2 Config */}
-        <Grid item xs={12} md={6}>
-          <Card className="glass-panel" sx={{ borderRadius: 3, p: 3, border: '1px solid rgba(255, 183, 3, 0.25)' }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2.5}>
-              <Chip label="VEHICLE B" color="secondary" sx={{ fontWeight: 800 }} />
-              <Typography variant="h6" fontWeight="bold">
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
+            <Box display="flex" alignItems="center" gap={1} mb={2}>
+              <Chip label="VEHICLE B" sx={{ fontWeight: 700, bgcolor: '#E0F2FE', color: '#0369A1', border: '1px solid #BAE6FD', fontSize: '0.75rem' }} />
+              <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
                 {car2.brand} {car2.model} ({car2.yom})
               </Typography>
             </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+            <Grid container spacing={1.8}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Brand</InputLabel>
                   <Select
@@ -301,7 +297,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Model</InputLabel>
                   <Select value={car2.model} label="Model" onChange={(e) => setCar2({ ...car2, model: e.target.value })}>
@@ -312,7 +308,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -323,7 +319,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -334,7 +330,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -345,7 +341,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Fuel Type</InputLabel>
                   <Select value={car2.fuel_type} label="Fuel Type" onChange={(e) => setCar2({ ...car2, fuel_type: e.target.value })}>
@@ -356,7 +352,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Transmission</InputLabel>
                   <Select value={car2.gear} label="Transmission" onChange={(e) => setCar2({ ...car2, gear: e.target.value })}>
@@ -370,9 +366,9 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
           </Card>
         </Grid>
 
-        {/* Error Notice if any */}
+        {/* Error Notice */}
         {error && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Alert severity="error" sx={{ borderRadius: 2 }}>
               {error}
             </Alert>
@@ -380,100 +376,94 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
         )}
 
         {/* Action Button */}
-        <Grid item xs={12} textAlign="center">
+        <Grid size={12} textAlign="center">
           <Button
             variant="contained"
-            color="primary"
-            size="large"
+            size="medium"
             onClick={handleCompare}
             disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <CompareArrowsIcon />}
-            sx={{ px: 5, py: 1.5, fontSize: '1.05rem' }}
+            startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <CompareArrowsIcon />}
+            sx={{ px: 4, py: 1.2, fontSize: '0.95rem', fontWeight: 700 }}
           >
             {loading ? 'Evaluating Dual Valuations...' : 'Compare Market Valuations'}
           </Button>
         </Grid>
       </Grid>
 
-      {/* Comparison Results Card */}
+      {/* Comparison Results */}
       {result1 && result2 && (
-        <Card className="glass-panel form-card-enter" sx={{ borderRadius: 4, p: 3.5, mb: 3 }}>
+        <Card sx={{ borderRadius: 3, p: 3, mb: 3, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
           {/* Comparison Banner */}
           <Box
             sx={{
-              p: 2.5,
-              borderRadius: 3,
-              backgroundColor: 'rgba(11, 15, 25, 0.7)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              mb: 3,
+              p: 2,
+              borderRadius: 2,
+              backgroundColor: '#F8FAFC',
+              border: '1px solid #E2E8F0',
+              mb: 2.5,
               textAlign: 'center',
             }}
           >
-            <Typography variant="caption" color="text.secondary" fontWeight="700" letterSpacing="0.08em">
+            <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.06em' }}>
               VALUATION DELTA ({selectedCurrency})
             </Typography>
-            <Typography variant="h4" fontWeight="900" sx={{ color: rawDiff >= 0 ? '#00E5FF' : '#FFB703', my: 1 }}>
+            <Typography variant="h5" sx={{ fontWeight: 800, color: rawDiff >= 0 ? '#4F46E5' : '#0284C7', my: 0.5 }}>
               {rawDiff >= 0 ? `Vehicle A is ${diffConverted.formatted} higher` : `Vehicle B is ${diffConverted.formatted} higher`}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.82rem' }}>
               Difference of {Math.abs(percentDiff)}% between configurations
             </Typography>
           </Box>
 
-          {/* Side by Side Valuation Table */}
+          {/* Table */}
           <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
-            <Table>
+            <Table size="small">
               <TableHead>
-                <TableRow>
-                  <TableCell sx={{ color: '#94A3B8', fontWeight: 'bold' }}>Parameter</TableCell>
-                  <TableCell sx={{ color: '#00E5FF', fontWeight: 'bold' }}>Vehicle A ({car1.brand} {car1.model})</TableCell>
-                  <TableCell sx={{ color: '#FFB703', fontWeight: 'bold' }}>Vehicle B ({car2.brand} {car2.model})</TableCell>
+                <TableRow sx={{ backgroundColor: '#F8FAFC' }}>
+                  <TableCell sx={{ color: '#475569', fontWeight: 'bold' }}>Parameter</TableCell>
+                  <TableCell sx={{ color: '#4F46E5', fontWeight: 'bold' }}>Vehicle A ({car1.brand} {car1.model})</TableCell>
+                  <TableCell sx={{ color: '#0284C7', fontWeight: 'bold' }}>Vehicle B ({car2.brand} {car2.model})</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 <TableRow>
-                  <TableCell sx={{ color: '#F8FAFC', fontWeight: 600 }}>Estimated Valuation ({selectedCurrency})</TableCell>
-                  <TableCell sx={{ color: '#00E5FF', fontWeight: 800, fontSize: '1.15rem' }}>{price1?.formatted}</TableCell>
-                  <TableCell sx={{ color: '#FFB703', fontWeight: 800, fontSize: '1.15rem' }}>{price2?.formatted}</TableCell>
+                  <TableCell sx={{ color: '#0F172A', fontWeight: 600 }}>Estimated Valuation ({selectedCurrency})</TableCell>
+                  <TableCell sx={{ color: '#4F46E5', fontWeight: 800, fontSize: '1.05rem' }}>{price1?.formatted}</TableCell>
+                  <TableCell sx={{ color: '#0284C7', fontWeight: 800, fontSize: '1.05rem' }}>{price2?.formatted}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>LKR Base Valuation</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>Rs. {result1.predicted_price_lkr_lakhs} Lakhs</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>Rs. {result2.predicted_price_lkr_lakhs} Lakhs</TableCell>
+                  <TableCell sx={{ color: '#64748B' }}>LKR Base Valuation</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>Rs. {result1.predicted_price_lkr_lakhs} Lakhs</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>Rs. {result2.predicted_price_lkr_lakhs} Lakhs</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>95% Confidence Range</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>
+                  <TableCell sx={{ color: '#64748B' }}>95% Confidence Range</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>
                     Rs. {result1.confidence_interval?.min_lkr_lakhs}L – {result1.confidence_interval?.max_lkr_lakhs}L
                   </TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>
+                  <TableCell sx={{ color: '#0F172A' }}>
                     Rs. {result2.confidence_interval?.min_lkr_lakhs}L – {result2.confidence_interval?.max_lkr_lakhs}L
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>Year of Manufacture</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car1.yom}</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car2.yom}</TableCell>
+                  <TableCell sx={{ color: '#64748B' }}>Year of Manufacture</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car1.yom}</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car2.yom}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>Mileage</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{Number(car1.mileage_km).toLocaleString()} KM</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{Number(car2.mileage_km).toLocaleString()} KM</TableCell>
+                  <TableCell sx={{ color: '#64748B' }}>Mileage</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{Number(car1.mileage_km).toLocaleString()} KM</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{Number(car2.mileage_km).toLocaleString()} KM</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>Engine Capacity</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car1.engine_cc} cc</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car2.engine_cc} cc</TableCell>
+                  <TableCell sx={{ color: '#64748B' }}>Engine Capacity</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car1.engine_cc} cc</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car2.engine_cc} cc</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>Powertrain & Gear</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car1.fuel_type} / {car1.gear}</TableCell>
-                  <TableCell sx={{ color: '#F8FAFC' }}>{car2.fuel_type} / {car2.gear}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ color: '#94A3B8' }}>5-Year Retained Value</TableCell>
-                  <TableCell sx={{ color: '#00E5FF', fontWeight: 700 }}>~74.8%</TableCell>
-                  <TableCell sx={{ color: '#FFB703', fontWeight: 700 }}>~74.8%</TableCell>
+                  <TableCell sx={{ color: '#64748B' }}>Powertrain & Gear</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car1.fuel_type} / {car1.gear}</TableCell>
+                  <TableCell sx={{ color: '#0F172A' }}>{car2.fuel_type} / {car2.gear}</TableCell>
                 </TableRow>
               </TableBody>
             </Table>
