@@ -18,6 +18,8 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import CarComparison from './components/CarComparison';
 import HistoryDrawer from './components/HistoryDrawer';
 
+import { updateCurrencyRates } from './utils/currencyUtils';
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
 function App() {
@@ -30,7 +32,7 @@ function App() {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' });
 
-  // Check Backend and ML Service Health & Fetch Dropdown Metadata on Load
+  // Check Backend and ML Service Health, Fetch Dropdown Metadata & Live Currencies on Load
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -52,6 +54,16 @@ function App() {
         setMetadata(metaRes.data);
       } catch (err) {
         console.warn('Could not load metadata from API, using defaults:', err.message);
+      }
+
+      try {
+        // 3. Live Redis Currency Rates Fetch
+        const currRes = await axios.get(`${API_BASE}/api/currencies`, { timeout: 4000 });
+        if (currRes.data?.rates) {
+          updateCurrencyRates(currRes.data.rates);
+        }
+      } catch (err) {
+        console.warn('Could not load live currency rates:', err.message);
       }
     };
 
