@@ -30,6 +30,12 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
+const MODEL_ROLES = {
+  'Linear Regression': 'Baseline',
+  'Random Forest': 'Bagging',
+  'Gradient Boosting': 'Boosting Champion',
+};
+
 const FALLBACK_METRICS = {
   best_model: 'Gradient Boosting',
   benchmark_leaderboard: [
@@ -41,7 +47,7 @@ const FALLBACK_METRICS = {
       test_rmse_lakhs: 26.69,
       test_mae_lakhs: 7.9,
       test_mape_percent: 14.75,
-      training_time_seconds: 13.56,
+      training_time_seconds: 40.89,
     },
     {
       model_name: 'Random Forest',
@@ -51,17 +57,7 @@ const FALLBACK_METRICS = {
       test_rmse_lakhs: 27.1,
       test_mae_lakhs: 7.14,
       test_mape_percent: 13.85,
-      training_time_seconds: 22.06,
-    },
-    {
-      model_name: 'Decision Tree',
-      cv_r2_mean: 0.8619,
-      cv_r2_std: 0.0064,
-      test_r2_score: 0.6782,
-      test_rmse_lakhs: 27.65,
-      test_mae_lakhs: 8.09,
-      test_mape_percent: 16.81,
-      training_time_seconds: 1.15,
+      training_time_seconds: 11.08,
     },
     {
       model_name: 'Linear Regression',
@@ -71,17 +67,7 @@ const FALLBACK_METRICS = {
       test_rmse_lakhs: 32.37,
       test_mae_lakhs: 9.6,
       test_mape_percent: 18.49,
-      training_time_seconds: 0.38,
-    },
-    {
-      model_name: 'Ridge Regression',
-      cv_r2_mean: 0.8739,
-      cv_r2_std: 0.0085,
-      test_r2_score: 0.5583,
-      test_rmse_lakhs: 32.39,
-      test_mae_lakhs: 9.61,
-      test_mape_percent: 18.48,
-      training_time_seconds: 0.82,
+      training_time_seconds: 1.23,
     },
   ],
   top_feature_importances: [
@@ -177,7 +163,7 @@ export default function AnalyticsDashboard() {
                   Machine Learning Model Benchmark & Intelligence
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.82rem' }}>
-                  5-Algorithm Regression Comparison, 5-Fold Cross-Validation, and Explainable Feature Importances
+                  3-Algorithm Benchmark (Baseline vs Bagging vs Boosting), 5-Fold CV, and Feature Importances
                 </Typography>
               </Box>
             </Box>
@@ -285,7 +271,7 @@ export default function AnalyticsDashboard() {
                 <Box display="flex" alignItems="center" gap={1}>
                   <BarChartIcon sx={{ color: '#4F46E5', fontSize: 20 }} />
                   <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '0.98rem', color: '#0F172A' }}>
-                    Model Benchmark Leaderboard
+                    3-Model Benchmark Leaderboard
                   </Typography>
                 </Box>
                 <Chip label="Holdout 20% Test Split" size="small" sx={{ color: '#64748B', fontSize: '0.72rem', bgcolor: '#F8FAFC', border: '1px solid #E2E8F0' }} />
@@ -327,6 +313,11 @@ export default function AnalyticsDashboard() {
                                 </Typography>
                               )}
                               {row.model_name}
+                              <Chip
+                                label={MODEL_ROLES[row.model_name] || 'Model'}
+                                size="small"
+                                sx={{ height: 16, fontSize: '0.62rem', fontWeight: 700, bgcolor: '#F1F5F9', color: '#475569' }}
+                              />
                               {isWinner && (
                                 <Chip label="BEST" size="small" sx={{ height: 16, fontSize: '0.62rem', fontWeight: 800, bgcolor: '#C7D2FE', color: '#3730A3' }} />
                               )}
