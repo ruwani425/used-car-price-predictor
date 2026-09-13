@@ -46,6 +46,10 @@ if (config.nodeEnv !== "test") {
   app.use(morgan("dev"));
 }
 
+// Request Currency Header Resolver (x-currency-code, x-currency, currency)
+const { currencyMiddleware } = require("./middleware/currencyMiddleware");
+app.use(currencyMiddleware);
+
 // API Routes
 app.use("/api/predict", predictionRoutes);
 app.use("/api/metadata", metadataRoutes);
