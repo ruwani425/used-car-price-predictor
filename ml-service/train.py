@@ -1,6 +1,6 @@
 """
-Train and evaluate 5 regression models on the cleaned used car dataset.
-Compares Linear Regression, Ridge, Decision Tree, Random Forest, and Gradient Boosting.
+Train and evaluate 3 representative regression models on the cleaned used car dataset.
+Compares Linear Regression (baseline), Random Forest (bagging), and Gradient Boosting (boosting champion).
 Exports the best model to models/car_price_model.pkl and metrics to models/metrics.json.
 """
 
@@ -17,8 +17,7 @@ if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
-from sklearn.linear_model import LinearRegression, RidgeCV
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
 
@@ -123,17 +122,13 @@ def train_and_benchmark():
 
     feature_names = get_feature_names(preprocessor)
 
-    # 5. Define 5 regression models with tuned hyperparameters
+    # 5. Define 3 representative algorithms: baseline, bagging, and boosting
     print("\n" + "-" * 70)
-    print("[BENCHMARK] Training and evaluating 5 regression algorithms...")
+    print("[BENCHMARK] Training Linear Regression, Random Forest, and Gradient Boosting...")
     print("-" * 70)
 
     models_config = {
         "Linear Regression": LinearRegression(),
-        "Ridge Regression": RidgeCV(alphas=[0.01, 0.1, 1.0, 10.0, 50.0, 100.0]),
-        "Decision Tree": DecisionTreeRegressor(
-            max_depth=15, min_samples_split=8, min_samples_leaf=4, random_state=42
-        ),
         "Random Forest": RandomForestRegressor(
             n_estimators=150,
             max_depth=20,
@@ -293,7 +288,7 @@ def train_and_benchmark():
     print(f"[EXPORT] Metrics & Performance JSON saved to: {metrics_json_path}")
 
     print("\n" + "=" * 70)
-    print("[SUCCESS] STEP 2 COMPLETED SUCCESSFULLY! All models trained and exported.")
+    print("[SUCCESS] STEP 2 COMPLETED SUCCESSFULLY! 3-model benchmark trained and exported.")
     print("=" * 70)
 
 

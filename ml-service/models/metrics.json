@@ -9,27 +9,7 @@
       "test_rmse_lakhs": 32.37,
       "test_mae_lakhs": 9.6,
       "test_mape_percent": 18.49,
-      "training_time_seconds": 1.11
-    },
-    {
-      "model_name": "Ridge Regression",
-      "cv_r2_mean": 0.8739,
-      "cv_r2_std": 0.0085,
-      "test_r2_score": 0.5583,
-      "test_rmse_lakhs": 32.39,
-      "test_mae_lakhs": 9.61,
-      "test_mape_percent": 18.48,
-      "training_time_seconds": 1.25
-    },
-    {
-      "model_name": "Decision Tree",
-      "cv_r2_mean": 0.8619,
-      "cv_r2_std": 0.0064,
-      "test_r2_score": 0.6782,
-      "test_rmse_lakhs": 27.65,
-      "test_mae_lakhs": 8.09,
-      "test_mape_percent": 16.81,
-      "training_time_seconds": 0.33
+      "training_time_seconds": 1.23
     },
     {
       "model_name": "Random Forest",
@@ -39,7 +19,7 @@
       "test_rmse_lakhs": 27.1,
       "test_mae_lakhs": 7.14,
       "test_mape_percent": 13.85,
-      "training_time_seconds": 4.78
+      "training_time_seconds": 11.08
     },
     {
       "model_name": "Gradient Boosting",
@@ -49,7 +29,7 @@
       "test_rmse_lakhs": 26.69,
       "test_mae_lakhs": 7.9,
       "test_mape_percent": 14.75,
-      "training_time_seconds": 39.41
+      "training_time_seconds": 40.89
     }
   ],
   "top_feature_importances": [
