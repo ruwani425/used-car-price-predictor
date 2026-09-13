@@ -2,26 +2,18 @@ const axios = require("axios");
 const { getCache, setCache, isRedisAvailable } = require("../config/redis");
 
 /**
- * Enterprise Multi-Currency Conversion Engine
+ * Enterprise Multi-Currency Conversion Engine (Redis Cache-Driven)
  * Supported Currencies: LKR (Base), USD ($), EUR (€), GBP (£), JPY (¥).
  * 
- * Features:
- * 1. Open Exchange Rates API live provider
- * 2. Pair-based key caching (e.g. LKR:USD, USD:LKR, LKR:EUR) in Redis ('currency:rates')
- * 3. In-Memory Direct, Inverse & Cross-Rate financial conversion
- * 4. Microsecond in-memory latency + 3-Hour TTL scheduled sync
+ * Rules:
+ * - NO HARDCODED EXCHANGE RATES
+ * - All rates & pairs are retrieved dynamically from Redis Cache ('currency:rates')
+ * - On cache miss/expiry, synchronizes from Open Exchange Rates API directly into Redis
  */
 
 const REDIS_RATES_KEY = "currency:rates";
 const REDIS_LATEST_KEY = "currency:exchange_rates:latest";
-const CACHE_TTL_SECONDS = 3 * 3600; // 3 Hours (10,800s)
-
-const FALLBACK_RATES = {
-  USD: 305.5,
-  EUR: 332.8,
-  GBP: 396.4,
-  JPY: 2.05,
-};
+const CACHE_TTL_SECONDS = 3 * 3600; // 3 Hours TTL
 
 const CURRENCY_REGISTRY = {
   LKR: {
@@ -35,71 +27,76 @@ const CURRENCY_REGISTRY = {
     code: "USD",
     name: "United States Dollar",
     symbol: "$",
-    rateToLKR: FALLBACK_RATES.USD,
+    rateToLKR: null,
     decimalPlaces: 2,
   },
   EUR: {
     code: "EUR",
     name: "Euro",
     symbol: "€",
-    rateToLKR: FALLBACK_RATES.EUR,
+    rateToLKR: null,
     decimalPlaces: 2,
   },
   GBP: {
     code: "GBP",
     name: "British Pound",
     symbol: "£",
-    rateToLKR: FALLBACK_RATES.GBP,
+    rateToLKR: null,
     decimalPlaces: 2,
   },
   JPY: {
     code: "JPY",
     name: "Japanese Yen",
     symbol: "¥",
-    rateToLKR: FALLBACK_RATES.JPY,
+    rateToLKR: null,
     decimalPlaces: 0,
   },
 };
 
-// In-Memory Currency Pair Matrix (e.g. 'LKR:USD', 'USD:LKR', 'LKR:EUR')
 let PAIR_RATES = {};
-let lastUpdated = new Date().toISOString();
-let rateSource = "Default In-Memory Registry";
+let lastUpdated = null;
+let rateSource = "Uninitialized";
 
 /**
- * Builds bidirectional currency pair rates from base LKR rates.
- * Formats:
- * - LKR:USD = 1 / usdToLkr
- * - USD:LKR = usdToLkr
- * - LKR:EUR = 1 / eurToLkr
- * - Cross-rate: EUR:USD = (1/usdToLkr) / (1/eurToLkr) = eurToLkr / usdToLkr
+ * Computes pair matrix (LKR:USD, USD:LKR, etc.) from base rates.
  */
-const buildPairMatrix = () => {
-  const pairs = {};
-  const codes = Object.keys(CURRENCY_REGISTRY);
+const computePairMatrixFromBaseRates = (rates) => {
+  const pairs = { "LKR:LKR": 1.0 };
+  const codes = ["LKR", "USD", "EUR", "GBP", "JPY"];
 
   codes.forEach((from) => {
     codes.forEach((to) => {
       if (from === to) {
         pairs[`${from}:${to}`] = 1.0;
       } else {
-        const fromToLkr = CURRENCY_REGISTRY[from].rateToLKR;
-        const toToLkr = CURRENCY_REGISTRY[to].rateToLKR;
-        // 1 FROM = (fromToLkr / toToLkr) TO
-        pairs[`${from}:${to}`] = Number((fromToLkr / toToLkr).toFixed(8));
+        const fromToLkr = from === "LKR" ? 1.0 : rates[from];
+        const toToLkr = to === "LKR" ? 1.0 : rates[to];
+        if (fromToLkr && toToLkr) {
+          pairs[`${from}:${to}`] = Number((fromToLkr / toToLkr).toFixed(8));
+        }
       }
     });
   });
 
-  PAIR_RATES = pairs;
   return pairs;
 };
 
-// Initialize default pairs
-buildPairMatrix();
+/**
+ * Updates in-memory registry & pairs from a validated rates object.
+ */
+const applyRates = (rates, pairs, source, timestamp) => {
+  if (rates.USD) CURRENCY_REGISTRY.USD.rateToLKR = rates.USD;
+  if (rates.EUR) CURRENCY_REGISTRY.EUR.rateToLKR = rates.EUR;
+  if (rates.GBP) CURRENCY_REGISTRY.GBP.rateToLKR = rates.GBP;
+  if (rates.JPY) CURRENCY_REGISTRY.JPY.rateToLKR = rates.JPY;
+
+  PAIR_RATES = pairs || computePairMatrixFromBaseRates(rates);
+  lastUpdated = timestamp || new Date().toISOString();
+  rateSource = source || "Redis Cache";
+};
 
 /**
- * Fetches real-time exchange rates from Open Exchange API and synchronizes Redis cache & pair matrix.
+ * Fetches real-time exchange rates from Open Exchange API and populates Redis.
  */
 const fetchAndCacheRates = async () => {
   try {
@@ -108,7 +105,7 @@ const fetchAndCacheRates = async () => {
       ? `https://openexchangerates.org/api/latest.json?app_id=${appId}`
       : "https://open.er-api.com/v6/latest/USD";
 
-    const response = await axios.get(url, { timeout: 6000 });
+    const response = await axios.get(url, { timeout: 8000 });
     const rates = response.data && response.data.rates;
 
     if (rates && rates.LKR) {
@@ -120,68 +117,67 @@ const fetchAndCacheRates = async () => {
         JPY: Number((lkrPerUsd / (rates.JPY || 1)).toFixed(2)),
       };
 
-      // 1. Update Registry
-      CURRENCY_REGISTRY.USD.rateToLKR = computedRates.USD;
-      CURRENCY_REGISTRY.EUR.rateToLKR = computedRates.EUR;
-      CURRENCY_REGISTRY.GBP.rateToLKR = computedRates.GBP;
-      CURRENCY_REGISTRY.JPY.rateToLKR = computedRates.JPY;
+      const pairs = computePairMatrixFromBaseRates(computedRates);
+      const timestamp = new Date().toISOString();
+      const source = appId ? "Open Exchange Rates API (Official)" : "Open Exchange Rates API (Live)";
 
-      // 2. Build Pair Matrix (LKR:USD, USD:LKR, LKR:EUR, etc.)
-      const pairs = buildPairMatrix();
-
-      lastUpdated = new Date().toISOString();
-      rateSource = appId ? "Open Exchange Rates API (Official)" : "Open Exchange Rates API (Live)";
-
-      // 3. Cache in Redis
+      // Store in Redis Cache
       const payload = {
         rates: computedRates,
         pairs,
-        source: rateSource,
-        lastUpdated,
+        source,
+        lastUpdated: timestamp,
       };
 
       await setCache(REDIS_LATEST_KEY, payload, CACHE_TTL_SECONDS);
       await setCache(REDIS_RATES_KEY, pairs, CACHE_TTL_SECONDS);
 
-      console.log(`[Currency Service] Live rates & pair matrix synced via ${rateSource}: USD=${computedRates.USD}, EUR=${computedRates.EUR}, GBP=${computedRates.GBP}, JPY=${computedRates.JPY}`);
-      return { success: true, source: rateSource, lastUpdated, rates: computedRates, pairs };
+      // Apply to active memory
+      applyRates(computedRates, pairs, source, timestamp);
+
+      console.log(`[Currency Service] Live exchange rates successfully stored in Redis (Source: ${source})`);
+      return { success: true, source, lastUpdated: timestamp, rates: computedRates, pairs };
     }
   } catch (error) {
-    console.warn(`[Currency Service] Live rate fetch failed (${error.message}). Checking Redis cache or fallback registry.`);
-
-    // Attempt restoring from Redis cache
-    const cachedPairs = await getCache(REDIS_RATES_KEY);
-    const cachedLatest = await getCache(REDIS_LATEST_KEY);
-
-    if (cachedPairs && cachedLatest) {
-      PAIR_RATES = cachedPairs;
-      if (cachedLatest.rates) {
-        CURRENCY_REGISTRY.USD.rateToLKR = cachedLatest.rates.USD;
-        CURRENCY_REGISTRY.EUR.rateToLKR = cachedLatest.rates.EUR;
-        CURRENCY_REGISTRY.GBP.rateToLKR = cachedLatest.rates.GBP;
-        CURRENCY_REGISTRY.JPY.rateToLKR = cachedLatest.rates.JPY;
-      }
-      lastUpdated = cachedLatest.lastUpdated || lastUpdated;
-      rateSource = "Redis Cache (Persisted Snapshot)";
-      return { success: true, source: rateSource, lastUpdated, pairs: cachedPairs };
-    }
-
-    buildPairMatrix();
-    rateSource = "Fallback Offline Registry";
+    console.error(`[Currency Service] Failed to fetch live exchange rates: ${error.message}`);
   }
-  return { success: false, source: rateSource, lastUpdated, pairs: PAIR_RATES };
+
+  return { success: false, source: rateSource, lastUpdated };
 };
 
-// Initial startup sync
-fetchAndCacheRates();
+/**
+ * Loads rates strictly from Redis cache; if missing, triggers API sync into Redis.
+ */
+const syncFromRedisOrProvider = async () => {
+  try {
+    // 1. Check Redis Cache
+    const cachedLatest = await getCache(REDIS_LATEST_KEY);
+    const cachedPairs = await getCache(REDIS_RATES_KEY);
+
+    if (cachedLatest && cachedLatest.rates) {
+      applyRates(
+        cachedLatest.rates,
+        cachedPairs || cachedLatest.pairs,
+        "Redis Cache (Dynamic Store)",
+        cachedLatest.lastUpdated
+      );
+      return { success: true, fromCache: true, source: rateSource };
+    }
+
+    // 2. Cache miss -> Fetch from Open Exchange API and populate Redis
+    console.log("[Currency Service] Redis cache empty. Fetching from Open Exchange API to seed Redis...");
+    return await fetchAndCacheRates();
+  } catch (err) {
+    console.error("[Currency Service] Sync error:", err.message);
+    return { success: false, error: err.message };
+  }
+};
+
+// Immediate initialization on boot
+syncFromRedisOrProvider();
 
 /**
- * In-Memory Financial Arithmetic Calculation using Pair Matrix & Cross-Rates.
- * 
- * @param {number} amount - Amount to convert
- * @param {string} from - Source currency code (e.g. 'LKR')
- * @param {string} to - Target currency code (e.g. 'USD')
- * @returns {number} Converted value
+ * In-Memory Financial Arithmetic Calculation using Redis Pair Matrix.
  */
 const convertAmountInMemory = (amount, from = "LKR", to = "USD") => {
   const fromCode = (from || "LKR").trim().toUpperCase();
@@ -194,21 +190,17 @@ const convertAmountInMemory = (amount, from = "LKR", to = "USD") => {
 
   let converted = 0;
   if (PAIR_RATES[directPair]) {
-    // 1. Direct pair exists in matrix
     converted = Number(amount) * PAIR_RATES[directPair];
   } else if (PAIR_RATES[inversePair]) {
-    // 2. Inverse pair exists in matrix
     converted = Number(amount) / PAIR_RATES[inversePair];
   } else if (PAIR_RATES[`LKR:${toCode}`] && PAIR_RATES[`LKR:${fromCode}`]) {
-    // 3. Cross-rate calculation via base LKR pivot
     const crossRate = PAIR_RATES[`LKR:${toCode}`] / PAIR_RATES[`LKR:${fromCode}`];
     converted = Number(amount) * crossRate;
   } else {
-    // Fallback registry calculation
-    const fromInfo = CURRENCY_REGISTRY[fromCode] || CURRENCY_REGISTRY.LKR;
-    const toInfo = CURRENCY_REGISTRY[toCode] || CURRENCY_REGISTRY.USD;
-    const inLkr = Number(amount) * fromInfo.rateToLKR;
-    converted = inLkr / toInfo.rateToLKR;
+    const fromRate = CURRENCY_REGISTRY[fromCode]?.rateToLKR || 1.0;
+    const toRate = CURRENCY_REGISTRY[toCode]?.rateToLKR || 1.0;
+    const inLkr = Number(amount) * fromRate;
+    converted = inLkr / toRate;
   }
 
   const targetInfo = CURRENCY_REGISTRY[toCode] || CURRENCY_REGISTRY.USD;
@@ -216,7 +208,7 @@ const convertAmountInMemory = (amount, from = "LKR", to = "USD") => {
 };
 
 /**
- * Converts a raw amount in LKR to a target currency with rich metadata.
+ * Converts raw LKR amount to target currency.
  */
 const convertFromLKR = (rawLkrAmount, targetCurrency = "LKR") => {
   const normalizedTarget = (targetCurrency || "LKR").trim().toUpperCase();
@@ -239,7 +231,7 @@ const convertFromLKR = (rawLkrAmount, targetCurrency = "LKR") => {
     currency: currencyInfo.code,
     symbol: currencyInfo.symbol,
     rate: currencyInfo.rateToLKR,
-    pair_rate: PAIR_RATES[`LKR:${normalizedTarget}`] || (1 / currencyInfo.rateToLKR),
+    pair_rate: PAIR_RATES[`LKR:${normalizedTarget}`] || (currencyInfo.rateToLKR ? (1 / currencyInfo.rateToLKR) : 1),
     amount: convertedAmount,
     formatted: formattedAmount,
   };
@@ -257,7 +249,7 @@ const convert = (amount, fromCurrency = "LKR", toCurrency = "USD") => {
 
   const convertedAmount = convertAmountInMemory(amount, fromCode, toCode);
   const pairKey = `${fromCode}:${toCode}`;
-  const effectiveRate = PAIR_RATES[pairKey] || Number((fromInfo.rateToLKR / toInfo.rateToLKR).toFixed(6));
+  const effectiveRate = PAIR_RATES[pairKey] || (fromInfo.rateToLKR && toInfo.rateToLKR ? Number((fromInfo.rateToLKR / toInfo.rateToLKR).toFixed(6)) : 1);
 
   return {
     from: fromInfo.code,
@@ -274,7 +266,7 @@ const convert = (amount, fromCurrency = "LKR", toCurrency = "USD") => {
 };
 
 /**
- * Returns list of all supported currencies, pair matrix and metadata.
+ * Returns all active currencies and pair matrix metadata.
  */
 const getAllCurrencies = () => {
   return {
@@ -290,7 +282,7 @@ const getAllCurrencies = () => {
       symbol: c.symbol,
       rate_against_lkr: c.rateToLKR,
       pair_lkr_to_curr: PAIR_RATES[`LKR:${c.code}`],
-      description: `1 ${c.code} = ${c.rateToLKR} LKR`,
+      description: c.rateToLKR ? `1 ${c.code} = ${c.rateToLKR} LKR` : "Loading...",
     })),
   };
 };
@@ -299,6 +291,7 @@ module.exports = {
   CURRENCY_REGISTRY,
   PAIR_RATES,
   fetchAndCacheRates,
+  syncFromRedisOrProvider,
   convertAmountInMemory,
   convertFromLKR,
   convert,
