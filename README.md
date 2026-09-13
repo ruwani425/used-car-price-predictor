@@ -67,7 +67,7 @@ Upstash provides a fully managed, serverless Cloud Redis instance with SSL/TLS e
 4. **Configure in Project**:
    - Open `backend/.env` and paste your Redis connection string:
      ```env
-     REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
+     REDIS_URL=rediss://default:your_password@your-endpoint.upstash.io:6379
      ```
 5. **Verify Data via Web**:
    - Open the **"Data Browser"** tab in Upstash Console to view stored cache keys (`currency:rates`, `currency:exchange_rates:latest`) and live TTL countdown timers.
@@ -81,11 +81,11 @@ Open Exchange Rates provides official foreign exchange rates for converting LKR 
 1. **Sign Up**: Visit [openexchangerates.org/signup/free](https://openexchangerates.org/signup/free) and create a free developer account (includes 1,000 free API requests per month).
 2. **Obtain App ID**:
    - After signing in, go to the **"App IDs"** section in your dashboard: [openexchangerates.org/account/app-ids](https://openexchangerates.org/account/app-ids).
-   - Copy your 32-character **App ID** (e.g., `cda30b7d944b4f71b8a861df1d899384`).
+   - Copy your 32-character **App ID** (e.g., `your_open_exchange_app_id_here`).
 3. **Configure in Project**:
    - Open `backend/.env` and add your App ID:
      ```env
-     OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
+     OPEN_EXCHANGE_APP_ID=your_open_exchange_app_id_here
      ```
 4. **Quota Efficiency Guaranteed**:
    - Thanks to the **3-hour Redis caching strategy** (`0 */3 * * *`), our backend makes **only 8 API requests per day** ($8 \times 30 = 240 \text{ requests/month}$), using only 24% of the monthly 1,000 free quota while allowing unlimited frontend currency conversions.
@@ -145,8 +145,8 @@ To run the complete system, open **3 separate terminal windows** (one for each m
    ```env
    PORT=5000
    ML_SERVICE_URL=http://localhost:8000
-   REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
-   OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
+   REDIS_URL=rediss://default:your_password@your-endpoint.upstash.io:6379
+   OPEN_EXCHANGE_APP_ID=your_open_exchange_app_id_here
    ```
 3. Install Node.js dependencies:
    ```powershell

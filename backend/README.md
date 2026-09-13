@@ -37,8 +37,8 @@ Create a `.env` file in the `backend` root:
 ```env
 PORT=5000
 ML_SERVICE_URL=http://localhost:8000
-REDIS_URL=rediss://default:gQAAAAAAAmP2AAIgcDI0MWJmNDNlNTAxNGU0NzJkODA2MzNkYzlhMzE1MGIyOQ@knowing-bird-156662.upstash.io:6379
-OPEN_EXCHANGE_APP_ID=cda30b7d944b4f71b8a861df1d899384
+REDIS_URL=rediss://default:your_password@your-endpoint.upstash.io:6379
+OPEN_EXCHANGE_APP_ID=your_open_exchange_app_id_here
 ```
 
 ### 3. Run Server
