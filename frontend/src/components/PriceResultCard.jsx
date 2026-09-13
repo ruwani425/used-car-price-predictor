@@ -131,10 +131,10 @@ Powered by AutoValuate`;
           </Box>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A', lineHeight: 1.2 }}>
-              Valuation Result
+              Fair Market Valuation
             </Typography>
             <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.75rem' }}>
-              Computed via {modelUsed} Regressor
+              Real-time Market Valuation Engine
             </Typography>
           </Box>
         </Box>
@@ -266,11 +266,11 @@ Powered by AutoValuate`;
             <Box display="flex" alignItems="center" gap={0.8}>
               <SecurityIcon sx={{ color: '#4F46E5', fontSize: 18 }} />
               <Typography variant="caption" sx={{ fontWeight: 700, color: '#475569', letterSpacing: '0.04em' }}>
-                STATISTICAL CONFIDENCE RANGE (95% CI)
+                ESTIMATED FAIR PRICE RANGE
               </Typography>
             </Box>
             <Typography variant="caption" sx={{ fontWeight: 700, color: '#4F46E5' }}>
-              ± 5% Margin
+              ± 5% Market Window
             </Typography>
           </Box>
 

@@ -15,7 +15,6 @@ import PredictionForm from './components/PredictionForm';
 import PriceResultCard from './components/PriceResultCard';
 import DepreciationChart from './components/DepreciationChart';
 import ValuationGuideCard from './components/ValuationGuideCard';
-import AnalyticsDashboard from './components/AnalyticsDashboard';
 import CarComparison from './components/CarComparison';
 import HistoryDrawer from './components/HistoryDrawer';
 
@@ -167,13 +166,8 @@ function App() {
             </Grid>
           )}
 
-          {/* Tab 1: Market Intelligence & ML Model Performance Analytics */}
+          {/* Tab 1: Side-by-Side Car Valuation Comparison */}
           {activeTab === 1 && (
-            <AnalyticsDashboard metadata={metadata} />
-          )}
-
-          {/* Tab 2: Side-by-Side Car Valuation Comparison */}
-          {activeTab === 2 && (
             <CarComparison metadata={metadata} selectedCurrency={selectedCurrency} />
           )}
         </Container>

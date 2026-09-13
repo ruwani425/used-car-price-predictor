@@ -219,10 +219,10 @@ export default function ValuationGuideCard({ selectedCurrency = 'LKR', onSelectP
               <CheckCircleIcon sx={{ color: '#4F46E5', fontSize: 18, mt: 0.2 }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A', fontSize: '0.84rem' }}>
-                  Gradient Boosting Regression (90.6% CV R²)
+                  Authentic Sri Lankan Market Pricing
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#64748B', lineHeight: 1.4, display: 'block' }}>
-                  Trained on authentic Sri Lankan used car listings across all major districts, capturing non-linear price curves.
+                  Derived from thousands of verified used car sales and listings across all districts and towns.
                 </Typography>
               </Box>
             </Box>
@@ -231,10 +231,10 @@ export default function ValuationGuideCard({ selectedCurrency = 'LKR', onSelectP
               <TrendingUpIcon sx={{ color: '#4F46E5', fontSize: 18, mt: 0.2 }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A', fontSize: '0.84rem' }}>
-                  5-Year Forecasted Residual Value
+                  5-Year Future Value & Depreciation Trends
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#64748B', lineHeight: 1.4, display: 'block' }}>
-                  Simulates vehicle age and future depreciation trends to help you time buying or selling.
+                  Projects how your car value holds up year over year to help you time buying or selling.
                 </Typography>
               </Box>
             </Box>
@@ -243,10 +243,10 @@ export default function ValuationGuideCard({ selectedCurrency = 'LKR', onSelectP
               <SecurityIcon sx={{ color: '#4F46E5', fontSize: 18, mt: 0.2 }} />
               <Box>
                 <Typography variant="body2" sx={{ fontWeight: 700, color: '#0F172A', fontSize: '0.84rem' }}>
-                  95% Confidence Upper & Lower Bounds
+                  Fair Negotiation Price Window
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#64748B', lineHeight: 1.4, display: 'block' }}>
-                  Provides realistic statistical price bounds based on market variability and condition factors.
+                  Provides expected low and high market pricing bounds to help with realistic negotiations.
                 </Typography>
               </Box>
             </Box>

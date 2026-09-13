@@ -103,8 +103,6 @@ export default function Navbar({
             </Box>
           </Box>
 
-          {/* Desktop Navigation Tabs */}
-          {!isMobile && (
             <Tabs
               value={activeTab}
               onChange={(e, val) => onTabChange && onTabChange(val)}
@@ -128,11 +126,9 @@ export default function Navbar({
                 },
               }}
             >
-              <Tab icon={<SpeedIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Valuation Predictor" />
-              <Tab icon={<InsightsIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Market Intelligence" />
+              <Tab icon={<DirectionsCarFilledIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Price Calculator" />
               <Tab icon={<CompareArrowsIcon sx={{ fontSize: 18 }} />} iconPosition="start" label="Compare Cars" />
             </Tabs>
-          )}
 
           {/* Controls: Currency Toggle & API Health Pill */}
           <Box display="flex" alignItems="center" gap={1.2}>
@@ -239,9 +235,8 @@ export default function Navbar({
               },
             }}
           >
-            <Tab icon={<SpeedIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Predictor" />
-            <Tab icon={<InsightsIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Intelligence" />
-            <Tab icon={<CompareArrowsIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Compare" />
+            <Tab icon={<DirectionsCarFilledIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Price Calculator" />
+            <Tab icon={<CompareArrowsIcon sx={{ fontSize: 16 }} />} iconPosition="start" label="Compare Cars" />
           </Tabs>
         )}
       </Container>
