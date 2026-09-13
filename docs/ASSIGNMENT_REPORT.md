@@ -15,9 +15,9 @@
 | Role | Student Name | Student ID | Batch | Assigned Implementation Steps & Scope |
 | :--- | :--- | :---: | :---: | :--- |
 | **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **Step 01**: Data Cleaning & 7 Feature Engineering Pipelines<br>**Step 03**: FastAPI ML Microservice REST Endpoints<br>**Step 05**: Multi-Currency Conversion Engine & Prediction History Store<br>**Step 07**: Price Result Card & Interactive 5-Year Depreciation Chart<br>**Step 09**: Fullstack End-to-End Integration & Error Boundaries |
-| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Benchmarking & Champion Model Export<br>**Step 04**: Express.js API Gateway, Input Validation & ML Proxy<br>**Step 06**: Dark Luxury UI Theme & Cascading Valuation Form<br>**Step 08**: Model Analytics Leaderboard & Car Comparison Matrix<br>**Step 10**: Architecture Documentation & Academic Project Report |
+| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Benchmarking & Champion Model Export<br>**Step 04**: Express.js API Gateway, Input Validation & ML Proxy<br>**Step 06**: Dark Luxury UI Theme & Cascading Valuation Form<br>**Step 08**: Model Analytics Leaderboard & Car Comparison Matrix<br>**Step 10**: Architecture Documentation & Academic Project Report<br>**Step 11**: Upstash Cloud Redis Caching & Live Open Exchange Rates API Integration |
 
-#### 📋 10-Step Implementation Work Allocation Breakdown
+#### 📋 11-Step Implementation Work Allocation Breakdown
 
 | Step | Phase / Task Description | Assigned Member | Student Name | Student ID |
 | :---: | :--- | :---: | :--- | :---: |
@@ -31,6 +31,8 @@
 | **Step 08** | Model Analytics Leaderboard & Side-by-Side Car Comparison Tool | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
 | **Step 09** | Fullstack End-to-End Integration, Error Boundaries & Latency Monitoring | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
 | **Step 10** | System Architecture Documentation, Academic Report & Viva Defense Prep | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+| **Step 11** | Upstash Cloud Redis Caching, Live Open Exchange Rates API & Minimalist 2-Column SaaS UI | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
+
 
 ---
 
