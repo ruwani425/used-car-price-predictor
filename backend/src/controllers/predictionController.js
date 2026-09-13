@@ -4,21 +4,21 @@ const historyService = require("../services/historyService");
 
 /**
  * Handles POST /api/predict
- * Forwards validated vehicle attributes to ML service, performs multi-currency conversion,
- * records in history service, and returns fully enriched payload matching assignment spec.
+ * Validates vehicle inputs, forwards to ML service, performs currency conversion,
+ * records the result in session history, and returns the prediction response.
  */
 const handlePrediction = async (req, res, next) => {
   try {
     const payload = req.body;
     const targetCurrency = req.preferredCurrency || payload.target_currency || req.query.currency || "USD";
 
-    // Call ML Microservice
+    // Call Python ML microservice
     const mlResponse = await mlClient.predictPrice(payload);
 
     const lakhs = mlResponse.predicted_price_lkr_lakhs;
     const lkrRaw = mlResponse.predicted_price_lkr_raw;
 
-    // Currency Conversion (Technique / Engine)
+    // Convert raw LKR price to requested target currency
     const convertedPrice = currencyService.convertFromLKR(lkrRaw, targetCurrency);
 
     // Format display string helper

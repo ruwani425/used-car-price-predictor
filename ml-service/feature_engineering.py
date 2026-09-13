@@ -1,13 +1,13 @@
 """
-Feature Engineering Pipeline for Used Car Price Prediction System.
-Implements 7 mandatory techniques:
-  1. Domain-Specific Derived Features (Car_Age, Mileage_Per_Year, Luxury_Score)
-  2. Irrelevant Feature Removal (Drop 'Unnamed: 0', 'Date')
-  3. Binary Feature Encoding (Amenities, Condition, Leasing -> 0/1)
-  4. High-Cardinality Management (Rare Model grouping < 5 to 'Other', Frequency Encoding for Brand & Town, One-Hot for Gear & Fuel Type)
-  5. Outlier Treatment & IQR Winsorization (Mileage & Price IQR Capping)
-  6. Logarithmic Target Transformation (np.log1p / np.expm1)
-  7. Feature Scaling & Scikit-Learn Pipeline Integration (StandardScaler)
+Feature engineering pipeline for used car price prediction.
+Transforms raw vehicle attributes into features for model training:
+1. Derived features: Car_Age, Mileage_Per_Year, Luxury_Score
+2. Remove unneeded columns: Unnamed: 0, Date
+3. Binary encoding: Amenities, Condition, Leasing
+4. High-cardinality handling: Rare models (< 5 count) to 'OTHER', Frequency encoding for Brand & Town
+5. Outlier capping: IQR clipping on mileage
+6. Target transformation: log(1 + Price)
+7. Standard scaling with Scikit-Learn Pipeline
 """
 
 import numpy as np
@@ -18,7 +18,7 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
 
-# Standard column name aliases (support both CSV and API JSON format)
+# Column name aliases for CSV and API JSON compatibility
 COLUMN_ALIASES = {
     "Brand": "brand",
     "Model": "model",
@@ -53,12 +53,8 @@ def standardize_columns(df: pd.DataFrame) -> pd.DataFrame:
 
 class CarFeatureEngineer(BaseEstimator, TransformerMixin):
     """
-    Custom Scikit-Learn Transformer implementing domain-specific feature engineering:
-    - Technique 1: Derived features (Car_Age, Mileage_Per_Year, Luxury_Score)
-    - Technique 2: Irrelevant feature removal ('unnamed:_0', 'date')
-    - Technique 3: Binary feature encoding (Amenities, Condition, Leasing -> 0/1)
-    - Technique 4: High-cardinality grouping (Rare models < 5 -> 'Other') & Frequency Encoding for Brand and Town
-    - Technique 5: Outlier Winsorization for mileage
+    Custom transformer to perform domain feature extraction, encoding,
+    rare model grouping, and outlier treatment.
     """
 
     def __init__(self, current_year=2025, rare_model_threshold=5, mileage_iqr_multiplier=1.5):

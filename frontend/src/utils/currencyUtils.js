@@ -1,7 +1,4 @@
-/**
- * Frontend Currency Utilities & Dynamic Exchange Rates.
- * Synchronizes with Backend Redis Cache & Open Exchange Rates API.
- */
+// Helper utilities for currency conversion and exchange rate configuration
 
 export const CURRENCY_CONFIG = {
   LKR: {

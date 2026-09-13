@@ -1,12 +1,6 @@
 """
-Python FastAPI ML Microservice for Used Car Price Valuation.
-GDSE Machine Learning Assignment - Step 3 (ml-service)
-
-Exposes:
-  - POST /api/ml/predict (and /predict): Real-time price inference + confidence intervals + 5-year depreciation curve
-  - GET  /api/ml/metadata (and /metadata): Brands, Models hierarchy, Towns, Fuel Types
-  - GET  /api/ml/metrics  (and /metrics): 5-Model comparison leaderboard & Feature Importances
-  - GET  / (and /health): Health check
+FastAPI service for the used car price predictor.
+Exposes endpoints for real-time model prediction, vehicle metadata, and evaluation metrics.
 """
 
 import os
@@ -20,21 +14,21 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
-# Ensure UTF-8 output encoding for Windows PowerShell consoles
+# Set UTF-8 encoding for Windows consoles
 if sys.stdout.encoding != "utf-8":
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
 
-# Initialize FastAPI App
+# Initialize FastAPI application
 app = FastAPI(
-    title="Used Car Price Valuation ML Service",
-    description="Microservice providing real-time AI valuation, confidence bounds, and depreciation forecasting.",
+    title="Used Car Price Valuation Service",
+    description="FastAPI microservice for used car price estimation and depreciation forecasting.",
     version="1.0.0",
 )
 
-# Enable CORS for communication with Express Gateway (5000) and React (5173)
+# Enable CORS for frontend and backend gateway
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -49,14 +43,14 @@ MODEL_PKL_PATH = os.path.join(MODELS_DIR, "car_price_model.pkl")
 METADATA_PATH = os.path.join(MODELS_DIR, "metadata.json")
 METRICS_PATH = os.path.join(MODELS_DIR, "metrics.json")
 
-# Global variables for loaded artifacts
+# In-memory storage for loaded model and metadata
 model_bundle = None
 metadata_cache = {}
 metrics_cache = {}
 
 
 def load_artifacts():
-    """Loads model pipeline and JSON caches into memory."""
+    """Load the trained model pipeline and cached metadata from disk."""
     global model_bundle, metadata_cache, metrics_cache
 
     # 1. Load Model Bundle

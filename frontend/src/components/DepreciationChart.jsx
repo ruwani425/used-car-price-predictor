@@ -10,9 +10,7 @@ import {
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import { convertFromLKR } from '../utils/currencyUtils';
 
-/**
- * Clean Minimalist SVG Depreciation Chart (Blue & White SaaS Theme).
- */
+// Interactive SVG chart showing 5-year depreciation curve
 export default function DepreciationChart({
   depreciationData = [],
   initialLakhs = 0,

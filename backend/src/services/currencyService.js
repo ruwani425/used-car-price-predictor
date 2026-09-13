@@ -2,13 +2,12 @@ const axios = require("axios");
 const { getCache, setCache, isRedisAvailable } = require("../config/redis");
 
 /**
- * Enterprise Multi-Currency Conversion Engine (Redis Cache-Driven)
- * Supported Currencies: LKR (Base), USD ($), EUR (€), GBP (£), JPY (¥).
+ * Currency conversion service.
+ * Supported currencies: LKR (Base), USD, EUR, GBP, JPY.
  * 
- * Rules:
- * - NO HARDCODED EXCHANGE RATES
- * - All rates & pairs are retrieved dynamically from Redis Cache ('currency:rates')
- * - On cache miss/expiry, synchronizes from Open Exchange Rates API directly into Redis
+ * - Caches exchange rates in Redis with a 3-hour TTL.
+ * - Fetches fresh rates from Open Exchange Rates API on cache miss or cron sync.
+ * - Falls back to safe default rates if the external API is unreachable.
  */
 
 const REDIS_RATES_KEY = "currency:rates";
@@ -56,6 +55,7 @@ const CURRENCY_REGISTRY = {
 let PAIR_RATES = {};
 let lastUpdated = null;
 let rateSource = "Uninitialized";
+
 
 /**
  * Computes pair matrix (LKR:USD, USD:LKR, etc.) from base rates.

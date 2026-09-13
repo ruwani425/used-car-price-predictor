@@ -1,9 +1,6 @@
 /**
- * Automated Verification Script for Step 4 (Express Gateway).
- * Tests:
- * 1. Gateway health check
- * 2. Payload validation (testing 400 Bad Request on invalid payload)
- * 3. Root endpoint routing
+ * Integration tests for the Express API gateway.
+ * Tests health check, payload validation, and history endpoints.
  */
 
 const http = require("http");

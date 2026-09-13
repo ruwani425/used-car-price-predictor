@@ -6,10 +6,10 @@ const {
   getPredictionHistory,
 } = require("../controllers/predictionController");
 
-// POST /api/predict (Validates input -> Proxies to ML service -> Returns enriched response)
+// POST /api/predict - validate vehicle input and compute valuation
 router.post("/", validatePredictionPayload, handlePrediction);
 
-// GET /api/predict/history
+// GET /api/predict/history - retrieve recent valuation history
 router.get("/history", getPredictionHistory);
 
 module.exports = router;

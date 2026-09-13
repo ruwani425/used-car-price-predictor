@@ -1,10 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 
-/**
- * Modern Minimalist Light SaaS Theme (Blue & White) for AutoValuate.
- * Inspired by clean Dribbble product dashboards: Crisp white cards, 
- * slate-900 typography, subtle 1px slate-200 borders, and royal indigo accents.
- */
+// Material-UI custom theme configuration (clean light theme with indigo accent)
 export const darkTheme = createTheme({
   palette: {
     mode: 'light',

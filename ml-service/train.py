@@ -1,23 +1,7 @@
 """
-Model Training, Benchmarking, and Hyperparameter Tuning Script.
-GDSE Machine Learning Assignment - Step 2 (ml-service)
-
-This script:
-1. Loads the cleaned dataset (dataset/car_price_dataset_clean.csv).
-2. Performs 80/20 train-test split.
-3. Fits the 7-technique Feature Engineering & Preprocessing Pipeline.
-4. Trains and evaluates 5 Regression Algorithms:
-   - Linear Regression
-   - Ridge Regression (L2 Regularized)
-   - Decision Tree Regressor
-   - Random Forest Regressor
-   - Gradient Boosting / XGBoost Regressor
-5. Calculates evaluation metrics: R² Score, RMSE (Lakhs), MAE (Lakhs), MAPE (%).
-6. Extracts Feature Importances.
-7. Saves:
-   - Best Model Pipeline -> models/car_price_model.pkl
-   - Comparison Leaderboard & Feature Importances -> models/metrics.json
-   - Application Metadata & Brand-Model Mappings -> models/metadata.json
+Train and evaluate 5 regression models on the cleaned used car dataset.
+Compares Linear Regression, Ridge, Decision Tree, Random Forest, and Gradient Boosting.
+Exports the best model to models/car_price_model.pkl and metrics to models/metrics.json.
 """
 
 import os
@@ -28,7 +12,7 @@ import joblib
 import numpy as np
 import pandas as pd
 
-# Ensure UTF-8 output encoding for Windows PowerShell consoles
+# Set UTF-8 encoding for Windows consoles
 if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
@@ -37,12 +21,13 @@ from sklearn.linear_model import LinearRegression, RidgeCV
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
-# Try to import XGBoost if available, otherwise use GradientBoostingRegressor
+# Optional XGBoost import if installed, otherwise GradientBoostingRegressor is used
 try:
     import xgboost as xgb
     XGB_AVAILABLE = True
 except ImportError:
     XGB_AVAILABLE = False
+
 
 from feature_engineering import (
     CarFeatureEngineer,
@@ -126,27 +111,27 @@ def train_and_benchmark():
     )
     print(f"[SPLIT] Training Set: {len(X_train)} samples | Test Set: {len(X_test)} samples")
 
-    # 3. Target Transformations (Technique 5: IQR Clipping & Technique 6: Log Transformation)
+    # 3. Target handling (IQR outlier clipping & log1p transformation)
     y_train_clipped, lower_bound, upper_bound = clip_target_outliers(y_train_raw, iqr_multiplier=2.5)
     y_train_log = log_transform_target(y_train_clipped)
 
     print(f"[TARGET] Target IQR Capping Bounds: [{lower_bound:.2f}, {upper_bound:.2f}] Lakhs")
     print(f"[TARGET] Log-transformed target skewness: {y_train_log.skew():.2f}")
 
-    # 4. Fit Feature Engineering Preprocessor on Training Data
+    # 4. Build and fit preprocessing pipeline on training set
     fe = CarFeatureEngineer(current_year=2025, rare_model_threshold=5)
     preprocessor = build_full_preprocessing_pipeline(fe)
     
-    print("[PIPELINE] Fitting 7 Feature Engineering & ColumnTransformer Pipeline...")
+    print("[PIPELINE] Fitting feature engineering and preprocessing pipeline...")
     X_train_transformed = preprocessor.fit_transform(X_train)
     X_test_transformed = preprocessor.transform(X_test)
     print(f"[PIPELINE] Transformed feature count: {X_train_transformed.shape[1]}")
 
     feature_names = get_feature_names(preprocessor)
 
-    # 5. Define Candidate Regression Models with Hyperparameters
+    # 5. Define 5 regression models with tuned hyperparameters
     print("\n" + "-" * 70)
-    print("[BENCHMARK] TRAINING & EVALUATING 5 REGRESSION ALGORITHMS")
+    print("[BENCHMARK] Training and evaluating 5 regression algorithms...")
     print("-" * 70)
 
     models_config = {

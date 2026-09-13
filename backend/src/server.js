@@ -65,7 +65,7 @@ app.get("/", (req, res) => {
   res.status(200).json({
     name: "Used Car Price Predictor Backend Gateway",
     version: "1.0.0",
-    description: "Enterprise REST API Gateway interfacing React UI and Python FastAPI ML Microservice",
+    description: "REST API Gateway interfacing React frontend and Python FastAPI ML microservice",
     docs: {
       predict: "POST /api/predict (supports ?currency=USD or body.target_currency)",
       metadata: "GET /api/metadata",
