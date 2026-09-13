@@ -142,26 +142,14 @@ def train_and_benchmark():
             n_jobs=-1,
             random_state=42,
         ),
-    }
-
-    if XGB_AVAILABLE:
-        models_config["XGBoost Regressor"] = xgb.XGBRegressor(
-            n_estimators=200,
-            learning_rate=0.08,
-            max_depth=7,
-            subsample=0.85,
-            colsample_bytree=0.85,
-            random_state=42,
-            n_jobs=-1,
-        )
-    else:
-        models_config["Gradient Boosting"] = GradientBoostingRegressor(
+        "Gradient Boosting": GradientBoostingRegressor(
             n_estimators=180,
             learning_rate=0.08,
             max_depth=6,
             subsample=0.85,
             random_state=42,
-        )
+        ),
+    }
 
     benchmark_results = []
     trained_models = {}
