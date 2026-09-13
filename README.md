@@ -18,59 +18,6 @@ An end-to-end, production-grade Machine Learning and Web Application system desi
 
 ---
 
-## 🏛️ System Architecture
-
-The platform is architected as an enterprise 3-tier microservices system:
-
-```mermaid
-graph TD
-    subgraph ClientTier ["Frontend (Vite + React 19 + MUI Modern SaaS)"]
-        UI["React Single Page Application (:5173)"]
-        Form["Vehicle Specification Form"]
-        Card["Fair Market Valuation Display"]
-        Chart["5-Year Depreciation Forecast Curve"]
-        Compare["Car Comparison Matrix"]
-        Hist["Valuation History Drawer"]
-    end
-
-    subgraph GatewayTier ["Backend Gateway (Node.js + Express.js :5000)"]
-        GW["Express REST API Gateway"]
-        Val["Payload Validation Middleware"]
-        Curr["Multi-Currency Engine (currencyService.js)"]
-        Cron["3-Hour Cron Sync Job (node-cron)"]
-        Redis["Upstash Cloud Redis Cache (3h TTL)"]
-        OpenEx["Open Exchange Rates API"]
-        Client["Axios ML Client Proxy"]
-    end
-
-    subgraph MLServiceTier ["ML Microservice (Python + FastAPI + Scikit-Learn :8000)"]
-        API["FastAPI REST Microservice"]
-        Pipeline["Inference Preprocessing Pipeline"]
-        Model["Gradient Boosting Regressor (.pkl)"]
-        Metadata["Model Metadata & Taxonomy Registry"]
-        Metrics["Evaluation Metrics & Benchmarks"]
-    end
-
-    UI -->|REST API Requests| GW
-    GW -->|POST /api/predict| Val
-    Val -->|Validated Payload| Client
-    Client -->|Internal HTTP Proxy| API
-    API --> Pipeline
-    Pipeline --> Model
-    Model -->|Predicted Log Price| Pipeline
-    Pipeline -->|Inverse Exp Transform| API
-    API -->|Prediction Result LKR Lakhs| Client
-    Client --> Curr
-    Curr <-->|Read / Write Cached Rates| Redis
-    Cron -->|Fetch Every 3 Hours| OpenEx
-    OpenEx -->|Live Exchange JSON| Cron
-    Cron -->|Set TTL Cache| Redis
-    Curr --> Hist
-    Hist -->|Enriched Multi-Currency JSON| UI
-```
-
----
-
 ## 📊 ML Model Performance & Leaderboard
 
 The models were evaluated on 9,770 cleaned Sri Lankan vehicle records using 5-Fold Cross-Validation and a held-out test split (80/20):
