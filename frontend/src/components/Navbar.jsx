@@ -47,44 +47,42 @@ export default function Navbar({
       position="sticky"
       elevation={0}
       sx={{
-        backgroundColor: 'rgba(11, 15, 25, 0.85)',
-        backdropFilter: 'blur(16px)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: '#FFFFFF',
+        borderBottom: '1px solid #E2E8F0',
         zIndex: (theme) => theme.zIndex.drawer + 1,
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar disableGutters sx={{ justifyContent: 'space-between', py: 1 }}>
+        <Toolbar disableGutters sx={{ justifyContent: 'space-between', py: 0.8 }}>
           {/* Logo & Branding */}
           <Box display="flex" alignItems="center" gap={1.5}>
             <Box
               sx={{
-                width: 44,
-                height: 44,
-                borderRadius: 2.5,
-                background: 'linear-gradient(135deg, #00E5FF 0%, #0077B6 100%)',
+                width: 38,
+                height: 38,
+                borderRadius: 2,
+                backgroundColor: '#4F46E5',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 18px rgba(0, 229, 255, 0.35)',
+                boxShadow: '0 2px 8px rgba(79, 70, 229, 0.25)',
               }}
             >
-              <DirectionsCarFilledIcon sx={{ color: '#031024', fontSize: 26 }} />
+              <DirectionsCarFilledIcon sx={{ color: '#FFFFFF', fontSize: 22 }} />
             </Box>
             <Box>
               <Box display="flex" alignItems="center" gap={1}>
                 <Typography
                   variant="h6"
                   sx={{
-                    fontWeight: 800,
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
                     letterSpacing: '-0.02em',
-                    background: 'linear-gradient(90deg, #FFFFFF 30%, #00E5FF 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
+                    color: '#0F172A',
                     lineHeight: 1.2,
                   }}
                 >
-                  AutoValuate AI
+                  AutoValuate
                 </Typography>
                 <Chip
                   label="PRO ML"
@@ -92,15 +90,15 @@ export default function Navbar({
                   sx={{
                     height: 18,
                     fontSize: '0.65rem',
-                    fontWeight: 800,
-                    backgroundColor: 'rgba(0, 229, 255, 0.15)',
-                    color: '#00E5FF',
-                    border: '1px solid rgba(0, 229, 255, 0.3)',
+                    fontWeight: 700,
+                    backgroundColor: '#EEF2FF',
+                    color: '#4F46E5',
+                    border: '1px solid #C7D2FE',
                   }}
                 />
               </Box>
-              <Typography variant="caption" sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'block' } }}>
-                Sri Lankan Vehicle Valuation & Market Predictor
+              <Typography variant="caption" sx={{ color: '#64748B', display: { xs: 'none', sm: 'block' }, fontSize: '0.75rem' }}>
+                Sri Lankan Automotive Valuation & Intelligence
               </Typography>
             </Box>
           </Box>
@@ -115,18 +113,18 @@ export default function Navbar({
               sx={{
                 '& .MuiTab-root': {
                   minHeight: 48,
-                  fontSize: '0.9rem',
+                  fontSize: '0.88rem',
                   fontWeight: 600,
-                  color: '#94A3B8',
+                  color: '#64748B',
+                  textTransform: 'none',
                   '&.Mui-selected': {
-                    color: '#00E5FF',
+                    color: '#4F46E5',
                   },
                 },
                 '& .MuiTabs-indicator': {
-                  backgroundColor: '#00E5FF',
-                  height: 3,
-                  borderRadius: 2,
-                  boxShadow: '0 0 12px #00E5FF',
+                  backgroundColor: '#4F46E5',
+                  height: 2.5,
+                  borderRadius: 1,
                 },
               }}
             >
@@ -137,26 +135,27 @@ export default function Navbar({
           )}
 
           {/* Controls: Currency Toggle & API Health Pill */}
-          <Box display="flex" alignItems="center" gap={1.5}>
+          <Box display="flex" alignItems="center" gap={1.2}>
             {/* Currency Selector */}
             <Box display="flex" alignItems="center" gap={0.8}>
-              <CurrencyExchangeIcon sx={{ color: '#00E5FF', fontSize: 20, display: { xs: 'none', sm: 'block' } }} />
+              <CurrencyExchangeIcon sx={{ color: '#64748B', fontSize: 18, display: { xs: 'none', sm: 'block' } }} />
               <FormControl size="small">
                 <Select
                   value={selectedCurrency}
                   onChange={(e) => onCurrencyChange && onCurrencyChange(e.target.value)}
                   sx={{
-                    height: 36,
-                    fontSize: '0.85rem',
-                    fontWeight: 700,
-                    color: '#F8FAFC',
-                    backgroundColor: 'rgba(19, 28, 46, 0.9)',
-                    borderRadius: 2,
+                    height: 34,
+                    fontSize: '0.82rem',
+                    fontWeight: 600,
+                    color: '#0F172A',
+                    backgroundColor: '#F8FAFC',
+                    borderRadius: 1.5,
+                    border: '1px solid #E2E8F0',
                     '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'rgba(0, 229, 255, 0.25)',
+                      border: 'none',
                     },
-                    '&:hover .MuiOutlinedInput-notchedOutline': {
-                      borderColor: '#00E5FF',
+                    '&:hover': {
+                      backgroundColor: '#F1F5F9',
                     },
                   }}
                 >
@@ -176,43 +175,45 @@ export default function Navbar({
                   size="small"
                   onClick={onOpenHistory}
                   sx={{
-                    color: '#94A3B8',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    '&:hover': { color: '#00E5FF', backgroundColor: 'rgba(0, 229, 255, 0.1)' },
+                    color: '#475569',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: 1.5,
+                    p: 0.8,
+                    '&:hover': { color: '#4F46E5', backgroundColor: '#F8FAFC' },
                   }}
                 >
-                  <HistoryIcon sx={{ fontSize: 20 }} />
+                  <HistoryIcon sx={{ fontSize: 18 }} />
                 </IconButton>
               </Tooltip>
             )}
 
             {/* API Status Badge */}
-            <Tooltip title={apiStatus === 'online' ? 'All Microservices Operational (Port 5000 & 8000)' : 'Connecting to API Gateway...'}>
+            <Tooltip title={apiStatus === 'online' ? 'All Microservices Operational' : 'Connecting to API Gateway...'}>
               <Chip
                 icon={
                   apiStatus === 'online' ? (
                     <Box
                       sx={{
-                        width: 8,
-                        height: 8,
+                        width: 7,
+                        height: 7,
                         borderRadius: '50%',
-                        backgroundColor: '#22C55E',
+                        backgroundColor: '#10B981',
                         ml: 1,
                       }}
                       className="pulsing-status"
                     />
                   ) : (
-                    <WarningAmberIcon sx={{ fontSize: '14px !important', color: '#F59E0B' }} />
+                    <WarningAmberIcon sx={{ fontSize: '13px !important', color: '#D97706' }} />
                   )
                 }
-                label={apiStatus === 'online' ? 'Live ML API' : 'Reconnecting...'}
+                label={apiStatus === 'online' ? 'Live ML API' : 'Connecting...'}
                 size="small"
                 sx={{
-                  backgroundColor: apiStatus === 'online' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(245, 158, 11, 0.12)',
-                  color: apiStatus === 'online' ? '#4ADE80' : '#FBBF24',
-                  border: `1px solid ${apiStatus === 'online' ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)'}`,
+                  backgroundColor: apiStatus === 'online' ? '#ECFDF5' : '#FFFBEB',
+                  color: apiStatus === 'online' ? '#059669' : '#D97706',
+                  border: `1px solid ${apiStatus === 'online' ? '#A7F3D0' : '#FDE68A'}`,
                   fontWeight: 600,
-                  fontSize: '0.75rem',
+                  fontSize: '0.72rem',
                   display: { xs: 'none', sm: 'flex' },
                 }}
               />
@@ -229,11 +230,12 @@ export default function Navbar({
             textColor="primary"
             indicatorColor="primary"
             sx={{
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+              borderTop: '1px solid #E2E8F0',
               '& .MuiTab-root': {
-                minHeight: 44,
+                minHeight: 40,
                 fontSize: '0.8rem',
                 fontWeight: 600,
+                textTransform: 'none',
               },
             }}
           >
