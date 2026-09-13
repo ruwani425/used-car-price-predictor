@@ -14,6 +14,7 @@ import Navbar from './components/Navbar';
 import PredictionForm from './components/PredictionForm';
 import PriceResultCard from './components/PriceResultCard';
 import DepreciationChart from './components/DepreciationChart';
+import ValuationGuideCard from './components/ValuationGuideCard';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import CarComparison from './components/CarComparison';
 import HistoryDrawer from './components/HistoryDrawer';
@@ -29,6 +30,7 @@ function App() {
   const [metadata, setMetadata] = useState(null);
   const [loading, setLoading] = useState(false);
   const [predictionResult, setPredictionResult] = useState(null);
+  const [presetData, setPresetData] = useState(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' });
 
@@ -100,10 +102,17 @@ function App() {
     }
   };
 
+  // Handle Preset Click from Guide
+  const handleSelectPreset = (preset) => {
+    setPresetData(preset);
+    // Automatically trigger valuation for preset for lightning UX
+    handleValuationSubmit(preset);
+  };
+
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
-      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
         {/* Navigation Bar with Multi-Currency Selector & History Button */}
         <Navbar
           activeTab={activeTab}
@@ -115,38 +124,46 @@ function App() {
         />
 
         {/* Main Content Area */}
-        <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 3, md: 5 } }}>
-          {/* Tab 0: Main Valuation Predictor */}
+        <Container maxWidth="xl" sx={{ flexGrow: 1, py: { xs: 3, md: 4 } }}>
+          {/* Tab 0: Main Valuation Predictor (Balanced 2-Column SaaS Layout) */}
           {activeTab === 0 && (
-            <Grid container spacing={3.5}>
+            <Grid container spacing={3.5} alignItems="flex-start">
               {/* Left Column: Vehicle Valuation Input Form */}
-              <Grid item xs={12} lg={predictionResult ? 7 : 12}>
+              <Grid size={{ xs: 12, lg: 5 }}>
                 <PredictionForm
                   metadata={metadata}
                   onSubmit={handleValuationSubmit}
                   loading={loading}
                   selectedCurrency={selectedCurrency}
+                  presetData={presetData}
                 />
               </Grid>
 
-              {/* Right Column: Prediction Result Card & Depreciation Chart */}
-              {predictionResult && (
-                <Grid item xs={12} lg={5}>
-                  <PriceResultCard
-                    result={predictionResult}
+              {/* Right Column: Dynamic Valuation Result & Depreciation Chart OR Market Intelligence Guide */}
+              <Grid size={{ xs: 12, lg: 7 }}>
+                {predictionResult ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                    <PriceResultCard
+                      result={predictionResult}
+                      selectedCurrency={selectedCurrency}
+                      onCurrencyChange={setSelectedCurrency}
+                      onCopyNotice={(msg) =>
+                        setNotification({ open: true, message: msg, severity: 'info' })
+                      }
+                    />
+                    <DepreciationChart
+                      depreciationData={predictionResult.depreciation_projection}
+                      initialLakhs={predictionResult.predicted_price_lkr_lakhs}
+                      selectedCurrency={selectedCurrency}
+                    />
+                  </Box>
+                ) : (
+                  <ValuationGuideCard
                     selectedCurrency={selectedCurrency}
-                    onCurrencyChange={setSelectedCurrency}
-                    onCopyNotice={(msg) =>
-                      setNotification({ open: true, message: msg, severity: 'info' })
-                    }
+                    onSelectPreset={handleSelectPreset}
                   />
-                  <DepreciationChart
-                    depreciationData={predictionResult.depreciation_projection}
-                    initialLakhs={predictionResult.predicted_price_lkr_lakhs}
-                    selectedCurrency={selectedCurrency}
-                  />
-                </Grid>
-              )}
+                )}
+              </Grid>
             </Grid>
           )}
 

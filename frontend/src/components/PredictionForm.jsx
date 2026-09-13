@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -33,11 +33,29 @@ const FALLBACK_MODELS = {
 };
 const FALLBACK_TOWNS = ['Colombo', 'Gampaha', 'Kandy', 'Kurunegala', 'Kalutara', 'Negombo', 'Galle', 'Matara', 'Ratnapura', 'Anuradhapura'];
 
+const INITIAL_STATE = {
+  brand: 'TOYOTA',
+  model: 'AXIO',
+  yom: 2017,
+  engine_cc: 1500,
+  gear: 'Automatic',
+  fuel_type: 'Hybrid',
+  mileage_km: 75000,
+  town: 'Colombo',
+  condition: 'USED',
+  leasing: 'No Leasing',
+  air_condition: true,
+  power_steering: true,
+  power_mirror: true,
+  power_window: true,
+};
+
 export default function PredictionForm({
   metadata = {},
   onSubmit,
   loading = false,
   selectedCurrency = 'LKR',
+  presetData = null,
 }) {
   const brands = metadata?.unique_brands?.length ? metadata.unique_brands : FALLBACK_BRANDS;
   const brandModelsMap = metadata?.brand_models_map || FALLBACK_MODELS;
@@ -45,33 +63,26 @@ export default function PredictionForm({
   const fuelTypes = metadata?.unique_fuel_types?.length ? metadata.unique_fuel_types : ['Petrol', 'Hybrid', 'Diesel', 'Electric'];
   const gears = metadata?.unique_gears?.length ? metadata.unique_gears : ['Automatic', 'Manual'];
 
-  const [formData, setFormData] = useState({
-    brand: 'TOYOTA',
-    model: 'AXIO',
-    yom: 2017,
-    engine_cc: 1500,
-    gear: 'Automatic',
-    fuel_type: 'Hybrid',
-    mileage_km: 75000,
-    town: 'Colombo',
-    condition: 'USED',
-    leasing: 'No Leasing',
-    air_condition: true,
-    power_steering: true,
-    power_mirror: true,
-    power_window: true,
-  });
+  const [formData, setFormData] = useState(INITIAL_STATE);
 
-  const brandKey = formData.brand.toUpperCase();
+  // Sync external preset if provided
+  useEffect(() => {
+    if (presetData) {
+      setFormData(presetData);
+    }
+  }, [presetData]);
+
+  const brandKey = (formData.brand || 'TOYOTA').toUpperCase();
   const availableModels =
     brandModelsMap[brandKey] && brandModelsMap[brandKey].length > 0
       ? brandModelsMap[brandKey]
       : ['OTHER'];
 
-  const luxuryScore = (formData.air_condition ? 1 : 0) +
-                      (formData.power_steering ? 1 : 0) +
-                      (formData.power_mirror ? 1 : 0) +
-                      (formData.power_window ? 1 : 0);
+  const luxuryScore =
+    (formData.air_condition ? 1 : 0) +
+    (formData.power_steering ? 1 : 0) +
+    (formData.power_mirror ? 1 : 0) +
+    (formData.power_window ? 1 : 0);
 
   const handleInputChange = (field, value) => {
     if (field === 'brand') {
@@ -107,80 +118,76 @@ export default function PredictionForm({
   };
 
   const handleReset = () => {
-    setFormData({
-      brand: 'TOYOTA',
-      model: 'AXIO',
-      yom: 2017,
-      engine_cc: 1500,
-      gear: 'Automatic',
-      fuel_type: 'Hybrid',
-      mileage_km: 75000,
-      town: 'Colombo',
-      condition: 'USED',
-      leasing: 'No Leasing',
-      air_condition: true,
-      power_steering: true,
-      power_mirror: true,
-      power_window: true,
-    });
+    setFormData(INITIAL_STATE);
   };
 
   return (
-    <Card sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+    <Card
+      sx={{
+        borderRadius: 3,
+        overflow: 'hidden',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+        backgroundColor: '#FFFFFF',
+      }}
+    >
       {/* Header Banner */}
       <Box
         sx={{
           backgroundColor: '#FFFFFF',
           borderBottom: '1px solid #E2E8F0',
           p: 2.5,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 1.5,
         }}
       >
-        <Box display="flex" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={1}>
-          <Box display="flex" alignItems="center" gap={1.2}>
-            <Box
-              sx={{
-                width: 36,
-                height: 36,
-                borderRadius: 2,
-                backgroundColor: '#EEF2FF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <DirectionsCarIcon sx={{ color: '#4F46E5', fontSize: 20 }} />
-            </Box>
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A' }}>
-                Vehicle Specifications
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
-                Enter vehicle parameters to calculate real-time ML market valuation
-              </Typography>
-            </Box>
-          </Box>
-
-          <Chip
-            icon={<AutoAwesomeIcon sx={{ fontSize: '13px !important', color: '#B45309' }} />}
-            label={`Luxury Index: ${luxuryScore} / 4`}
-            size="small"
+        <Box display="flex" alignItems="center" gap={1.2}>
+          <Box
             sx={{
-              backgroundColor: '#FEF3C7',
-              color: '#92400E',
-              border: '1px solid #FDE68A',
-              fontWeight: 700,
-              fontSize: '0.75rem',
+              width: 36,
+              height: 36,
+              borderRadius: 2,
+              backgroundColor: '#EEF2FF',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
+          >
+            <DirectionsCarIcon sx={{ color: '#4F46E5', fontSize: 20 }} />
+          </Box>
+          <Box>
+            <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A' }}>
+              Vehicle Specifications
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
+              Enter vehicle parameters to calculate real-time ML market valuation
+            </Typography>
+          </Box>
         </Box>
+
+        <Chip
+          icon={<AutoAwesomeIcon sx={{ fontSize: '13px !important', color: '#B45309' }} />}
+          label={`Luxury Index: ${luxuryScore} / 4`}
+          size="small"
+          sx={{
+            backgroundColor: '#FEF3C7',
+            color: '#92400E',
+            border: '1px solid #FDE68A',
+            fontWeight: 700,
+            fontSize: '0.75rem',
+          }}
+        />
       </Box>
 
       {/* Form Content */}
       <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
         <form onSubmit={handleSubmit}>
-          <Grid container spacing={2}>
+          <Grid container spacing={2.2}>
             {/* 1. Brand */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="brand-select-label">Vehicle Brand</InputLabel>
                 <Select
@@ -199,7 +206,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 2. Model */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="model-select-label">Vehicle Model</InputLabel>
                 <Select
@@ -218,7 +225,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 3. Year of Manufacture */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Box>
                 <Box display="flex" justifyContent="space-between" mb={0.4}>
                   <Typography variant="caption" fontWeight="600" color="#475569">
@@ -245,7 +252,7 @@ export default function PredictionForm({
                       clickable
                       onClick={() => handleInputChange('yom', yr)}
                       sx={{
-                        height: 20,
+                        height: 22,
                         fontSize: '0.72rem',
                         backgroundColor: formData.yom === yr ? '#EEF2FF' : '#F8FAFC',
                         color: formData.yom === yr ? '#4F46E5' : '#64748B',
@@ -259,7 +266,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 4. Mileage */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <Box>
                 <Box display="flex" justifyContent="space-between" mb={0.4}>
                   <Typography variant="caption" fontWeight="600" color="#475569">
@@ -286,7 +293,7 @@ export default function PredictionForm({
                       clickable
                       onClick={() => handleInputChange('mileage_km', km)}
                       sx={{
-                        height: 20,
+                        height: 22,
                         fontSize: '0.72rem',
                         backgroundColor: formData.mileage_km === km ? '#EEF2FF' : '#F8FAFC',
                         color: formData.mileage_km === km ? '#4F46E5' : '#64748B',
@@ -300,7 +307,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 5. Engine Capacity */}
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="engine-cc-label">Engine (cc)</InputLabel>
                 <Select
@@ -318,8 +325,8 @@ export default function PredictionForm({
               </FormControl>
             </Grid>
 
-            {/* 6. Gear */}
-            <Grid item xs={12} sm={4}>
+            {/* 6. Transmission */}
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="gear-select-label">Transmission</InputLabel>
                 <Select
@@ -338,7 +345,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 7. Fuel Type */}
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="fuel-select-label">Fuel Type</InputLabel>
                 <Select
@@ -357,7 +364,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* 8. Location */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="town-select-label">Town / City</InputLabel>
                 <Select
@@ -375,8 +382,8 @@ export default function PredictionForm({
               </FormControl>
             </Grid>
 
-            {/* 9. Condition & Leasing */}
-            <Grid item xs={12} sm={3}>
+            {/* 9. Condition */}
+            <Grid size={{ xs: 6, sm: 3 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="condition-select-label">Condition</InputLabel>
                 <Select
@@ -391,7 +398,8 @@ export default function PredictionForm({
               </FormControl>
             </Grid>
 
-            <Grid item xs={12} sm={3}>
+            {/* 10. Leasing */}
+            <Grid size={{ xs: 6, sm: 3 }}>
               <FormControl fullWidth size="small">
                 <InputLabel id="leasing-select-label">Leasing</InputLabel>
                 <Select
@@ -407,7 +415,7 @@ export default function PredictionForm({
             </Grid>
 
             {/* Luxury Options Divider */}
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Divider sx={{ my: 0.5 }}>
                 <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, letterSpacing: '0.04em' }}>
                   FACTORY POWER & COMFORT OPTIONS
@@ -415,8 +423,8 @@ export default function PredictionForm({
               </Divider>
             </Grid>
 
-            {/* 10. Luxury Feature Toggles */}
-            <Grid item xs={6} sm={3}>
+            {/* 11. Luxury Feature Toggles */}
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Box
                 sx={{
                   p: 1.2,
@@ -442,7 +450,7 @@ export default function PredictionForm({
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Box
                 sx={{
                   p: 1.2,
@@ -468,7 +476,7 @@ export default function PredictionForm({
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Box
                 sx={{
                   p: 1.2,
@@ -494,7 +502,7 @@ export default function PredictionForm({
               </Box>
             </Grid>
 
-            <Grid item xs={6} sm={3}>
+            <Grid size={{ xs: 6, sm: 3 }}>
               <Box
                 sx={{
                   p: 1.2,
@@ -521,14 +529,14 @@ export default function PredictionForm({
             </Grid>
 
             {/* Action Buttons */}
-            <Grid item xs={12} display="flex" gap={1.5} mt={0.5}>
+            <Grid size={12} display="flex" gap={1.5} mt={0.5}>
               <Button
                 type="submit"
                 variant="contained"
                 fullWidth
                 disabled={loading}
                 startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <AutoAwesomeIcon />}
-                sx={{ py: 1.2, fontSize: '0.92rem' }}
+                sx={{ py: 1.3, fontSize: '0.92rem', fontWeight: 700 }}
               >
                 {loading ? 'Calculating Fair Valuation...' : 'Calculate Fair Market Valuation'}
               </Button>
@@ -542,6 +550,7 @@ export default function PredictionForm({
                   borderColor: '#E2E8F0',
                   color: '#475569',
                   px: 2.5,
+                  fontWeight: 600,
                   '&:hover': {
                     borderColor: '#CBD5E1',
                     backgroundColor: '#F8FAFC',

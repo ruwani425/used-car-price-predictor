@@ -169,8 +169,8 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
       {/* Dual Vehicle Form Cards */}
       <Grid container spacing={3} mb={3}>
         {/* Car 1 Config */}
-        <Grid item xs={12} md={6}>
-          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <Chip label="VEHICLE A" sx={{ fontWeight: 700, bgcolor: '#EEF2FF', color: '#4F46E5', border: '1px solid #C7D2FE', fontSize: '0.75rem' }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
@@ -179,7 +179,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
             </Box>
 
             <Grid container spacing={1.8}>
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Brand</InputLabel>
                   <Select
@@ -198,7 +198,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Model</InputLabel>
                   <Select value={car1.model} label="Model" onChange={(e) => setCar1({ ...car1, model: e.target.value })}>
@@ -209,7 +209,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -220,7 +220,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -231,7 +231,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -242,7 +242,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Fuel Type</InputLabel>
                   <Select value={car1.fuel_type} label="Fuel Type" onChange={(e) => setCar1({ ...car1, fuel_type: e.target.value })}>
@@ -253,7 +253,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Transmission</InputLabel>
                   <Select value={car1.gear} label="Transmission" onChange={(e) => setCar1({ ...car1, gear: e.target.value })}>
@@ -268,8 +268,8 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
         </Grid>
 
         {/* Car 2 Config */}
-        <Grid item xs={12} md={6}>
-          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2.5, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" gap={1} mb={2}>
               <Chip label="VEHICLE B" sx={{ fontWeight: 700, bgcolor: '#E0F2FE', color: '#0369A1', border: '1px solid #BAE6FD', fontSize: '0.75rem' }} />
               <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0F172A' }}>
@@ -278,7 +278,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
             </Box>
 
             <Grid container spacing={1.8}>
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Brand</InputLabel>
                   <Select
@@ -297,7 +297,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Model</InputLabel>
                   <Select value={car2.model} label="Model" onChange={(e) => setCar2({ ...car2, model: e.target.value })}>
@@ -308,7 +308,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -319,7 +319,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -330,7 +330,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <TextField
                   fullWidth
                   size="small"
@@ -341,7 +341,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 />
               </Grid>
 
-              <Grid item xs={6}>
+              <Grid size={{ xs: 6 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Fuel Type</InputLabel>
                   <Select value={car2.fuel_type} label="Fuel Type" onChange={(e) => setCar2({ ...car2, fuel_type: e.target.value })}>
@@ -352,7 +352,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <FormControl fullWidth size="small">
                   <InputLabel>Transmission</InputLabel>
                   <Select value={car2.gear} label="Transmission" onChange={(e) => setCar2({ ...car2, gear: e.target.value })}>
@@ -368,7 +368,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
 
         {/* Error Notice */}
         {error && (
-          <Grid item xs={12}>
+          <Grid size={12}>
             <Alert severity="error" sx={{ borderRadius: 2 }}>
               {error}
             </Alert>
@@ -376,14 +376,14 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
         )}
 
         {/* Action Button */}
-        <Grid item xs={12} textAlign="center">
+        <Grid size={12} textAlign="center">
           <Button
             variant="contained"
             size="medium"
             onClick={handleCompare}
             disabled={loading}
             startIcon={loading ? <CircularProgress size={18} color="inherit" /> : <CompareArrowsIcon />}
-            sx={{ px: 4, py: 1.2, fontSize: '0.95rem' }}
+            sx={{ px: 4, py: 1.2, fontSize: '0.95rem', fontWeight: 700 }}
           >
             {loading ? 'Evaluating Dual Valuations...' : 'Compare Market Valuations'}
           </Button>
@@ -392,7 +392,7 @@ export default function CarComparison({ metadata = null, selectedCurrency = 'LKR
 
       {/* Comparison Results */}
       {result1 && result2 && (
-        <Card sx={{ borderRadius: 3, p: 3, mb: 3, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Card sx={{ borderRadius: 3, p: 3, mb: 3, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
           {/* Comparison Banner */}
           <Box
             sx={{

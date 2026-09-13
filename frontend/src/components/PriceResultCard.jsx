@@ -99,7 +99,7 @@ Powered by AutoValuate`;
         overflow: 'hidden',
         border: '1px solid #E2E8F0',
         boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
-        mb: 3,
+        backgroundColor: '#FFFFFF',
       }}
     >
       {/* Header Banner */}

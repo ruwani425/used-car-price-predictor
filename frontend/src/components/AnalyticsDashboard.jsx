@@ -258,8 +258,8 @@ export default function AnalyticsDashboard() {
 
       {/* 4 Metric Summary Cards */}
       <Grid container spacing={2} mb={3}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.8}>
               <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, fontSize: '0.72rem' }}>
                 CHAMPION ALGORITHM
@@ -275,8 +275,8 @@ export default function AnalyticsDashboard() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.8}>
               <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, fontSize: '0.72rem' }}>
                 5-FOLD CROSS-VALIDATION R²
@@ -292,8 +292,8 @@ export default function AnalyticsDashboard() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.8}>
               <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, fontSize: '0.72rem' }}>
                 TRAINED OBSERVATIONS
@@ -309,8 +309,8 @@ export default function AnalyticsDashboard() {
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card sx={{ borderRadius: 2.5, p: 2, border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={0.8}>
               <Typography variant="caption" sx={{ color: '#64748B', fontWeight: 700, fontSize: '0.72rem' }}>
                 ENGINEERED MATRIX
@@ -330,7 +330,7 @@ export default function AnalyticsDashboard() {
       {/* Row 2: Model Benchmark Table & Feature Importances */}
       <Grid container spacing={3} mb={3}>
         {/* Left: Model Leaderboard */}
-        <Grid item xs={12} lg={7}>
+        <Grid size={{ xs: 12, lg: 7 }}>
           <Card sx={{ borderRadius: 3, height: '100%', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
             <Box sx={{ p: 2.5, borderBottom: '1px solid #E2E8F0' }}>
               <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -410,8 +410,8 @@ export default function AnalyticsDashboard() {
         </Grid>
 
         {/* Right: Feature Importances */}
-        <Grid item xs={12} lg={5}>
-          <Card sx={{ borderRadius: 3, height: '100%', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+        <Grid size={{ xs: 12, lg: 5 }}>
+          <Card sx={{ borderRadius: 3, height: '100%', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
             <Box sx={{ p: 2.5, borderBottom: '1px solid #E2E8F0' }}>
               <Box display="flex" alignItems="center" justifyContent="space-between">
                 <Box display="flex" alignItems="center" gap={1}>
@@ -462,7 +462,7 @@ export default function AnalyticsDashboard() {
       </Grid>
 
       {/* Row 3: 7 Feature Engineering Summary */}
-      <Card sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+      <Card sx={{ borderRadius: 3, overflow: 'hidden', border: '1px solid #E2E8F0', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', backgroundColor: '#FFFFFF' }}>
         <Box sx={{ p: 2.5, borderBottom: '1px solid #E2E8F0' }}>
           <Typography variant="h6" sx={{ fontWeight: 700, fontSize: '1rem', color: '#0F172A' }}>
             7 Mandatory Feature Engineering Techniques
@@ -475,7 +475,7 @@ export default function AnalyticsDashboard() {
         <CardContent sx={{ p: 2.5 }}>
           <Grid container spacing={2}>
             {FEATURE_ENGINEERING_TECHNIQUES.map((tech) => (
-              <Grid item xs={12} sm={6} md={4} lg={3} key={tech.num}>
+              <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={tech.num}>
                 <Box
                   sx={{
                     p: 2,
