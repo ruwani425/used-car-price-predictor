@@ -235,43 +235,21 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-## 👥 Team & Work Distribution
+## 👥 Team & 11-Step Implementation Plan Breakdown
 
-### Summary of Roles & Responsibilities
-
-| Member | Student Name | Student ID | Batch | Assigned Implementation Steps & Scope |
-| :--- | :--- | :---: | :---: | :--- |
-| **Member 01** | **W. Himadi Yenushka De Silva** | `241711081` | GDSE 71 | **Step 01**: Data Cleaning & 7 Feature Engineering Pipelines<br>**Step 03**: FastAPI ML Microservice REST Endpoints<br>**Step 05**: Multi-Currency Engine & Prediction History System<br>**Step 07**: Live Prediction Result Card & Depreciation Chart<br>**Step 09**: End-to-End System Integration & Robustness Testing |
-| **Member 02** | **E.V. Ruwani Ranthika** | `241722021` | GDSE 72 | **Step 02**: Multi-Model Training, Hyperparameter Tuning & Export<br>**Step 04**: Express.js Backend REST API Gateway Setup<br>**Step 06**: Frontend Core Setup & Cascading Valuation Form<br>**Step 08**: Model Analytics Dashboard & Car Comparison Tool<br>**Step 10**: Final Documentation, Assignment Submission & Viva Prep<br>**Step 11**: Enterprise Cloud Redis Caching, Live Open Exchange Rates Integration & Minimalist SaaS UI Overhaul |
-
----
-
-### 📋 11-Step Implementation Plan Breakdown
-
-| Step | Phase / Task Description | Assigned Member | Student Name | Student ID |
-| :---: | :--- | :---: | :--- | :---: |
-| **Step 01** | Data Cleaning & Feature Engineering Pipeline (`ml-service/`) | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 02** | Multi-Model Training, Hyperparameter Tuning & Export (`ml-service/`) | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 03** | Python FastAPI ML Microservice Development (`ml-service/`) | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 04** | Express.js Backend REST API Gateway Setup (`backend/`) | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 05** | Multi-Currency Engine & Prediction History System (`backend/`) | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 06** | Frontend Core Setup & Cascading Valuation Form (`frontend/`) | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 07** | Live Prediction Result Card & Depreciation Chart (`frontend/`) | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 08** | Model Analytics Dashboard & Car Comparison Tool (`frontend/`) | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 09** | End-to-End System Integration & Robustness Testing (Full-Stack) | **Member 01** | W. Himadi Yenushka De Silva | `241711081` |
-| **Step 10** | Final Documentation, Assignment Submission & Viva Prep (`docs/`) | **Member 02** | E.V. Ruwani Ranthika | `241722021` |
-| **Step 11** | **Enterprise Cloud Redis Caching & Live Open Exchange Rates Integration** (`backend/` & `frontend/`) | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** |
-
----
-
-### 📝 Step 11 Detailed Specification (Member 02: E.V. Ruwani Ranthika)
-* **Objective**: Integrate official live foreign exchange rates API with Upstash Cloud Redis 3-hour TTL caching, automated cron background synchronization, and frontend minimalist SaaS layout revamp.
-* **Key Deliverables**:
-  1. **Live Open Exchange Rates Integration**: Connect official API (`app_id`) for dynamic USD, EUR, GBP, and JPY exchange rate resolution without hardcoded fallback rates.
-  2. **Upstash Serverless Cloud Redis**: Configure high-performance TLS connection (`rediss://`) with 3-hour cache TTL (`currency:rates`, `currency:exchange_rates:latest`).
-  3. **Automated Background Cron Worker**: Implement `node-cron` schedule (`0 */3 * * *`) guaranteeing only 240 requests/month (well within the 1,000 monthly free tier quota).
-  4. **Header Currency Resolution**: Implement Express middleware (`currencyMiddleware.js`) supporting `x-currency-code` header injection.
-  5. **Modern SaaS UI Redesign**: Overhaul layout into a balanced 2-column SaaS dashboard with Material-UI Grid v2 responsiveness.
+| Step | Implementation Phase & Task Description | Assigned Member | Student Name | Student ID | Batch |
+| :---: | :--- | :---: | :--- | :---: | :---: |
+| **Step 01** | **Data Cleaning & Feature Engineering Pipeline** (`ml-service/`)<br>• Deduplicate dataset rows and clean data anomalies.<br>• Implement 7 feature engineering techniques (Car Age, Mileage/Year, Luxury Score, rare model grouping, log transformation, IQR outlier clipping).<br>• Construct reusable Scikit-Learn preprocessing pipeline. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
+| **Step 02** | **Multi-Model Training, Hyperparameter Tuning & Export** (`ml-service/`)<br>• Train and benchmark 5 regression algorithms (Linear, Ridge, Decision Tree, Random Forest, Gradient Boosting).<br>• Compute $R^2$, RMSE, MAE, MAPE via 5-Fold Cross-Validation.<br>• Export serialized artifacts (`car_price_model.pkl`, `metrics.json`, `metadata.json`). | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 03** | **Python FastAPI ML Microservice Development** (`ml-service/`)<br>• Build high-performance FastAPI microservice (`app.py`).<br>• Expose `POST /api/ml/predict`, `GET /api/ml/metadata`, and `GET /api/ml/metrics`.<br>• Perform unit testing and interactive Swagger docs on port `8000`. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
+| **Step 04** | **Express.js Backend REST API Gateway Setup** (`backend/`)<br>• Initialize Node.js Express server architecture (server, routes, controllers).<br>• Implement request payload validation middleware.<br>• Build Axios ML proxy client forwarding requests to FastAPI (`:8000`). | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 05** | **Multi-Currency Engine & Prediction History System** (`backend/`)<br>• Implement base conversion engine and data models.<br>• Enrich valuation response with converted prices and formatting.<br>• Implement persistent prediction history retrieval endpoint (`GET /api/history`). | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
+| **Step 06** | **Frontend Core Setup & Cascading Valuation Form** (`frontend/`)<br>• Setup React 19 + Vite environment and Material UI theme.<br>• Build responsive Navbar and navigation layout.<br>• Create dynamic cascading Brand $\rightarrow$ Model dropdown form and option toggles. | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 07** | **Live Prediction Result Card & Depreciation Chart** (`frontend/`)<br>• Build `PriceResultCard.jsx` with animated price counter and confidence bounds.<br>• Build `DepreciationChart.jsx` (5-year forecasted compound residual value curve).<br>• Implement active currency selector toggle. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
+| **Step 08** | **Model Analytics Dashboard & Car Comparison Tool** (`frontend/`)<br>• Build `CarComparison.jsx` (side-by-side vehicle valuation comparator).<br>• Build recent prediction history slide-out drawer.<br>• Design comparative price delta metrics. | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 09** | **End-to-End System Integration & Robustness Testing** (Full-Stack)<br>• Validate complete 3-tier workflow across ports 8000, 5000, and 5173.<br>• Test edge cases (extreme mileage, rare models, invalid inputs) and configure error boundaries.<br>• Verify CORS policies, environment variables, and network latency. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
+| **Step 10** | **Final Documentation, Assignment Submission & Viva Prep** (`docs/`)<br>• Complete system architecture documentation, Mermaid diagrams, and run guides.<br>• Compile academic report sections (dataset profile, feature engineering, model benchmark tables).<br>• Prepare Viva Voce defense points and demonstration scripts. | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
+| **Step 11** | **Enterprise Cloud Redis Caching & Live Open Exchange Rates Integration** (`backend/` & `frontend/`)<br>• Connect official **Open Exchange Rates API** (`app_id`) for dynamic USD, EUR, GBP, and JPY exchange rate resolution.<br>• Integrate **Upstash Serverless Cloud Redis** (`rediss://`) with 3-hour cache TTL (`currency:rates`, `currency:exchange_rates:latest`).<br>• Implement automated **3-hour background cron worker** (`0 */3 * * *`) ensuring quota efficiency (240 requests/month).<br>• Implement Express `currencyMiddleware.js` for dynamic `x-currency-code` header resolution.<br>• Overhaul frontend into a balanced **2-column Minimalist SaaS Dashboard** with Material-UI Grid v2 responsiveness. | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** | **GDSE 72** |
 
 ---
 
