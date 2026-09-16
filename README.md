@@ -2,6 +2,9 @@
 
 An end-to-end, production-grade Machine Learning and Web Application system designed specifically for the **Sri Lankan Automobile Market**. Built for the **GDSE Machine Learning Module Assignment**, this platform bridges advanced machine learning regression techniques with a high-performance modern 3-tier microservices architecture.
 
+> **Live Cloud Deployment**: [http://ec2-13-251-129-76.ap-southeast-1.compute.amazonaws.com](http://ec2-13-251-129-76.ap-southeast-1.compute.amazonaws.com)  
+> **Direct Public IP**: [http://13.251.129.76](http://13.251.129.76)
+
 ---
 
 ## Key Features
