@@ -61,20 +61,30 @@ const validatePredictionPayload = (req, res, next) => {
     });
   }
 
-  // Standardize numeric types in req.body
+  const normalizeAmenity = (val) => {
+    if (val === true || val === 1 || val === "true" || val === "Available" || val === "available") {
+      return "Available";
+    }
+    if (val === false || val === 0 || val === "false" || val === "Not_Available" || val === "not_available") {
+      return "Not_Available";
+    }
+    return typeof val === "string" ? val.trim() : "Available";
+  };
+
+  // Standardize numeric and boolean types in req.body
   req.body.brand = brand.trim().toUpperCase();
   req.body.model = model.trim().toUpperCase();
   req.body.yom = Math.round(yomNum);
   req.body.engine_cc = parseFloat(ccNum);
   req.body.mileage_km = parseFloat(mileageNum);
-  req.body.town = (req.body.town || "Colombo").trim();
-  req.body.condition = (req.body.condition || "USED").trim().toUpperCase();
-  req.body.leasing = (req.body.leasing || "No Leasing").trim();
-  req.body.air_condition = (req.body.air_condition || "Available").trim();
-  req.body.power_steering = (req.body.power_steering || "Available").trim();
-  req.body.power_mirror = (req.body.power_mirror || "Available").trim();
-  req.body.power_window = (req.body.power_window || "Available").trim();
-  req.body.target_currency = (req.body.target_currency || "LKR").trim().toUpperCase();
+  req.body.town = (req.body.town ? String(req.body.town) : "Colombo").trim();
+  req.body.condition = (req.body.condition ? String(req.body.condition) : "USED").trim().toUpperCase();
+  req.body.leasing = (req.body.leasing ? String(req.body.leasing) : "No Leasing").trim();
+  req.body.air_condition = normalizeAmenity(req.body.air_condition);
+  req.body.power_steering = normalizeAmenity(req.body.power_steering);
+  req.body.power_mirror = normalizeAmenity(req.body.power_mirror);
+  req.body.power_window = normalizeAmenity(req.body.power_window);
+  req.body.target_currency = (req.body.target_currency ? String(req.body.target_currency) : "LKR").trim().toUpperCase();
 
   next();
 };
