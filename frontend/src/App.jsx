@@ -20,7 +20,7 @@ import HistoryDrawer from './components/HistoryDrawer';
 
 import { updateCurrencyRates } from './utils/currencyUtils';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL !== undefined ? import.meta.env.VITE_API_BASE_URL : (import.meta.env.PROD ? '' : 'http://localhost:5000');
 
 function App() {
   const [activeTab, setActiveTab] = useState(0);

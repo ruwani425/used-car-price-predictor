@@ -25,7 +25,7 @@ import {
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { convertFromLKR } from '../utils/currencyUtils';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env.VITE_API_BASE_URL !== undefined ? import.meta.env.VITE_API_BASE_URL : (import.meta.env.PROD ? '' : 'http://localhost:5000');
 
 const FALLBACK_BRANDS = ['TOYOTA', 'SUZUKI', 'NISSAN', 'HONDA', 'MITSUBISHI', 'HYUNDAI', 'MAZDA', 'MERCEDES-BENZ', 'BMW', 'AUDI'];
 const FALLBACK_MODELS = {
