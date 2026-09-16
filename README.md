@@ -185,7 +185,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-## 👥 Team & 11-Step Implementation Plan Breakdown
+## 👥 Team & 12-Step Implementation Plan Breakdown
 
 | Step | Implementation Phase & Task Description | Assigned Member | Student Name | Student ID | Batch |
 | :---: | :--- | :---: | :--- | :---: | :---: |
@@ -200,6 +200,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 | **Step 09** | **End-to-End System Integration & Robustness Testing** (Full-Stack)<br>• Validate complete 3-tier workflow across ports 8000, 5000, and 5173.<br>• Test edge cases (extreme mileage, rare models, invalid inputs) and configure error boundaries.<br>• Verify CORS policies, environment variables, and network latency. | **Member 01** | W. Himadi Yenushka De Silva | `241711081` | GDSE 71 |
 | **Step 10** | **Final Documentation, Assignment Submission & Viva Prep** (`docs/`)<br>• Complete system architecture documentation, Mermaid diagrams, and run guides.<br>• Compile academic report sections (dataset profile, feature engineering, model benchmark tables).<br>• Prepare Viva Voce defense points and demonstration scripts. | **Member 02** | E.V. Ruwani Ranthika | `241722021` | GDSE 72 |
 | **Step 11** | **Enterprise Cloud Redis Caching & Live Open Exchange Rates Integration** (`backend/` & `frontend/`)<br>• Connect official **Open Exchange Rates API** (`app_id`) for dynamic USD, EUR, GBP, and JPY exchange rate resolution.<br>• Integrate **Upstash Serverless Cloud Redis** (`rediss://`) with 3-hour cache TTL (`currency:rates`, `currency:exchange_rates:latest`).<br>• Implement automated **3-hour background cron worker** (`0 */3 * * *`) ensuring quota efficiency (240 requests/month).<br>• Implement Express `currencyMiddleware.js` for dynamic `x-currency-code` header resolution.<br>• Overhaul frontend into a balanced **2-column Minimalist SaaS Dashboard** with Material-UI Grid v2 responsiveness. | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** | **GDSE 72** |
+| **Step 12** | **Production Cloud Deployment on AWS EC2 & NGINX Reverse Proxy** (`devops/` & `cloud`)<br>• Provision and configure **AWS EC2 (Ubuntu 24.04 LTS)** in `ap-southeast-1 (Singapore)`.<br>• Configure 2GB virtual swap memory optimization for resource reliability on free-tier compute.<br>• Setup **NGINX Reverse Proxy** for Port 80 unified routing across React static build and Node.js `/api` endpoints.<br>• Configure **PM2 Process Manager** for 24/7 background execution, process monitoring, and auto-restart of Python FastAPI (`ml-service`) and Express Gateway (`backend-gateway`).<br>• Deploy live public application at `http://ec2-13-251-129-76.ap-southeast-1.compute.amazonaws.com`. | **Member 02** | **E.V. Ruwani Ranthika** | **`241722021`** | **GDSE 72** |
 
 ---
 
