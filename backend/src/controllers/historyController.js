@@ -8,71 +8,88 @@ const historyService = require("../services/historyService");
  *   - min_price: minimum price in Lakhs
  *   - max_price: maximum price in Lakhs
  */
-const getHistory = (req, res) => {
-  const { limit, brand, min_price, max_price } = req.query;
+const getHistory = async (req, res, next) => {
+  try {
+    const { limit, brand, min_price, max_price } = req.query;
 
-  const records = historyService.getRecords({
-    limit,
-    brand,
-    minPrice: min_price,
-    maxPrice: max_price,
-  });
+    const records = await historyService.getRecords({
+      limit,
+      brand,
+      minPrice: min_price,
+      maxPrice: max_price,
+    });
 
-  return res.status(200).json({
-    status: "success",
-    count: records.length,
-    filters_applied: {
-      limit: limit || 10,
-      brand: brand || null,
-      min_price: min_price || null,
-      max_price: max_price || null,
-    },
-    history: records,
-  });
+    return res.status(200).json({
+      status: "success",
+      source: historyService.isRedisActive() ? "redis_cloud" : "in_memory",
+      count: records.length,
+      filters_applied: {
+        limit: limit || 10,
+        brand: brand || null,
+        min_price: min_price || null,
+        max_price: max_price || null,
+      },
+      history: records,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 /**
  * GET /api/history/stats
  */
-const getHistoryStats = (req, res) => {
-  const stats = historyService.getStats();
-  return res.status(200).json({
-    status: "success",
-    stats,
-  });
+const getHistoryStats = async (req, res, next) => {
+  try {
+    const stats = await historyService.getStats();
+    return res.status(200).json({
+      status: "success",
+      stats,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 /**
  * GET /api/history/:id
  */
-const getHistoryById = (req, res) => {
-  const { id } = req.params;
-  const record = historyService.getById(id);
+const getHistoryById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const record = await historyService.getById(id);
 
-  if (!record) {
-    return res.status(404).json({
-      status: "fail",
-      message: `Prediction record with ID '${id}' not found.`,
+    if (!record) {
+      return res.status(404).json({
+        status: "fail",
+        message: `Prediction record with ID '${id}' not found.`,
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      prediction: record,
     });
+  } catch (err) {
+    next(err);
   }
-
-  return res.status(200).json({
-    status: "success",
-    prediction: record,
-  });
 };
 
 /**
  * DELETE /api/history
- * Clears in-memory prediction history.
+ * Clears prediction history from Redis & memory.
  */
-const clearHistory = (req, res) => {
-  const result = historyService.clear();
-  return res.status(200).json({
-    status: "success",
-    message: "Prediction history successfully cleared.",
-    ...result,
-  });
+const clearHistory = async (req, res, next) => {
+  try {
+    const result = await historyService.clear();
+    return res.status(200).json({
+      status: "success",
+      message: "Prediction history successfully cleared.",
+      ...result,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 module.exports = {

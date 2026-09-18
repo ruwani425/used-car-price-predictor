@@ -1,38 +1,68 @@
-/**
- * Prediction History Service for Used Car Price Predictor.
- * Manages runtime prediction records with filtering, searching, and eviction limits.
- */
+const { redisClient, isRedisAvailable } = require("../config/redis");
+
+const REDIS_HISTORY_KEY = "prediction:history";
+const MAX_HISTORY_SIZE = 100;
 
 class HistoryService {
-  constructor(maxSize = 100) {
+  constructor(maxSize = MAX_HISTORY_SIZE) {
     this.maxSize = maxSize;
-    this.records = [];
+    this.records = []; // In-memory fallback
+  }
+
+  isRedisActive() {
+    return isRedisAvailable() && redisClient !== null;
   }
 
   /**
-   * Adds a new prediction record to the top of the history list.
+   * Adds a new prediction record to Redis and local memory.
    */
-  addRecord(record) {
+  async addRecord(record) {
     const historyItem = {
       id: `pred_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       createdAt: new Date().toISOString(),
       ...record,
     };
 
+    // Update in-memory fallback
     this.records.unshift(historyItem);
-
     if (this.records.length > this.maxSize) {
       this.records.pop();
+    }
+
+    // Persist to Upstash Cloud Redis
+    if (this.isRedisActive()) {
+      try {
+        await redisClient.lpush(REDIS_HISTORY_KEY, JSON.stringify(historyItem));
+        await redisClient.ltrim(REDIS_HISTORY_KEY, 0, this.maxSize - 1);
+      } catch (err) {
+        console.warn("[HistoryService] Redis write failed, kept in-memory:", err.message);
+      }
     }
 
     return historyItem;
   }
 
   /**
-   * Retrieves records with optional filtering (brand, price range, limit).
+   * Retrieves history records with optional filters.
    */
-  getRecords({ limit = 10, brand = null, minPrice = null, maxPrice = null }) {
-    let filtered = this.records;
+  async getRecords({ limit = 10, brand = null, minPrice = null, maxPrice = null } = {}) {
+    let allRecords = this.records;
+
+    // Fetch from Redis if available
+    if (this.isRedisActive()) {
+      try {
+        const rawItems = await redisClient.lrange(REDIS_HISTORY_KEY, 0, this.maxSize - 1);
+        if (rawItems && rawItems.length > 0) {
+          allRecords = rawItems.map((item) => JSON.parse(item));
+          this.records = allRecords; // Sync in-memory cache
+        }
+      } catch (err) {
+        console.warn("[HistoryService] Redis read failed, using in-memory:", err.message);
+        allRecords = this.records;
+      }
+    }
+
+    let filtered = allRecords;
 
     if (brand && typeof brand === "string" && brand.trim()) {
       const brandClean = brand.trim().toUpperCase();
@@ -64,16 +94,26 @@ class HistoryService {
   /**
    * Retrieves single record by ID.
    */
-  getById(id) {
-    return this.records.find((r) => r.id === id) || null;
+  async getById(id) {
+    const records = await this.getRecords({ limit: this.maxSize });
+    return records.find((r) => r.id === id) || null;
   }
 
   /**
-   * Clears all stored records.
+   * Clears prediction history from Redis and in-memory.
    */
-  clear() {
+  async clear() {
     const previousCount = this.records.length;
     this.records = [];
+
+    if (this.isRedisActive()) {
+      try {
+        await redisClient.del(REDIS_HISTORY_KEY);
+      } catch (err) {
+        console.warn("[HistoryService] Redis clear failed:", err.message);
+      }
+    }
+
     return {
       cleared: true,
       cleared_count: previousCount,
@@ -83,8 +123,10 @@ class HistoryService {
   /**
    * Returns summary stats of stored predictions.
    */
-  getStats() {
-    const total = this.records.length;
+  async getStats() {
+    const records = await this.getRecords({ limit: this.maxSize });
+    const total = records.length;
+
     if (total === 0) {
       return {
         total_predictions: 0,
@@ -93,13 +135,13 @@ class HistoryService {
       };
     }
 
-    const sumPrice = this.records.reduce(
+    const sumPrice = records.reduce(
       (sum, r) => sum + (r.predicted_price_lkr_lakhs || 0),
       0
     );
 
     const brandCounts = {};
-    for (const r of this.records) {
+    for (const r of records) {
       const b = (r.requested_vehicle?.brand || r.vehicle_summary?.brand || "UNKNOWN").toUpperCase();
       brandCounts[b] = (brandCounts[b] || 0) + 1;
     }
@@ -112,5 +154,4 @@ class HistoryService {
   }
 }
 
-// Export singleton instance
-module.exports = new HistoryService(100);
+module.exports = new HistoryService(MAX_HISTORY_SIZE);

@@ -85,8 +85,8 @@ const handlePrediction = async (req, res, next) => {
       },
     };
 
-    // Save to centralized runtime history service
-    const savedRecord = historyService.addRecord(enrichedResponse);
+    // Save to centralized runtime history service (Redis Cloud + in-memory fallback)
+    const savedRecord = await historyService.addRecord(enrichedResponse);
     enrichedResponse.history_id = savedRecord.id;
 
     return res.status(200).json(enrichedResponse);
@@ -98,20 +98,24 @@ const handlePrediction = async (req, res, next) => {
 /**
  * Legacy/compat wrapper for GET /api/history
  */
-const getPredictionHistory = (req, res) => {
-  const { limit, brand, min_price, max_price } = req.query;
-  const records = historyService.getRecords({
-    limit,
-    brand,
-    minPrice: min_price,
-    maxPrice: max_price,
-  });
+const getPredictionHistory = async (req, res, next) => {
+  try {
+    const { limit, brand, min_price, max_price } = req.query;
+    const records = await historyService.getRecords({
+      limit,
+      brand,
+      minPrice: min_price,
+      maxPrice: max_price,
+    });
 
-  return res.status(200).json({
-    status: "success",
-    count: records.length,
-    history: records,
-  });
+    return res.status(200).json({
+      status: "success",
+      count: records.length,
+      history: records,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
