@@ -116,17 +116,22 @@ npm run dev
 ## API Testing & Verification (Postman)
 
 ### 1. Health Check (`GET /api/health`)
-![Health Check](https://github.com/user-attachments/assets/e1d6a5e9-eeab-4d38-9c97-503a496e5439)
+![Health Check](./docs/screenshots/health.png)
 
 ### 2. Vehicle Metadata (`GET /api/metadata`)
-![Metadata API](https://github.com/user-attachments/assets/7cf6a8b2-a1a5-4a92-b0b1-39f729c87929)
+![Metadata API](./docs/screenshots/metadata.png)
 
 ### 3. Currency Rates (`GET /api/currencies`)
-![Currency API](https://github.com/user-attachments/assets/7cd1466c-5a1f-481c-958a-926d16858dcf)
+![Currency API](./docs/screenshots/currencies.png)
 
 ### 4. Car Price Prediction (`POST /api/predict`)
-![Predict API Request](https://github.com/user-attachments/assets/4880660d-18ef-4a1a-a371-d1b02300b7b0)
-![Predict API Response](https://github.com/user-attachments/assets/929a65cf-4f68-4287-bef8-cb0fd3919ea8)
+![Predict API Request](./docs/screenshots/predict_request.png)
+![Predict API Response](./docs/screenshots/predict_response.png)
 
 ### 5. Prediction History (`GET /api/history`)
-![History API](https://github.com/user-attachments/assets/b1860e07-63b3-47df-82e7-1b04fde2fba3)
+![History API](./docs/screenshots/history.png)
+
+### 6. Model Benchmark & Metrics (`GET /api/analytics`)
+![Analytics API](./docs/screenshots/analytics.png)
+
+
