@@ -105,8 +105,19 @@ npm run dev
 | Method | Endpoint | Description | Service |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/health` | Service health status | Gateway (5000) |
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222404" src="https://github.com/user-attachments/assets/e1d6a5e9-eeab-4d38-9c97-503a496e5439" />
+
 | `GET` | `/api/metadata` | Brands, models, and city options | Gateway (5000) |
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222400" src="https://github.com/user-attachments/assets/7cf6a8b2-a1a5-4a92-b0b1-39f729c87929" />
+
 | `GET` | `/api/currencies` | Cached currency exchange rates | Gateway / Redis |
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222355" src="https://github.com/user-attachments/assets/7cd1466c-5a1f-481c-958a-926d16858dcf" />
+
 | `POST` | `/api/predict` | Car price prediction | Gateway -> ML (8000) |
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222346" src="https://github.com/user-attachments/assets/4880660d-18ef-4a1a-a371-d1b02300b7b0" />
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222411" src="https://github.com/user-attachments/assets/929a65cf-4f68-4287-bef8-cb0fd3919ea8" />
+
 | `GET` | `/api/history` | Previous prediction history | Gateway (5000) |
+<img width="1920" height="1020" alt="Screenshot 2026-09-18 222340" src="https://github.com/user-attachments/assets/b1860e07-63b3-47df-82e7-1b04fde2fba3" />
+
 | `GET` | `/docs` | Swagger OpenAPI documentation | ML Service (8000) |
