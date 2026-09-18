@@ -1,6 +1,6 @@
 """
-FastAPI service for the used car price predictor.
-Exposes endpoints for real-time model prediction, vehicle metadata, and evaluation metrics.
+FastAPI Microservice for Used Car Price Predictor.
+Exposes REST API endpoints for real-time model inference, metadata taxonomy, and metrics.
 """
 
 import os
@@ -28,7 +28,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Enable CORS for frontend and backend gateway
+# Enable CORS to allow requests from Frontend (Port 5173) and Express Gateway (Port 5000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -37,6 +37,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# File paths for model artifacts and cached JSONs
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELS_DIR = os.path.join(BASE_DIR, "models")
 MODEL_PKL_PATH = os.path.join(MODELS_DIR, "car_price_model.pkl")
@@ -50,22 +51,24 @@ metrics_cache = {}
 
 
 def load_artifacts():
-    """Load the trained model pipeline and cached metadata from disk."""
+    """
+    Loads serialized ML model pipeline, metadata, and evaluation metrics from disk into memory.
+    """
     global model_bundle, metadata_cache, metrics_cache
 
-    # 1. Load Model Bundle
+    # 1. Load trained Scikit-Learn Model Pipeline
     if os.path.exists(MODEL_PKL_PATH):
         try:
             model_bundle = joblib.load(MODEL_PKL_PATH)
             print(f"[STARTUP] Loaded model bundle successfully. Best model: {model_bundle.get('best_model_name')}")
         except Exception as e:
-            print(f"[ERROR] Failed to load model bundle from {MODEL_PKL_PATH}: {e}")
+            print(f"[ERROR] Failed to load model bundle: {e}")
             model_bundle = None
     else:
         print(f"[WARNING] Model file not found at {MODEL_PKL_PATH}")
         model_bundle = None
 
-    # 2. Load Metadata JSON
+    # 2. Load Metadata JSON (Dropdown taxonomy)
     if os.path.exists(METADATA_PATH):
         try:
             with open(METADATA_PATH, "r", encoding="utf-8") as f:
@@ -75,7 +78,7 @@ def load_artifacts():
             print(f"[ERROR] Failed to load metadata from {METADATA_PATH}: {e}")
             metadata_cache = {}
 
-    # 3. Load Metrics JSON
+    # 3. Load Evaluation Metrics JSON
     if os.path.exists(METRICS_PATH):
         try:
             with open(METRICS_PATH, "r", encoding="utf-8") as f:
@@ -86,19 +89,19 @@ def load_artifacts():
             metrics_cache = {}
 
 
-# Load artifacts on module import
+# Load artifacts immediately on startup
 load_artifacts()
 
 
-# Pydantic Schemas
+# Pydantic Schemas for Request and Response validation
 class CarPredictionRequest(BaseModel):
     brand: str = Field(..., example="TOYOTA")
-    model: str = Field(..., example="AXIO")
-    yom: int = Field(..., ge=1950, le=2026, example=2017)
+    model: str = Field(..., example="PREMIO")
+    yom: int = Field(..., ge=1950, le=2026, example=2018)
     engine_cc: float = Field(..., gt=0, example=1500)
     gear: str = Field(default="Automatic", example="Automatic")
-    fuel_type: str = Field(default="Hybrid", example="Hybrid")
-    mileage_km: float = Field(..., ge=0, example=75000)
+    fuel_type: str = Field(default="Petrol", example="Petrol")
+    mileage_km: float = Field(..., ge=0, example=45000)
     town: str = Field(default="Colombo", example="Colombo")
     condition: str = Field(default="USED", example="USED")
     leasing: str = Field(default="No Leasing", example="No Leasing")
@@ -134,7 +137,9 @@ class PredictionResponse(BaseModel):
 @app.get("/")
 @app.get("/health")
 def health_check():
-    """Service health check endpoint."""
+    """
+    Health check endpoint: verifies service status and whether models are loaded in memory.
+    """
     return {
         "status": "online",
         "service": "Used Car Price Valuation ML Microservice",
@@ -147,11 +152,17 @@ def health_check():
 
 
 def compute_prediction(car: CarPredictionRequest) -> Dict[str, Any]:
-    """Core prediction logic shared by both /api/ml/predict and /predict."""
+    """
+    Core prediction workflow:
+    1. Prepares input DataFrame from request payload.
+    2. Runs feature engineering and preprocessing transformations.
+    3. Runs model inference (in log space) and inverts to Price (Lakhs).
+    4. Computes confidence interval and 5-year depreciation forecast.
+    """
     if not model_bundle or "preprocessor" not in model_bundle or "model" not in model_bundle:
         raise HTTPException(
             status_code=503,
-            detail="ML Model pipeline is not loaded or unavailable. Please run train.py first.",
+            detail="ML Model pipeline is not loaded. Please run train.py first.",
         )
 
     try:
@@ -159,7 +170,7 @@ def compute_prediction(car: CarPredictionRequest) -> Dict[str, Any]:
         model = model_bundle["model"]
         best_model_name = model_bundle.get("best_model_name", "Gradient Boosting")
 
-        # Prepare single record DataFrame
+        # 1. Structure vehicle attributes into a single-row DataFrame
         input_data = {
             "brand": car.brand.strip().upper(),
             "model": car.model.strip().upper(),
@@ -178,22 +189,22 @@ def compute_prediction(car: CarPredictionRequest) -> Dict[str, Any]:
         }
         df_input = pd.DataFrame([input_data])
 
-        # Feature transformation
+        # 2. Transform raw features using fitted pipeline (Scaling, One-Hot Encoding)
         X_trans = preprocessor.transform(df_input)
 
-        # Model inference (trained on log1p)
+        # 3. Predict log-price and invert back to LKR Lakhs: Price = exp(pred) - 1
         pred_log = model.predict(X_trans)
         pred_lakhs = float(np.expm1(pred_log)[0])
 
-        # Floor at 1.0 Lakh for real-world car valuations
+        # 4. Set floor at 1.0 Lakh for realistic car prices
         pred_lakhs = max(1.0, round(pred_lakhs, 2))
         raw_lkr = int(round(pred_lakhs * 100000))
 
-        # Confidence Interval (~5% variance margin based on model test error)
+        # 5. Calculate Confidence Interval (+/- 5% margin based on model test error)
         min_lakhs = round(max(1.0, pred_lakhs * 0.95), 2)
         max_lakhs = round(pred_lakhs * 1.05, 2)
 
-        # 5-Year Forecasted Depreciation Projection (~7% compound depreciation per year)
+        # 6. Forecast 5-Year Depreciation Curve (assuming ~7% annual compound depreciation)
         current_year = 2025
         annual_depreciation_rate = 0.07
         depreciation_curve = []
@@ -238,9 +249,7 @@ def compute_prediction(car: CarPredictionRequest) -> Dict[str, Any]:
 @app.post("/predict", response_model=PredictionResponse)
 def predict_car_price(car: CarPredictionRequest):
     """
-    Real-time price valuation endpoint:
-    Accepts car attributes, returns predicted valuation in Lakhs and raw LKR,
-    confidence bounds, and 5-year depreciation projection.
+    POST endpoint for car price prediction.
     """
     return compute_prediction(car)
 
@@ -249,11 +258,9 @@ def predict_car_price(car: CarPredictionRequest):
 @app.get("/metadata")
 def get_metadata():
     """
-    Returns dropdown choices and vehicle taxonomy:
-    Brands, Brand-to-Model mappings, Towns, Fuel Types, Gears.
+    GET endpoint returning car taxonomy dropdown options (Brands, Models, Towns).
     """
     if not metadata_cache:
-        # Fallback to loading directly if empty
         if os.path.exists(METADATA_PATH):
             with open(METADATA_PATH, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -265,8 +272,7 @@ def get_metadata():
 @app.get("/metrics")
 def get_metrics():
     """
-    Returns model evaluation metrics:
-    Benchmark leaderboard (R2, RMSE, MAE, MAPE), Best Model, and Top Feature Importances.
+    GET endpoint returning model evaluation benchmark results and accuracy metrics.
     """
     if not metrics_cache:
         if os.path.exists(METRICS_PATH):

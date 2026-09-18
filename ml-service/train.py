@@ -1,7 +1,11 @@
 """
-Train and evaluate 3 representative regression models on the cleaned used car dataset.
-Compares Linear Regression (baseline), Random Forest (bagging), and Gradient Boosting (boosting champion).
-Exports the best model to models/car_price_model.pkl and metrics to models/metrics.json.
+Train and benchmark 3 regression models on the cleaned Sri Lankan vehicle dataset:
+1. Linear Regression (Interpretable baseline)
+2. Random Forest Regressor (Bagging ensemble)
+3. Gradient Boosting Regressor (Boosting champion)
+
+Evaluates models with 5-Fold Cross-Validation and exports the best model artifact
+along with metadata and metrics JSONs.
 """
 
 import os
@@ -15,12 +19,11 @@ import pandas as pd
 # Set UTF-8 encoding for Windows consoles
 if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
 from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, mean_absolute_percentage_error
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-
-
 
 from feature_engineering import (
     CarFeatureEngineer,
@@ -32,7 +35,9 @@ from feature_engineering import (
 
 
 def load_clean_data(clean_csv_path: str) -> pd.DataFrame:
-    """Loads and validates the clean dataset."""
+    """
+    Loads and validates the cleaned CSV dataset.
+    """
     if not os.path.exists(clean_csv_path):
         raise FileNotFoundError(f"Clean dataset not found at {clean_csv_path}. Please run clean_dataset.py first.")
     df = pd.read_csv(clean_csv_path)
@@ -42,14 +47,20 @@ def load_clean_data(clean_csv_path: str) -> pd.DataFrame:
 
 def evaluate_model_predictions(y_true_raw, y_pred_raw):
     """
-    Computes standard regression evaluation metrics in original units (Lakhs).
+    Calculates standard regression evaluation metrics in original units (LKR Lakhs):
+    - R² Score (Coefficient of determination)
+    - RMSE (Root Mean Squared Error)
+    - MAE (Mean Absolute Error)
+    - MAPE (Mean Absolute Percentage Error)
     """
+    # Prevent negative predicted prices
     y_pred_safe = np.maximum(y_pred_raw, 0.0)
     
     r2 = float(r2_score(y_true_raw, y_pred_safe))
     rmse = float(np.sqrt(mean_squared_error(y_true_raw, y_pred_safe)))
     mae = float(mean_absolute_error(y_true_raw, y_pred_safe))
     
+    # Calculate MAPE for prices greater than 0.1 Lakhs
     valid_mask = y_true_raw > 0.1
     if np.sum(valid_mask) > 0:
         mape = float(mean_absolute_percentage_error(y_true_raw[valid_mask], y_pred_safe[valid_mask]) * 100)
@@ -65,7 +76,9 @@ def evaluate_model_predictions(y_true_raw, y_pred_raw):
 
 
 def get_feature_names(fitted_pipeline):
-    """Extracts human-readable feature names from the fitted ColumnTransformer."""
+    """
+    Extracts human-readable feature column names from the fitted ColumnTransformer.
+    """
     try:
         col_transformer = fitted_pipeline.named_steps["col_transformer"]
         feature_names = []
@@ -84,16 +97,24 @@ def get_feature_names(fitted_pipeline):
 
 
 def train_and_benchmark():
+    """
+    Main training workflow:
+    1. Loads clean data and splits into 80% train / 20% test.
+    2. Applies IQR outlier clipping and log1p transform on Price.
+    3. Fits feature engineering & preprocessing pipeline.
+    4. Evaluates 3 algorithms with 5-fold CV.
+    5. Exports best model, metadata.json, and metrics.json.
+    """
     script_dir = os.path.dirname(os.path.abspath(__file__))
     dataset_path = os.path.join(script_dir, "dataset", "car_price_dataset_clean.csv")
     models_dir = os.path.join(script_dir, "models")
     os.makedirs(models_dir, exist_ok=True)
 
     print("=" * 70)
-    print("[STEP 2] MULTI-MODEL REGRESSION BENCHMARK & HYPERPARAMETER TUNING")
+    print("3-MODEL REGRESSION BENCHMARK & TRAINING")
     print("=" * 70)
 
-    # 1. Load Data
+    # 1. Load clean dataset and split into features (X) and target (y)
     df = load_clean_data(dataset_path)
     X = df.drop(columns=["Price"])
     y = df["Price"].astype(float)
@@ -104,7 +125,7 @@ def train_and_benchmark():
     )
     print(f"[SPLIT] Training Set: {len(X_train)} samples | Test Set: {len(X_test)} samples")
 
-    # 3. Target handling (IQR outlier clipping & log1p transformation)
+    # 3. Target Outlier Clipping and Log Transformation
     y_train_clipped, lower_bound, upper_bound = clip_target_outliers(y_train_raw, iqr_multiplier=2.5)
     y_train_log = log_transform_target(y_train_clipped)
 
@@ -122,13 +143,16 @@ def train_and_benchmark():
 
     feature_names = get_feature_names(preprocessor)
 
-    # 5. Define 3 representative algorithms: baseline, bagging, and boosting
+    # 5. Define 3 representative algorithms to train and compare
     print("\n" + "-" * 70)
     print("[BENCHMARK] Training Linear Regression, Random Forest, and Gradient Boosting...")
     print("-" * 70)
 
     models_config = {
+        # Baseline model: fast, linear, interpretable
         "Linear Regression": LinearRegression(),
+        
+        # Bagging ensemble model: robust, reduces variance
         "Random Forest": RandomForestRegressor(
             n_estimators=150,
             max_depth=20,
@@ -137,6 +161,8 @@ def train_and_benchmark():
             n_jobs=-1,
             random_state=42,
         ),
+        
+        # Boosting ensemble model: high predictive accuracy, sequential tree building
         "Gradient Boosting": GradientBoostingRegressor(
             n_estimators=180,
             learning_rate=0.08,
@@ -151,27 +177,28 @@ def train_and_benchmark():
     best_model_name = None
     best_r2 = -float("inf")
 
+    # 5-Fold Cross-Validation splitter
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
     for name, model in models_config.items():
         t0 = time.time()
         print(f"\n[MODEL] Training {name}...")
 
-        # 5-Fold Cross Validation on Training set
+        # Run 5-Fold Cross Validation on Training set in log space
         cv_scores = cross_val_score(model, X_train_transformed, y_train_log, cv=kf, scoring="r2")
         cv_r2_mean = float(np.mean(cv_scores))
         cv_r2_std = float(np.std(cv_scores))
 
-        # Train on full training set
+        # Train model on full training set
         model.fit(X_train_transformed, y_train_log)
         train_time = round(time.time() - t0, 2)
         trained_models[name] = model
 
-        # Predict on Test Set in log space, then invert to original LKR Lakhs
+        # Predict on Test Set in log space, then invert back to LKR Lakhs
         y_test_pred_log = model.predict(X_test_transformed)
         y_test_pred_raw = inverse_log_transform(y_test_pred_log)
 
-        # Compute Metrics in original LKR Lakhs
+        # Compute evaluation metrics in original Lakhs
         metrics = evaluate_model_predictions(y_test_raw.values, y_test_pred_raw)
 
         print(f"   [+] CV R2 Score (5-Fold): {cv_r2_mean:.4f} +/- {cv_r2_std:.4f}")
@@ -193,21 +220,21 @@ def train_and_benchmark():
         }
         benchmark_results.append(result_entry)
 
-        # Track best model
+        # Track the best model based on Test R² score
         if metrics["r2_score"] > best_r2:
             best_r2 = metrics["r2_score"]
             best_model_name = name
 
-    # 6. Leaderboard Summary Table
+    # 6. Display Leaderboard Summary Table
     print("\n" + "=" * 70)
-    print("[LEADERBOARD] FINAL MODEL BENCHMARK RESULTS (TEST SET EVALUATION)")
+    print("[LEADERBOARD] FINAL MODEL BENCHMARK RESULTS")
     print("=" * 70)
     leaderboard_df = pd.DataFrame(benchmark_results).sort_values(by="test_r2_score", ascending=False)
     print(leaderboard_df.to_string(index=False))
 
     print(f"\n[WINNER] BEST PERFORMING MODEL: {best_model_name} (Test R2 = {best_r2:.4f})")
 
-    # 7. Extract Feature Importances from the best model (or Tree model)
+    # 7. Extract Top Feature Importances from the best tree-based model
     best_estimator = trained_models[best_model_name]
     feature_importances = []
     
@@ -215,7 +242,7 @@ def train_and_benchmark():
         importances = best_estimator.feature_importances_
         sorted_indices = np.argsort(importances)[::-1]
         
-        for idx in sorted_indices[:20]:  # Top 20 features
+        for idx in sorted_indices[:20]:  # Top 20 most important features
             feature_importances.append({
                 "feature": feature_names[idx] if idx < len(feature_names) else f"feature_{idx}",
                 "importance": round(float(importances[idx]), 4),
@@ -231,7 +258,7 @@ def train_and_benchmark():
                 "importance_percent": round(float(importances[idx] * 100), 2)
             })
 
-    # 8. Export Full Pipeline Artifact (Preprocessor + Best Estimator + Target Bounds)
+    # 8. Export Full Serialized Pipeline (Preprocessor + Best Estimator + Bounds)
     full_export_pipeline = {
         "preprocessor": preprocessor,
         "model": best_estimator,
@@ -249,7 +276,7 @@ def train_and_benchmark():
     joblib.dump(full_export_pipeline, model_pkl_path, compress=3)
     print(f"\n[EXPORT] Serialized Best Model saved to: {model_pkl_path}")
 
-    # 9. Export Frontend Dropdown Metadata
+    # 9. Export Frontend Metadata JSON (Brands, Models, Towns for Dropdowns)
     metadata_json_path = os.path.join(models_dir, "metadata.json")
     metadata_payload = {
         "unique_brands": list(fe.unique_brands_),
@@ -270,7 +297,7 @@ def train_and_benchmark():
         json.dump(metadata_payload, f, indent=2, default=str)
     print(f"[EXPORT] Metadata JSON saved to: {metadata_json_path}")
 
-    # 10. Export Comparison Metrics JSON for UI Dashboard
+    # 10. Export Comparison Metrics JSON for Dashboard
     metrics_json_path = os.path.join(models_dir, "metrics.json")
     metrics_payload = {
         "best_model": best_model_name,
@@ -288,7 +315,7 @@ def train_and_benchmark():
     print(f"[EXPORT] Metrics & Performance JSON saved to: {metrics_json_path}")
 
     print("\n" + "=" * 70)
-    print("[SUCCESS] STEP 2 COMPLETED SUCCESSFULLY! 3-model benchmark trained and exported.")
+    print("Training and benchmarking completed successfully!")
     print("=" * 70)
 
 
