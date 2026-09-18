@@ -1,35 +1,27 @@
-# 🧠 Machine Learning Microservice (FastAPI)
+# Machine Learning Microservice
 
-The Python machine learning microservice responsible for real-time model inference, data preprocessing pipelines, and 5-year depreciation forecasting.
-
----
-
-## Key Responsibilities
-
-- **Model Inference**: Serves predictions using the trained Champion **Gradient Boosting Regressor** (`car_price_model.pkl`).
-- **Feature Engineering Pipelines**: Automatically handles domain-derived features (Car Age, Mileage per Year, Luxury Score), One-Hot Encoding, and Log Transformation.
-- **5-Year Depreciation Calculation**: Returns annual compound residual value projections.
-- **Taxonomy Metadata API**: Serves unique Sri Lankan automobile brands, models, towns, and powertrain options.
+FastAPI Python microservice for used car price prediction, feature engineering pipelines, and depreciation calculations.
 
 ---
 
-## Tech Stack
+## Features
 
-- **Framework**: FastAPI + Uvicorn
-- **Data Science**: Scikit-Learn, Pandas, NumPy, Joblib
-- **Validation**: Pydantic v2
+- **Gradient Boosting Model**: Serves real-time price predictions using trained model (`car_price_model.pkl`).
+- **Feature Engineering Pipeline**: Handles derived features (Car Age, Mileage/Year, Luxury Score), One-Hot Encoding, and Log-transformed target mapping.
+- **5-Year Depreciation Calculation**: Forecasts annual depreciation based on vehicle age and brand retention.
+- **Taxonomy API**: Provides Sri Lankan car brands, models, and locations.
 
 ---
 
-## Getting Started
+## Setup & Run
 
-### 1. Setup Virtual Environment
+### 1. Create Virtual Environment
 ```powershell
-# Windows PowerShell:
+# Windows PowerShell
 python -m venv venv
 .\venv\Scripts\Activate.ps1
 
-# macOS / Linux:
+# Linux / macOS
 # python3 -m venv venv
 # source venv/bin/activate
 ```
@@ -39,26 +31,24 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-### 3. (Optional) Re-train ML Model
+### 3. Model Training (Optional)
 ```powershell
 python clean_dataset.py
 python feature_engineering.py
 python train.py
 ```
 
-### 4. Interactive Jupyter Notebook (Visualizations & Research)
-To explore exploratory data analysis (EDA), 7 feature engineering distributions, and 3-model comparative benchmark charts:
-```powershell
-jupyter notebook notebooks/used_car_price_prediction.ipynb
-```
-
-### 5. Start FastAPI Server
+### 4. Run FastAPI Server
 ```powershell
 uvicorn app:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-### 6. API Documentation
-- Health Check: `GET http://localhost:8000/health`
-- Swagger Interactive Docs: `GET http://localhost:8000/docs`
-- ReDoc Docs: `GET http://localhost:8000/redoc`
+---
 
+## API Endpoints
+
+- `GET /health` - Service health status
+- `POST /api/ml/predict` - Real-time price prediction
+- `GET /api/ml/metadata` - Unique brands, models, and features taxonomy
+- `GET /api/ml/metrics` - Model evaluation metrics
+- `GET /docs` - Interactive Swagger API documentation

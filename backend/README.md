@@ -1,58 +1,48 @@
-# Backend API Gateway & Currency Service
+# Backend API Gateway
 
-The Node.js and Express.js API Gateway that orchestrates requests between the Frontend client, ML microservice, Cloud Redis cache, and Open Exchange Rates API.
-
----
-
-## Key Responsibilities
-
-- **REST API Gateway**: Exposes secure REST endpoints for vehicle predictions, metadata taxonomy, and historical logs.
-- **Upstash Cloud Redis Caching**: Caches official live foreign exchange rates with a 3-hour TTL.
-- **Automated Cron Sync**: `node-cron` background worker running every 3 hours (`0 */3 * * *`) to fetch fresh rates from Open Exchange Rates API.
-- **Header Currency Resolution**: Custom middleware (`x-currency-code`) to dynamically inject currency conversions.
-- **ML Proxy Client**: Validates client payloads and forwards inference requests to the Python FastAPI microservice (`:8000`).
+Node.js Express API gateway that handles validation, proxies requests to the ML microservice, and manages currency rates with Upstash Redis cache.
 
 ---
 
-## Tech Stack
+## Features
 
-- **Runtime**: Node.js 18+
-- **Framework**: Express.js
-- **Cache Engine**: ioredis (Upstash TLS `rediss://`)
-- **Cron Engine**: node-cron
-- **HTTP Client**: Axios
-- **Utilities**: CORS, Dotenv, Morgan
+- **ML Service Proxy**: Validates and routes prediction requests to FastAPI.
+- **Currency Caching**: Caches exchange rates (USD, EUR, GBP, JPY) in Upstash Redis.
+- **Scheduled Sync**: Uses `node-cron` to refresh rates every 3 hours from Open Exchange Rates API.
+- **Prediction History**: In-memory historical prediction store with filtering.
 
 ---
 
-## Getting Started
+## Setup & Run
 
 ### 1. Install Dependencies
 ```bash
 npm install
 ```
 
-### 2. Configure Environment Variables
-Create a `.env` file in the `backend` root:
+### 2. Environment Variables (`.env`)
 ```env
 PORT=5000
 ML_SERVICE_URL=http://localhost:8000
 REDIS_URL=rediss://default:your_password@your-endpoint.upstash.io:6379
-OPEN_EXCHANGE_APP_ID=your_open_exchange_app_id_here
+OPEN_EXCHANGE_APP_ID=your_open_exchange_app_id
 ```
 
-### 3. Run Server
+### 3. Start Server
 ```bash
-# Development (with auto-reload)
+# Development (with nodemon)
 npm run dev
 
 # Production
 npm start
 ```
 
-### 4. API Endpoints
-- Health Check: `GET http://localhost:5000/api/health`
-- Currencies: `GET http://localhost:5000/api/currencies`
-- Metadata: `GET http://localhost:5000/api/metadata`
-- Valuation Predict: `POST http://localhost:5000/api/predict`
-- History: `GET http://localhost:5000/api/history`
+---
+
+## API Endpoints
+
+- `GET /api/health` - Check health of Gateway & ML service
+- `GET /api/metadata` - Get vehicle taxonomy (brands, models, towns)
+- `GET /api/currencies` - Get currency exchange rates
+- `POST /api/predict` - Vehicle valuation prediction
+- `GET /api/history` - Get recent predictions
