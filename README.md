@@ -185,7 +185,7 @@ To run the complete system, open **3 separate terminal windows** (one for each m
 
 ---
 
-## 👥 Team & 12-Step Implementation Plan Breakdown
+## 👥 Development Team: NeuraCore (12-Step Implementation Plan Breakdown)
 
 | Step | Implementation Phase & Task Description | Assigned Member | Student Name | Student ID | Batch |
 | :---: | :--- | :---: | :--- | :---: | :---: |

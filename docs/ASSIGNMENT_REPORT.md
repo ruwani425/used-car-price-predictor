@@ -7,6 +7,7 @@
 - **Programme**: Graduate Diploma in Software Engineering (GDSE)
 - **Module**: Machine Learning & Predictive Analytics (CS601)
 - **Project Title**: End-to-End Sri Lankan Used Car Price Valuation System
+- **Development Team**: **NeuraCore**
 - **Academic Year**: 2025/2026
 - **Date of Submission**: September 2026
 
